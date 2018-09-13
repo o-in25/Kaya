@@ -55,7 +55,7 @@ void insertProcQ (pcb_PTR *tp, pcb_PTR p){
 		p->p_next = p;
 		return;
 	}
-	// non-empty q
+	/* non-empty q */
 	p->p_next = (*tp)->p_next;
 	(*tp)->p_next = p;
 	*tp = p;
