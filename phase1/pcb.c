@@ -12,6 +12,10 @@
 
 HIDDEN pcb_PTR pcbFree_h;
 
+state_t mkEmptyState() {
+	return NULL;
+}
+
 void freePcb (pcb_PTR p){
 	insertProcQ(&pcbFree_h, p);
 }
@@ -24,7 +28,7 @@ pcb_PTR allocPcb (){
 	tmp->p_prnt = NULL;
 	tmp->p_child = NULL;
 	tmp->p_sib = NULL;
-	tmp->p_s = NULL;   
+	(*tmp).p_s = NULL;   
 	tmp->p_semAdd = NULL;  
 
 	if(tmp != NULL) return tmp;
