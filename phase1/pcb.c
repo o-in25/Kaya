@@ -24,8 +24,8 @@ pcb_PTR allocPcb (){
 	tmp->p_prnt = NULL;
 	tmp->p_child = NULL;
 	tmp->p_sib = NULL;
-	//tmp->p_s = NULL;   
-	//tmp->p_semAdd = NULL;  
+	tmp->p_s = NULL;   
+	tmp->p_semAdd = NULL;  
 
 	if(tmp != NULL) return tmp;
 	return NULL;
