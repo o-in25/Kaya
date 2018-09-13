@@ -12,7 +12,7 @@
 
 HIDDEN pcb_PTR pcbFree_h;
 
-state_t mkEmptyState() {
+state_PTR mkEmptyState() {
 	return NULL;
 }
 
@@ -28,7 +28,7 @@ pcb_PTR allocPcb (){
 	tmp->p_prnt = NULL;
 	tmp->p_child = NULL;
 	tmp->p_sib = NULL;
-	(*tmp).p_s = NULL;   
+	tmp->p_s = (*(mkEmptyState()));   
 	tmp->p_semAdd = NULL;  
 
 	if(tmp != NULL) return tmp;
