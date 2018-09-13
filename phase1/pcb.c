@@ -28,7 +28,7 @@ pcb_PTR allocPcb (){
 	tmp->p_prnt = NULL;
 	tmp->p_child = NULL;
 	tmp->p_sib = NULL;
-	tmp->p_s = (*(mkEmptyState()));   
+	tmp->p_s = (*(mkEmptyState()));   /* wtf */
 	tmp->p_semAdd = NULL;  
 
 	if(tmp != NULL) return tmp;
@@ -37,7 +37,8 @@ pcb_PTR allocPcb (){
 
 void initPcbs (){
 	static pcb_t *foo[MAXPROC];	
-	for (int i = 0; i<MAXPROC; i++) {
+	int i;
+	for (i = 0; i < MAXPROC; i++) {
 		foo[i] = mkEmptyProcQ();
 		freePcb(foo[i]);
 	}
