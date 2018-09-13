@@ -45,35 +45,6 @@ typedef struct {
 } devregarea_t;
 
 
-
-/* process table entry type */
-typedef struct pcb_t {
-	/* process queue fields */
-    struct pcb_t   *p_next;		/* ptr to next entry     */
-    struct pcb_t   *p_prev;             /* ptr to previous entry */
-
-    /* process tree fields */
-    struct pcb_t   *p_prnt, 		/* ptr to parent         */
-		   *p_child,		/* ptr to 1st child      */
-		   *p_sib;	        /* ptr to next sibling   */
-	
-    /* process status information */
-    state_t	   p_s;			/* processor state       */
-    int		   *p_semAdd;		/* ptr to semaphore on   */
-					/* which proc is blocked */
-}  pcb_t, *pcb_PTR;
-
-
-/* semaphore table entry type */
-typedef struct semd_t {
-	/* semaphore fields */
-	struct semd_t   *s_next;	/* next element on the ASL  */
-	int             *s_semAdd;	/* pointer to the semaphore */
-	pcb_t           *s_procQ;       /* tail pointer to a procQ  */
-
-}  semd_t;
-
-
 #define STATEREGNUM	31
 typedef struct state_t {
 	unsigned int	s_asid;
@@ -116,5 +87,33 @@ typedef struct state_t {
 #define s_HI	s_reg[29]
 #define s_LO	s_reg[30]
 
+
+
+/* process table entry type */
+typedef struct pcb_t {
+	/* process queue fields */
+    struct pcb_t   *p_next;		/* ptr to next entry     */
+    struct pcb_t   *p_prev;             /* ptr to previous entry */
+
+    /* process tree fields */
+    struct pcb_t   *p_prnt, 		/* ptr to parent         */
+		   *p_child,		/* ptr to 1st child      */
+		   *p_sib;	        /* ptr to next sibling   */
+	
+    /* process status information */
+    state_t	   p_s;			/* processor state       */
+    int		   *p_semAdd;		/* ptr to semaphore on   */
+					/* which proc is blocked */
+}  pcb_t, *pcb_PTR;
+
+
+/* semaphore table entry type */
+typedef struct semd_t {
+	/* semaphore fields */
+	struct semd_t   *s_next;	/* next element on the ASL  */
+	int             *s_semAdd;	/* pointer to the semaphore */
+	pcb_t           *s_procQ;       /* tail pointer to a procQ  */
+
+}  semd_t;
 
 #endif
