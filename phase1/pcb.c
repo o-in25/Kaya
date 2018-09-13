@@ -19,7 +19,7 @@ void freePcb (pcb_PTR p){
 pcb_PTR allocPcb (){
 	pcb_PTR tmp = removeProcQ(&pcbFree_h);
 	
-	tmp->p_next = NULL;  // initialize fields
+	tmp->p_next = NULL;  /* initialize fields */
 	tmp->p_prev = NULL;
 	tmp->p_prnt = NULL;
 	tmp->p_child = NULL;
@@ -50,7 +50,7 @@ int emptyProcQ (pcb_PTR tp){
 }
 
 void insertProcQ (pcb_PTR *tp, pcb_PTR p){
-	if (emptyProcQ(*tp)) { // empty q
+	if (emptyProcQ(*tp)) { /* empty q */
 		*tp = p;
 		p->p_next = p;
 		return;
@@ -69,7 +69,7 @@ pcb_PTR outProcQ (pcb_PTR *tp, pcb_PTR p){
 	pcb_PTR tmp;
 	pcb_PTR tmp2;	
 	tmp = *tp;
-	if (tmp == p) { //first pcb is p
+	if (tmp == p) { /* first pcb is p */
 		(*tp)->p_next = tmp->p_next;
 		
 		tmp->p_next = NULL;
@@ -79,7 +79,7 @@ pcb_PTR outProcQ (pcb_PTR *tp, pcb_PTR p){
 
 	pcb_PTR current = tmp->p_next;
 	while (current != tmp) {
-		if (current == p) {  // find right pcb then...
+		if (current == p) {  /* find right pcb then... */
 			tmp = (*tp)->p_next;
 			(*tp)->p_next = tmp->p_next;
 			tmp->p_next = NULL;
@@ -88,7 +88,7 @@ pcb_PTR outProcQ (pcb_PTR *tp, pcb_PTR p){
 		current = current->p_next;
 	}
 
-	return NULL; //pcb not found		
+	return NULL; /* pcb not found */		
 }
 
 pcb_PTR headProcQ (pcb_PTR tp){
@@ -110,7 +110,7 @@ pcb_PTR removeChild (pcb_PTR p){
 	return removeProcQ(&p->p_child);
 }
 
-pcb_PTR outChild (pcb_PTR p){ //do you need to search each process block to find the one that has p as a child?
+pcb_PTR outChild (pcb_PTR p){ /* do you need to search each process block to find the one that has p as a child? */
 	pcb_PTR *prnt = &(p->p_prnt);	
 	return outProcQ(prnt, p);
 }
