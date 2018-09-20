@@ -4,7 +4,7 @@ The Kaya Operating System Project
 The Kaya OS described below is similar to the T.H.E. system outlined by Dijkstra back in 1968[4]. Dijkstra’s paper described an OS divided into six layers. Each layer i was an ADT or abstract machine to layer i + 1; successively building up the capabilities of the system for each new layer to build upon. The OS described here also contains six layers, though the final OS is not as complete as Dijkstra’s.
 Kaya is actually the latest instantiation of an older “learning” operating system design. Ozalp Babaoglu and Fred Schneider originally described this operating system, calling it the HOCA OS[3], for implemention on the Cornell Hypothetical Instruction Processor (CHIP)[2, 1]. Later, Renzo Davoli and Mauro Morsiani reworked HOCA, calling it TINA[6] and ICAROS[5], for implementation on the Microprocessor (without) Pipeline Stages (MPS)[7, 6].
 
-## Level 0: ## The base hardware of μMPS2.
+## Level 0: The base hardware of μMPS2. ##
 There are two versions of the μMPS hardware; the original μMPS emulator, and μMPS2, a 100% backwards compatible extension of μMPS with an improved GUI and multiprocessor support. While both emulators are still available (though the original μMPS is no longer supported), this guide assumes the use of μMPS2 due to its superior GUI and additional hardware features.
 
 ## Level 1: The additional services provided in ROM. ## 
