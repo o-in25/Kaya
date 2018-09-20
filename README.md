@@ -4,31 +4,27 @@ The Queues Manager
 
  
 
-1  Introduction
-In this phase you will implement Level 2 of the Kaya OS; The Queues Manager. The specification for this level is in the Student Guide to the Kaya Operating System Project. You are expected to follow the guidelines set forth both in the µMPS2 Principles of Operation and the Implementing Modules in C documentation.
+The Kaya OS described below is similar to the T.H.E. system outlined by Dijkstra back in 1968[4]. Dijkstra’s paper described an OS divided into six layers. Each layer i was an ADT or abstract machine to layer i + 1; successively building up the capabilities of the system for each new layer to build upon. The OS described here also contains six layers, though the final OS is not as complete as Dijkstra’s.
+Kaya is actually the latest instantiation of an older “learning” operating system design. Ozalp Babaoglu and Fred Schneider originally described this operating system, calling it the HOCA OS[3], for implemention on the Cornell Hypothetical Instruction Processor (CHIP)[2, 1]. Later, Renzo Davoli and Mauro Morsiani reworked HOCA, calling it TINA[6] and ICAROS[5], for implementation on the Microprocessor (without) Pipeline Stages (MPS)[7, 6].
 
- 
-There are a number of important provided files.
+## Level 0: ## The base hardware of μMPS2.
+There are two versions of the μMPS hardware; the original μMPS emulator, and μMPS2, a 100% backwards compatible extension of μMPS with an improved GUI and multiprocessor support. While both emulators are still available (though the original μMPS is no longer supported), this guide assumes the use of μMPS2 due to its superior GUI and additional hardware features.
 
-const.h - contains hardware-related constants,
-types.h - contains type-definitions for µMPS2.
-p1test.c - is a provided test file for this phase.
-P1-Makefile - a sample Makefile for this project.
-You should copy these files into your own directory and make additions (and deletions) as you see fit.
-Rename P1-Makefile to simply Makefile, and put the .h files into your own h/ directory.
+## Level 1: The additional services provided in ROM. ## 
+This includes the services provided by the ROM-Excpt handler (i.e. processor state save and load), the ROM-TLB-Refill handler (i.e. searching PTE’s for matching entries and loading them into the TLB), and the additional ROM services/instructions (i.e. LDST, FORK, PANIC, and HALT). The μMPS2 Principles of Operation contains a complete description of both Level 0 and 1.
+
+## Level 2: The Queues Manager (Phase 1 – described in Chapter 2). ## 
+Based on the key operating systems concept that active entities at one layer are just data structures at lower layers, this layer supports the management of queues of structures; ProcBlk’s.
 
 
-These files can all be found in ~mikeyg/opSys/kaya/ on cerebro.cs.xu.edu
+## Level 3: The Kernel (Phase 2 – described in Chapter 3). ##
+This level implements eight new kernel-mode process management and synchronization primitives in addition to multiprogramming, a process scheduler, device interrupt handlers, and deadlock detection.
 
- 
-2  Testing and Submission of Code
- 
-The test program reports on its progress by adding messages to the buffers okbuf and errbuf in addition to displaying these same messages on TERMINAL0.
+## Level 4: The Support Level (Phase 3 – described in Chapter 4). ## 
+Level 3 is extended to support a system that can support multiple user-level cooperating processes that can request I/O and which run in their own virtual address space. Furthermore, this level adds user-level synchronization, and a pro- cess sleep/delay facility.
 
- 
-Here is what the output from a successful run should look like.
- 
- 
-You are to submit both hardcopies and electronic copies of all of your code.
+## Level 5: The File System (Phase 4) ## 
+This level implements the abstraction of a flat file system by implementing primitives necessary to create, rename, delete, open, close, and modify files.
 
-Please submit via email all the files necessary for complete instructor testing. (i.e. All .c, .e and .h files in addition to your Makefile.)
+## Level 6: The Interactive Shell ## 
+– why not?
