@@ -1,10 +1,10 @@
 #ifndef TYPES
 #define TYPES
 
-/**************************************************************************** 
+/****************************************************************************
  *
  * This header file contains utility types definitions.
- * 
+ *
  ****************************************************************************/
 
 
@@ -13,7 +13,6 @@ typedef signed int cpu_t;
 
 typedef unsigned int memaddr;
 
-
 typedef struct {
 	unsigned int d_status;
 	unsigned int d_command;
@@ -21,13 +20,14 @@ typedef struct {
 	unsigned int d_dataa1;
 } device_t;
 
-#define t_recv_status		d_status
-#define t_recv_command		d_command
-#define t_transm_status		d_data0
-#define t_transm_command	d_data1
+#define t_recv_status	d_status
+#define t_recv_command d_command
+#define t_transm_status	d_data0
+#define t_transm_command d_data1
 
 #define DEVINTNUM 5
 #define DEVPERINT 8
+
 typedef struct {
 	unsigned int rambase;
 	unsigned int ramsize;
@@ -46,15 +46,17 @@ typedef struct {
 
 
 #define STATEREGNUM	31
-typedef struct state_t {
-	unsigned int	s_asid;
-	unsigned int	s_cause;
-	unsigned int	s_status;
-	unsigned int 	s_pc;
-	int	 			s_reg[STATEREGNUM];
 
+/* state */
+typedef struct state_t {
+	unsigned int s_asid;
+	unsigned int s_cause;
+	unsigned int s_status;
+	unsigned int s_pc;
+	int	s_reg[STATEREGNUM];
 } state_t, *state_PTR;
 
+/* registers */
 #define	s_at	s_reg[0]
 #define	s_v0	s_reg[1]
 #define s_v1	s_reg[2]
@@ -91,29 +93,21 @@ typedef struct state_t {
 
 /* process table entry type */
 typedef struct pcb_t {
-	/* process queue fields */
-    struct pcb_t   *p_next;		/* ptr to next entry     */
-    struct pcb_t   *p_prev;             /* ptr to previous entry */
-
-    /* process tree fields */
-    struct pcb_t   *p_prnt, 		/* ptr to parent         */
-		   *p_child,		/* ptr to 1st child      */
-		   *p_sib;	        /* ptr to next sibling   */
-	
-    /* process status information */
-    state_t	   p_s;			/* processor state       */
-    int		   *p_semAdd;		/* ptr to semaphore on   */
-					/* which proc is blocked */
+    struct pcb_t* p_next;
+    struct pcb_t* p_prev;
+    struct pcb_t* p_prnt;
+		struct pcb_t* p_child;
+		struct pcb_t* p_sib;
+    state_t	p_s;
+    int* p_semAdd;
 }  pcb_t, *pcb_PTR;
 
 
 /* semaphore table entry type */
 typedef struct semd_t {
-	/* semaphore fields */
-	struct semd_t   *s_next;	/* next element on the ASL  */
-	int             *s_semAdd;	/* pointer to the semaphore */
-	pcb_t           *s_procQ;       /* tail pointer to a procQ  */
-
+	struct semd_t *s_next;
+	int *s_semAdd;
+	pcb_t *s_procQ;
 }  semd_t;
 
 #endif

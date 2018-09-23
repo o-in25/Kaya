@@ -1,15 +1,9 @@
 #ifndef ASL
 #define ASL
 
-/************************** ASL.E ******************************
-*
-*  The externals declaration file for the Active Semaphore List
-*    Module.
-*
-*  Written by Mikeyg
-*/
-
+#include "../h/const.h"
 #include "../h/types.h"
+
 #include "../e/pcb.e"
 
 
@@ -18,7 +12,7 @@ HIDDEN semd_t* semdFree;
 
 
 int insertBlocked (int *semAdd, pcb_PTR p) { /* 3 cases */
-	semd_t target = searchASL(semAdd);	
+	semd_t target = searchASL(semAdd);
 	if (target == NULL) { /* semAdd not found */
 		allocSemd(semAdd, &p);
 		return NULL;
@@ -29,7 +23,7 @@ int insertBlocked (int *semAdd, pcb_PTR p) { /* 3 cases */
 }
 
 pcb_PTR removeBlocked (int *semAdd){
-	semd_t target = searchASL(semAdd);	
+	semd_t target = searchASL(semAdd);
 	if (searchASL(semAdd) == NULL) return NULL;
 	return removeProcQ(&target.s_procQ);
 }
