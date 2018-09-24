@@ -112,18 +112,18 @@ pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p){
 		/* what is being removed is the tp */
 		if(p == tail) {
 			/* a list of 1 */
-				if(tail.p_next == tail) {
-					tail = NULL;
-				} else {
-					/* a list of > 1 */
-					/* reasign the tail pointer */
-					tail = tail.p_prev;
-					/* swap the pointers with the soon to be removed pcb_t */
-					tail.p_next->p_prev = tail.p_next;
-					tail.p_prev->p_next = tail.p_prev;
-				}
-				/* return the block */
-				return p;
+			if(tail.p_next == tail) {
+				tail = NULL;
+			} else {
+				/* a list of > 1 */
+				/* reasign the tail pointer */
+				tail = tail.p_prev;
+				/* swap the pointers with the soon to be removed pcb_t */
+				tail.p_next->p_prev = tail.p_next;
+				tail.p_prev->p_next = tail.p_prev;
+			}
+			/* return the block */
+			return p;
 		} else {
 			/* what is being removed is not the tp */
 			pcb_PTR currentPcb = tail->p_next;
