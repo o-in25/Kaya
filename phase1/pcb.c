@@ -94,57 +94,57 @@ pcb_PTR removeProcQ (pcb_PTR *tp){
 * return null; else, return p
 */
 pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p){
-		/* dereference ahead of time */
-		pcb_PTR tail = (*tp);
-		/* removing the pcb_t from the process
-		pointed to by tp has three cases to consider;
-		first, if the tp is null, meaning there is no list for
-		a pcb_t to be removed from; second, the pcb_t to be removed
-		is the tp, in which case a if the tp is the only remaining
-		node on the list, the tp must be set the null - otherwise its
-		pointers must be rearranged. the last remaining case if
-		tp is an arbitrary element in the list */
-		if(emptyProcQ(tail)) {
-			/* no list */
-			return NULL;
-		} else {
-			/* a list of >= 1 */
-			/* what is being removed is the tp */
-			if(p == tail) {
-				/* a list of 1 */
-					if(tail.p_next == tail) {
-						tail = NULL;
-					} else {
-						/* a list of > 1 */
-						/* reasign the tail pointer */
-						tail = tail.p_prev;
-						/* swap the pointers with the soon to be removed pcb_t */
-						tail.p_next->p_prev = tail.p_next;
-						tail.p_prev->p_next = tail.p_prev;
-					}
-					/* return the block */
-					return p;
-			} else {
-				/* what is being removed is not the tp */
-				pcb_PTR currentPcb = tail->p_next;
-				/* start from the start of the queue */
-				while(currentPcb != tail) {
-					if(currentPcb == p) {
-						/* set the next and prev to be null */
-						currentPcb->p_next = NULL;
-						currentPcb->p_prev = NULL;
-						/* reasign the pointers */
-						currentPcb->p_prev->p_next = currentPcb->p_next
-						currentPcb->p_next->p_prev = currentPcb->p_prev
-					} else {
-						/* try again, moving up the list */
-						currentPcb = currentPcb->p_next;
-					}
+	/* dereference ahead of time */
+	pcb_PTR tail = (*tp);
+	/* removing the pcb_t from the process
+	pointed to by tp has three cases to consider;
+	first, if the tp is null, meaning there is no list for
+	a pcb_t to be removed from; second, the pcb_t to be removed
+	is the tp, in which case a if the tp is the only remaining
+	node on the list, the tp must be set the null - otherwise its
+	pointers must be rearranged. the last remaining case if
+	tp is an arbitrary element in the list */
+	if(emptyProcQ(tail)) {
+		/* no list */
+		return NULL;
+	} else {
+		/* a list of >= 1 */
+		/* what is being removed is the tp */
+		if(p == tail) {
+			/* a list of 1 */
+				if(tail.p_next == tail) {
+					tail = NULL;
+				} else {
+					/* a list of > 1 */
+					/* reasign the tail pointer */
+					tail = tail.p_prev;
+					/* swap the pointers with the soon to be removed pcb_t */
+					tail.p_next->p_prev = tail.p_next;
+					tail.p_prev->p_next = tail.p_prev;
 				}
-				/* the pcb_t was not found */
-				return NULL;
+				/* return the block */
+				return p;
+		} else {
+			/* what is being removed is not the tp */
+			pcb_PTR currentPcb = tail->p_next;
+			/* start from the start of the queue */
+			while(currentPcb != tail) {
+				if(currentPcb == p) {
+					/* set the next and prev to be null */
+					currentPcb->p_next = NULL;
+					currentPcb->p_prev = NULL;
+					/* reasign the pointers */
+					currentPcb->p_prev->p_next = currentPcb->p_next
+					currentPcb->p_next->p_prev = currentPcb->p_prev
+				} else {
+					/* try again, moving up the list */
+					currentPcb = currentPcb->p_next;
+				}
 			}
+			/* the pcb_t was not found */
+			return NULL;
 		}
+	}
 }
 
 	pcb_PTR current = tmp->p_next;
