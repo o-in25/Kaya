@@ -12,45 +12,70 @@ HIDDEN semd_t* semdFree_h;
 
 
 int insertBlocked(int *semAdd, pcb_PTR p) { /* 3 cases */
-	semd_t target = searchASL(semAdd);
-	if (target == NULL) { /* semAdd not found */
-		allocSemd(semAdd, &p);
-		return NULL;
+	semd_PTR prev = searchASL(semAdd);
+	if (*(prev->s_next->s_semAdd) != *(semAdd)) { /* semAdd not found */
+		semd_t newSemd = allocSemd();
+		if (newSemd == NULL) {
+			return TRUE;
+		}
+		newSemd.s_procQ = mkEmptyProcQ();
+		*(newSemd.s_semAdd) = *(semAdd);
+
+		newSemd.s_prev = prev;
+		newSemd.s_next = prev->s_next;
+		prev->s_next->s_prev = &(newSemd);
+		prev->s_next = &(newSemd);
+
+		(*p).p_semAdd = semAdd;
+		insertProcQ(newSemd.s_procQ, p);
+
+		return FALSE;
 	}
 	/* semAdd found */
-	insertProcQ(&target.s_procQ, p)
-	return 8; /* FIX */
+	(*p).p_semAdd = semAdd;
+	insertProcQ(prev->s_next->s_procQ, p);
+
+	return FALSE;
 }
 
 pcb_PTR removeBlocked(int* semAdd){
 	/* find previous node */
-	semd_PTR target = searchASL(semAdd);
-	/* if previous node is what is being looked for */
-	if (*(target->s_next->p_semAdd) == *(semAdd)) {
-		pcb_PTR removed = removeProcQ(&target.s_procQ);
+	semd_PTR prev = searchASL(semAdd);
+	/* did we find the right node? */
+	if (*(prev->s_next->s_semAdd) == *(semAdd)) {
+		pcb_PTR removed = removeProcQ(*(prev).s_procQ);
 
-		if (emptyProcQ(*(target).s_procQ)) {
-			freeSemd(target);
+		if (emptyProcQ(prev->s_next->s_procQ)) {
+			freeSemd(prev->s_next);
 		}
 		return removed;
 	}
 	/* semd not found */
-
-
-
-
+	return NULL;
 }
 
 pcb_PTR outBlocked (pcb_PTR p){
-	semd_t a = *(p->p_semAdd);
-	if (a == NULL) return NULL;
+	int* targetSemAdd = p->p_semAdd;
+	semd_PTR prev = searchASL(targetSemAdd);
+
+	if (*(prev->s_next->s_semAdd) == *(semAdd)) {
+		pcb_PTR removed = outProcQ(*(prev).s_procQ, p);
+
+		if (emptyProcQ(prev->s_next->s_procQ)) {
+			freeSemd(prev->s_next);
+		}
+		return removed;
+	}
+
 	return outProcQ(&a.s_procQ, p);
 }
 
 pcb_PTR headBlocked (int *semAdd){
-	semd_t target = searchASL(semAdd);
-	if (target == NULL) return null;
-	return headProcQ(target.s_procQ);
+	semd_PTR prev = searchASL(semAdd);
+	if (*(prev->s_next->s_semAdd) != *(semAdd)) {
+		return NULL;
+	}
+	return headProcQ(prev->s_next->s_procQ);
 }
 
 void initASL() {
@@ -59,7 +84,18 @@ void initASL() {
 		semdTable[i] = mkEmptySemd();
 		freeSemd(&(semdTable[i]));
 	}
-	semd_t dummy1 = alloc
+	semd_t dummy1 = allocSemd();
+	semd_t dummy2 = allocSemd();
+	*(dummy1.s_semAdd) = 0;
+	*(dummy1.s_semAdd) = MAXINT;
+	dummy1.s_next = &(dummy2);
+	dummy1.s_prev = NULL;
+	dummy1.s_procQ = mkEmptyProcQ();
+	dummy2.s_next = NULL;
+	dummy2.s_prev = &(dummy1);
+	dummy2.s_procQ = mkEmptyProcQ();
+
+	semd_h = &(dummy1);
 }
 
 semd_t mkEmptySemd() {
@@ -95,7 +131,7 @@ HIDDEN semd_PTR allocSemd() {
 	firstNode.s_next = NULL;   /* washing dishes just before using them */
 	firstNode.s_semAdd = NULL;
 	firstNode.s_procQ = NULL;
-	
+
 	semdFree_h = secondNode;
 	return &(firstNode);
 }

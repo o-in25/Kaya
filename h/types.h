@@ -105,9 +105,10 @@ typedef struct pcb_t {
 
 /* semaphore table entry type */
 typedef struct semd_t {
-	struct semd_t *s_next;
+	struct semd_PTR s_next;
+	struct semd_PTR s_prev;
 	int *s_semAdd;
-	pcb_t *s_procQ;
+	pcb_PTR s_procQ;
 }  semd_t, *semd_PTR;
 
 #endif
