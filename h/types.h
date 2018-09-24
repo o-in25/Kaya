@@ -108,6 +108,6 @@ typedef struct semd_t {
 	struct semd_t *s_next;
 	int *s_semAdd;
 	pcb_t *s_procQ;
-}  semd_t;
+}  semd_t, *semd_PTR;
 
 #endif

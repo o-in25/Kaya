@@ -1,15 +1,16 @@
 #ifndef CONSTS
 #define CONSTS
 
-/**************************************************************************** 
+/****************************************************************************
  *
  * This header file contains utility constants & macro definitions.
- * 
+ *
  ****************************************************************************/
 
 /* Maximum process blocks */
 #define MAXPROC  		20
-
+#define MAXINT 2147483647
+/* Maximum 32-bit signed
 
 /* Hardware & software constants */
 #define PAGESIZE		4096	/* page size in bytes */
@@ -23,7 +24,7 @@
 /* timer, timescale, TOD-LO and other bus regs */
 #define RAMBASEADDR	0x10000000
 #define TODLOADDR	0x1000001C
-#define INTERVALTMR	0x10000020	
+#define INTERVALTMR	0x10000020
 #define TIMESCALEADDR	0x10000024
 
 
@@ -87,7 +88,7 @@
 
 /* Useful operations */
 #define STCK(T) ((T) = ((* ((cpu_t *) TODLOADDR)) / (* ((cpu_t *) TIMESCALEADDR))))
-#define LDIT(T)	((* ((cpu_t *) INTERVALTMR)) = (T) * (* ((cpu_t *) TIMESCALEADDR))) 
+#define LDIT(T)	((* ((cpu_t *) INTERVALTMR)) = (T) * (* ((cpu_t *) TIMESCALEADDR)))
 
 
 #endif
