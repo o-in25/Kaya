@@ -372,8 +372,25 @@ void insertChild(pcb_PTR prnt, pcb_PTR p) {
 	MkHeadChild(prnt, p);
 }
 
-pcb_PTR removeChild(pcb_PTR p) {
-	return removeProcQ(&p->p_child);
+/*
+* Function: takes a parent pcb_t and
+* removes and returns the first pcb_t child -
+* baring there is one; if the parent
+* pcb_t, however, is null, then this
+* function must return null to hanle
+* that case
+*/
+pcb_PTR removeChild(pcb_PTR prnt) {
+	if(emptyChild(prnt)) {
+		return NULL;
+	} else {
+		pcb_PTR childPcb = (*(prnt->p_child));
+		/* helpful dereferenced child pcb_t */
+		prnt->p_child = childPcb.p_nextSib;
+		childPcb.p_prevSib = NULL;
+
+		return &(childPcb);
+	}
 }
 
 pcb_PTR outChild(pcb_PTR p) { /* do you need to search each process block to find the one that has p as a child? */
