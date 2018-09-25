@@ -196,7 +196,7 @@ pcb_PTR removeProcQ(pcb_PTR *tp) {
 		/* since this functionality is already
 		written, use the encapsulated function */
 		pcb_PTR tailPcb = (*tp);
-		return outProcQ(tp, tailPcb);
+		return outProcQ(tp, tailPcb->p_next);
 	}
 }
 
