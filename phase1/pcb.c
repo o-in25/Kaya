@@ -16,12 +16,6 @@ state_PTR mkEmptyState() {
 	return NULL;
 }
 
-
-void freePcb(pcb_PTR p) {
-
-	insertProcQ(&pcbFree_h, p);
-}
-
 /*
 * Function: nulls out all of the fields for
 * a provided pcb_t; if a null pcb_t is provided,
@@ -57,6 +51,28 @@ pcb_PTR cleanPcb(pcb_PTR p) {
 }
 
 /*
+* Function: pcb_t that are no longer in use
+* are returned to the free list here; this simply
+* requires the uses of the already written
+* insertProcQ, but must be cleaned before they
+* are inserted onto the list pointed to by
+* insertProcQ - that is, the free list.
+*/
+void freePcb(pcb_PTR p) {
+	/* since it will prove detremental to process
+	management if a pcb_t has predefined values on it
+	before going to the free list, it must be cleaned first */
+	pcb_PTR temp = cleanPcb(p);
+	/* now its cleaned */
+	p = temp;
+	/* insert into a specified process queue - that is,
+	the free list; use the predefined encapsulated function
+	to achieve this */
+	insertProcQ(&pcbFree_h, p);
+}
+
+
+/*
 * Function: allocate a pcb_t from the free
 * free list; remove the pcb_t so that the
 * free list has n-1 pcb_t on it; if the
@@ -75,10 +91,10 @@ pcb_PTR allocPcb() {
 	/* since removeProcQ is a generic function,
 	simply supply the address of the free list to
 	return the nth-1 element from said list */
-	pcb_PTR rmvdPcb = removeProcQ(&pcbFree_h);
+	pcb_PTR temp = removeProcQ(&pcbFree_h);
 	/* now that the removed pcb is returned (or really, its
 	pointer is) it must be cleaned before it can be used */
-	rmvdPcb = cleanPcb(rmvdPcb);
+	pcb_PTR rmvdPcb = cleanPcb(temp);
 	/* now that its cleaned, it can be used */
 	return rmvdPcb;
 }
@@ -92,11 +108,17 @@ pcb_PTR allocPcb() {
 void initPcbs() {
 	/* statically declare the list of pcbs_t */
 	static pcb_t pcbTable[MAXPROC];
+	/* delcare the index */
 	int i;
+	/* make the head element in the array - that is,
+	the head of the free list - equal to null; by doing so, since
+	this function will ostensibily call insertProcQ, then by
+	having the head equal to null, the pcb_t pointed to by
+	p will have itself asigned to its previous and next - allowing
+	for the n+1th element to then be allocated to the nth previous
+	and next - and so on */
+	pcbFree_h = mkEmptyProcQ();
 	for (i = 0; i < MAXPROC; i++) {
-		/* make each element in the array - that is,
-		the free list - equal to null */
-		pcbTable[i] = mkEmptyProcQ();
 		/* insert the element into the freepcb function; since it takes
 		a pointer, simply supply the address */
 		freePcb(&(pcbTable[i]));
