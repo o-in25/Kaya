@@ -158,7 +158,7 @@ void insertProcQ(pcb_PTR *tp, pcb_PTR p) {
 	the queue must be verified for emptiness;
 	if it is not empty, this becomes the facile
 	task of rearanging the pointers */
-	if (emptyProcQ(tailPcb) {
+	if (emptyProcQ(tailPcb)) {
 		/* the queue is empty, so assign this
 		pcb_t to be circular by making itself
 		its previous and next element */
@@ -243,6 +243,7 @@ pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
 			pcb_PTR currentPcb = tailPcb->p_next;
 			/* start from the start of the queue */
 			while(currentPcb != tailPcb) {
+				/* the p matches the tp */
 				if(currentPcb == p) {
 					/* set the next and prev to be null */
 					currentPcb->p_next = NULL;
@@ -262,8 +263,22 @@ pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
 }
 
 
+/*
+* Function: returns a pointer to the head
+* of a process queue signified by tp - however
+* this head should not be removed; if there is no
+* head of the process queue - that is, there is
+* no process queue, return null
+*/
 pcb_PTR headProcQ(pcb_PTR tp) {
-	if (emptyProcQ(tp)) return NULL;
+	/* if the tp points tp null,
+	that is, there is no process queue,
+	return null */
+	if (emptyProcQ(tp)) {
+		return NULL
+	};
+	/* since the tp will point to head by the
+	p_next field, return that */
 	return (tp->p_next);
 }
 
