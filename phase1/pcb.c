@@ -283,12 +283,93 @@ pcb_PTR headProcQ(pcb_PTR tp) {
 	return (tp->p_next);
 }
 
+/* tree maintainece (a word i'll learn how to spell eventually) */
+
+/*
+* Function: takes a pcb_t as an
+* argument and returns a boolean expression
+* as to whether or not a particular
+* pcb_t has a child or not
+*/
 int emptyChild(pcb_PTR p) {
+	/* if the pcb_t has a child, return true,
+	and if otherwise - false - as captured by
+	the boolean expression */
 	return (p->p_child == NULL);
 }
+/*
+* Function: makes the child pcb_t
+* of a parent pcb_t to be the head
+* or initial child; this simply sets
+* the values and does not return
+* anything
+*/
+void MkHeadChild(pcb_PTR prnt, pcb_PTR p) {
+	/* if there is no child, then the child
+	waill have no parents */
+		if(emptyChild(prnt)) {
+			/* make null */
+			prnt->p_child = NULL;
+		} else {
+			/* the pcb_t child is the newly
+			added p */
+			prnt->p_child = p;
+			/* the newly added pcb_t parent
+			is the pcb_t parent passed as an
+			argument */
+			p->p_prnt = prnt;
+		}
+}
 
+/*
+* Function: makes the child
+* of a specified parent null
+* for p_next and p_prev; if the parent
+* is null, that is there is not parent,
+* then null is returned;
+*/
+void cleanChild(pcb_PTR prnt) {
+	/* if the parent does not have
+	* a child, return null */
+	if(emptyChild(prnt)) {
+		prnt->p_child = NULL;
+	} else {
+		/* clean the child */
+		prnt->p_child->p_prevSib = NULL;
+		prnt->p_child->p_nextSib = NULL;
+	}
+}
+
+/*
+* Function: takes a parent pcb_t and
+* provides a pcb_t to be linked to that
+* parent
+*/
 void insertChild(pcb_PTR prnt, pcb_PTR p) {
-	insertProcQ(&prnt->p_child, p);
+	/* here, there are 2 cases to consider;
+	first - if the inserted pcb_t is the first
+	and only child of the parent pcb_t; in this
+	case, the newly aded pcb_t previous sibling
+	must be set to null - since it is the
+	only child; otherwise, if the newly aded
+	pcb_t is one of >0 childs, then the new child
+	must be set as the parent pcb_t */
+	if(emptyChild(prnt)) {
+		/* since there is no child, clean it */
+		cleanChild(prnt);
+	} else {
+		/* asign the parent pcb_t next
+		child's next sibling to the back
+		of the child list */
+		prnt->p_child->p_nextSib = p;
+		p->p_prevSib = prnt->p_child;
+		/* the end of the list */
+		p->p_nextSib = NULL;
+	}
+	/* reasign the pcb_t head child by
+	calling the encapsulated MkHeadChild()
+	function for easibility */
+	MkHeadChild(prnt, p);
 }
 
 pcb_PTR removeChild(pcb_PTR p) {

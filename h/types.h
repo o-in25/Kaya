@@ -93,14 +93,22 @@ typedef struct state_t {
 
 /* process table entry type */
 typedef struct pcb_t {
+		/* queue relationship */
+		/* the next pcb_t */
     struct pcb_t* p_next;
+		/* the previous pcb_t */
     struct pcb_t* p_prev;
+		/* the pcb_t parent */
     struct pcb_t* p_prnt;
+		/* the pcb_t child */
 		struct pcb_t* p_child;
 		/* double linked children */
+		/* the pcb_t next sibiling */
 		struct pcb_t* p_nextSib;
+		/* the pcb_t previous sibiling */
 		struct pcb_t* p_prevSib;
     state_t	p_s;
+		/* the semaphore address */
     int* p_semAdd;
 }  pcb_t, *pcb_PTR;
 
