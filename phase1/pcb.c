@@ -16,14 +16,13 @@ state_PTR mkEmptyState() {
 	return NULL;
 }
 
-void freePcb(pcb_PTR p){
+void freePcb(pcb_PTR p) {
 	insertProcQ(&pcbFree_h, p);
 }
 
 
-pcb_PTR allocPcb(){
+pcb_PTR allocPcb() {
 	pcb_PTR tmp = removeProcQ(&pcbFree_h);
-
 	tmp->p_next = NULL;  /* initialize fields */
 	tmp->p_prev = NULL;
 	tmp->p_prnt = NULL;
@@ -31,27 +30,48 @@ pcb_PTR allocPcb(){
 	tmp->p_sib = NULL;
 	tmp->p_s = (*(mkEmptyState()));   /* wtf */
 	tmp->p_semAdd = NULL;
-
 	if(tmp != NULL) return tmp;
 	return NULL;
 }
 
+/*
+* Function: initializes the pcb_t
+* free list for pcb_t to be allocated to
+* by some predefined constant; this function
+* is an init call
+*/
 void initPcbs() {
+	/* statically declare the list of pcbs_t */
 	static pcb_t pcbTable[MAXPROC];
 	int i;
 	for (i = 0; i < MAXPROC; i++) {
-		foo[i] = mkEmptyProcQ();
+		/* make each element in the array - that is,
+		the free list - equal to null */
+		pcbTable[i] = mkEmptyProcQ();
+		/* insert the element into the freepcb function */
 		freePcb(&(pcbTable[i]));
 	}
 }
 
 
-
-pcb_PTR mkEmptyProcQ (){
+/*
+* Function: initialize the tp of an
+* empty process queue - i.e. return null
+*/
+pcb_PTR mkEmptyProcQ() {
+	/* here, proper encapsulation is used to
+	initialize an empty process via a function
+	rather than by asigning the address of null */
 	return NULL;
 }
 
-int emptyProcQ (pcb_PTR tp){
+/*
+* Function: returns a boolean expression
+* if a tp is null - that is, a tp points
+* to an empty process queue
+*/
+int emptyProcQ(pcb_PTR tp) {
+	/* evaluate */
 	return (tp == NULL);
 }
 
@@ -59,14 +79,14 @@ int emptyProcQ (pcb_PTR tp){
 * Function: insert the pcb_t p into the
 * process queue tp
 */
-void insertProcQ(pcb_PTR *tp, pcb_PTR p){
-	pcb_PTR tail = (*tp);
+void insertProcQ(pcb_PTR *tp, pcb_PTR p) {
+	pcb_PTR tailPcb = (*tp);
 	/* in order to insert a given pcb_t into a
 	given process queue given by tp,
 	the queue must be verified for emptiness;
 	if it is not empty, this becomes the facile
 	task of rearanging the pointers */
-	if (emptyProcQ(tail) {
+	if (emptyProcQ(tailPcb) {
 		/* the queue is empty, so assign this
 		pcb_t to be circular by making itself
 		its previous and next element */
@@ -76,14 +96,36 @@ void insertProcQ(pcb_PTR *tp, pcb_PTR p){
 		/* since the list is not empty, simply
 		reasign the pointers to account for the newly
 		added element */
-		tail->p_next = p;
-		tail->p_prev
+		p->p_next = tailPcb->p_next;
+		/* the newest element has the tail as its previous */
+		p->p_prev = tailPcb;
+		tailPcb->p_next = p;
+		tailPcb->p_next->p_prev = p;
 	}
-	tail = p;
+	/* reasign the tp */
+	tailPcb = p;
 }
 
-pcb_PTR removeProcQ (pcb_PTR *tp){
-	return outProcQ(tp, *tp);
+
+/*
+* Function: removes the first element from the
+* processes queue whose tp is passed in as an
+* argument; return null if the tp is null - meaning
+* there is no list
+*/
+pcb_PTR removeProcQ(pcb_PTR *tp) {
+	/* first, consider the case in which the process queue is
+	empty, then simply use the encapsulated functionality
+	of the outProcQ function */
+	if(emptyProcQ(*tp)) {
+		/* empty list */
+		return NULL;
+	} else {
+		/* since this functionality is already
+		written, use the encapsulated function */
+		pcb_PTR tailPcb = (*tp);
+		return outProcQ(tp, tailPcb);
+	}
 }
 
 /*
@@ -93,9 +135,9 @@ pcb_PTR removeProcQ (pcb_PTR *tp){
 * if the desired entry is not in the indicated queue,
 * return null; else, return p
 */
-pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p){
+pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
 	/* dereference ahead of time */
-	pcb_PTR tail = (*tp);
+	pcb_PTR tailPcb = (*tp);
 	/* removing the pcb_t from the process
 	pointed to by tp has three cases to consider;
 	first, if the tp is null, meaning there is no list for
@@ -104,31 +146,31 @@ pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p){
 	node on the list, the tp must be set the null - otherwise its
 	pointers must be rearranged. the last remaining case if
 	tp is an arbitrary element in the list */
-	if(emptyProcQ(tail)) {
+	if(emptyProcQ(tailPcb)) {
 		/* no list */
 		return NULL;
 	} else {
 		/* a list of >= 1 */
 		/* what is being removed is the tp */
-		if(p == tail) {
+		if(p == tailPcb) {
 			/* a list of 1 */
-			if(tail.p_next == tail) {
-				tail = NULL;
+			if(tailPcb.p_next == tailPcb) {
+				tailPcb = NULL;
 			} else {
 				/* a list of > 1 */
 				/* reasign the tail pointer */
-				tail = tail.p_prev;
+				tailPcb = tailPcb.p_prev;
 				/* swap the pointers with the soon to be removed pcb_t */
-				tail.p_next->p_prev = tail.p_next;
-				tail.p_prev->p_next = tail.p_prev;
+				tailPcb.p_next->p_prev = tailPcb.p_next;
+				tailPcb.p_prev->p_next = tailPcb.p_prev;
 			}
 			/* return the block */
 			return p;
 		} else {
 			/* what is being removed is not the tp */
-			pcb_PTR currentPcb = tail->p_next;
+			pcb_PTR currentPcb = tailPcb->p_next;
 			/* start from the start of the queue */
-			while(currentPcb != tail) {
+			while(currentPcb != tailPcb) {
 				if(currentPcb == p) {
 					/* set the next and prev to be null */
 					currentPcb->p_next = NULL;
@@ -147,40 +189,27 @@ pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p){
 	}
 }
 
-	pcb_PTR current = tmp->p_next;
-	while(current != tmp) {
-		if (current == p) {  /* find right pcb then... */
-			tmp = (*tp)->p_next;
-			(*tp)->p_next = tmp->p_next;
-			tmp->p_next = NULL;
-			return tmp;
-		}
-		current = current->p_next;
-	}
 
-	return NULL; /* pcb not found */
-}
-
-pcb_PTR headProcQ (pcb_PTR tp){
+pcb_PTR headProcQ(pcb_PTR tp) {
 	if (emptyProcQ(tp)) return NULL;
 	return (tp->p_next);
 }
 
 
 
-int emptyChild (pcb_PTR p){
+int emptyChild(pcb_PTR p) {
 	return (p->p_child == NULL);
 }
 
-void insertChild (pcb_PTR prnt, pcb_PTR p){
+void insertChild(pcb_PTR prnt, pcb_PTR p) {
 	insertProcQ(&prnt->p_child, p);
 }
 
-pcb_PTR removeChild (pcb_PTR p){
+pcb_PTR removeChild(pcb_PTR p) {
 	return removeProcQ(&p->p_child);
 }
 
-pcb_PTR outChild (pcb_PTR p){ /* do you need to search each process block to find the one that has p as a child? */
+pcb_PTR outChild(pcb_PTR p) { /* do you need to search each process block to find the one that has p as a child? */
 	pcb_PTR *prnt = &(p->p_prnt);
 	return outProcQ(prnt, p);
 }
