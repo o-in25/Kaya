@@ -97,7 +97,9 @@ typedef struct pcb_t {
     struct pcb_t* p_prev;
     struct pcb_t* p_prnt;
 		struct pcb_t* p_child;
-		struct pcb_t* p_sib;
+		/* double linked children */
+		struct pcb_t* p_nextSib;
+		struct pcb_t* p_prevSib;
     state_t	p_s;
     int* p_semAdd;
 }  pcb_t, *pcb_PTR;

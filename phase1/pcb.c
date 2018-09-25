@@ -16,7 +16,9 @@ state_PTR mkEmptyState() {
 	return NULL;
 }
 
+
 void freePcb(pcb_PTR p) {
+
 	insertProcQ(&pcbFree_h, p);
 }
 
@@ -54,8 +56,31 @@ pcb_PTR cleanPcb(pcb_PTR p) {
 	}
 }
 
+/*
+* Function: allocate a pcb_t from the free
+* free list; remove the pcb_t so that the
+* free list has n-1 pcb_t on it; if the
+* free list has no remaining free pcb_t
+* that is, the free list is empty,
+* simply return null to indicate that there
+* are no pcb_t remaining; otherwise, make the
+* free list n-1 pcb_t by calling removeProcQ()
+* given the free list as a pointer. Before the
+* pcb_t is returned, it is cleaned so that
+* can be appropriately used and a pointer to the
+* returned pcb_t is provided; additionally, the
+* pcb_t will be cleaned before it is returned
+*/
 pcb_PTR allocPcb() {
-
+	/* since removeProcQ is a generic function,
+	simply supply the address of the free list to
+	return the nth-1 element from said list */
+	pcb_PTR rmvdPcb = removeProcQ(&pcbFree_h);
+	/* now that the removed pcb is returned (or really, its
+	pointer is) it must be cleaned before it can be used */
+	rmvdPcb = cleanPcb(rmvdPcb);
+	/* now that its cleaned, it can be used */
+	return rmvdPcb;
 }
 
 /*
