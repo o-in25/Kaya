@@ -1,16 +1,16 @@
+/********************************** pcb.c **********************************/
+
+/* h files to include */
 #include "../h/const.h"
 #include "../h/types.h"
-
 #include "/usr/include/uarm/libuarm.h"
+/* e files to include */
 #include "../e/pcb.e"
 #include "../e/asl.e"
 
-#define TRUE 1
-#define FALSE 0
-
-/* PCB.C */
-
+/* globals */
 HIDDEN pcb_PTR pcbFree_h;
+
 
 state_PTR mkEmptyState() {
 	return NULL;
@@ -20,18 +20,42 @@ void freePcb(pcb_PTR p) {
 	insertProcQ(&pcbFree_h, p);
 }
 
+/*
+* Function: nulls out all of the fields for
+* a provided pcb_t; if a null pcb_t is provided,
+* the function will return null
+*/
+pcb_PTR cleanPcb(pcb_PTR p) {
+	/* if the pcb_t is null, then
+	there are no values we can clean, so
+	we return null */
+	if(p == NULL) {
+		/* return null - there is no non-null pcb
+		provided */
+		return 	NULL;
+	} else {
+		/* if the pcb_t is not null, then its
+		fields are cleaned and it is returned
+		with null fields */
+		/* clean its previous and next fields */
+		p->p_next = NULL;
+		p->p_prev = NULL;
+		/* clean its relationships */
+		p->p_prnt = NULL;
+		p->p_child = NULL;
+		p->p_nextSib = NULL;
+		p->p_prevSib = NULL;
+		/* clean its state */
+		p->p_s = (*(mkEmptyState()));
+		/* clean its semaphore */
+		p->p_semAdd = NULL;
+		/* returned the cleaned node */
+		return p;
+	}
+}
 
 pcb_PTR allocPcb() {
-	pcb_PTR tmp = removeProcQ(&pcbFree_h);
-	tmp->p_next = NULL;  /* initialize fields */
-	tmp->p_prev = NULL;
-	tmp->p_prnt = NULL;
-	tmp->p_child = NULL;
-	tmp->p_sib = NULL;
-	tmp->p_s = (*(mkEmptyState()));   /* wtf */
-	tmp->p_semAdd = NULL;
-	if(tmp != NULL) return tmp;
-	return NULL;
+
 }
 
 /*
@@ -48,7 +72,8 @@ void initPcbs() {
 		/* make each element in the array - that is,
 		the free list - equal to null */
 		pcbTable[i] = mkEmptyProcQ();
-		/* insert the element into the freepcb function */
+		/* insert the element into the freepcb function; since it takes
+		a pointer, simply supply the address */
 		freePcb(&(pcbTable[i]));
 	}
 }
@@ -194,8 +219,6 @@ pcb_PTR headProcQ(pcb_PTR tp) {
 	if (emptyProcQ(tp)) return NULL;
 	return (tp->p_next);
 }
-
-
 
 int emptyChild(pcb_PTR p) {
 	return (p->p_child == NULL);
