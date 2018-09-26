@@ -279,7 +279,7 @@ pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
 					rmvdPcb = (*tp);
 					/* reallocate pointers */
 					(*tp)->p_next->p_prev = (*tp)->p_next;
-					(*tp)->p_prev-p_next = (*tp)->p_next;
+					(*tp)->p_prev->p_next = (*tp)->p_next;
 					/* reasign the tp - someones lucky day */
 					(*tp) = (*tp)->p_prev;
 					return rmvdPcb;
@@ -294,7 +294,7 @@ pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
 				while(currentPcb != (*tp)) {
 					if(currentPcb == p) {
 						/* a match! we found the pcb_t */
-						if(currentPcb = (*tp)->p_next) {
+						if(currentPcb == (*tp)->p_next) {
 							/* in this case, we had to search for the pcb_t
 							but if it is at the head, i.e. the tp next,
 							then simply implement the removeProcQ function to
@@ -321,43 +321,6 @@ pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
 			}
 		}
 	}
-
-
-/*
-* Function: remove the pcb_t pointed to by p
-* from the process queue pointed to by tp;
-* update the process queue's tp if necessary;
-* if the desired entry is not in the indicated queue,
-* return null; else, return p
-*/
-pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
-
-	/* removing the pcb_t from the process
-	pointed to by tp has three cases to consider;
-	first, if the tp is null, meaning there is no list for
-	a pcb_t to be removed from; second, the pcb_t to be removed
-	is the tp, in which case a if the tp is the only remaining
-	node on the list, the tp must be set the null - otherwise its
-	pointers must be rearranged. the last remaining case if
-	tp is an arbitrary element in the list; we will start
-	with the first case */
-	if(emptyProcQ(*tp)) {
-		return NULL;
-	/* now the case that the pcb_t to be removed is the only one left
-	must be considered; with appropriate logic, we can set up a
-	branch of statements to then consider the case that the pcb_t
-	is in the middle of the list; begin by advancing to the next pcb_t
-	from the tp and take it from there */
-	} else if(((*tp)->p_next) == tp) {
-		/* the pcb_t to be removed is the tp */
-		pcb_PTR rmvdPcb = (*tp);
-		mkEmptyProcQ(tp);
-		return rmvdPcb;
-	} else {
-		/* now begin iteration */
-	}
-
-}
 
 /*
 * Function: removes the first element from the
