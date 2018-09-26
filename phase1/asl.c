@@ -163,17 +163,31 @@ semd_PTR allocSemd() {
 }
 
 /*
-*	Function: builds a dummy node, that is a placeholder
+*	Function: builds the bigger dummy node, that is a placeholder
 * node for a semd_t; as noted in the initASL documentation,
 * the use of a dummy node will allow for less error-prone
 * boundry conditions
 */
-semd_PTR mkEdgeSemd(int* i) {
+semd_PTR mkLhsEdgeSemd() {
+		/* allocate a new sem_d */
+		semd_PTR edgeSemd = allocSemd();
+		/* asign its address to be a radical
+		boundry - i.e. p */
+		edgeSemd->s_semAdd = 0;
+}
+
+/*
+*	Function: builds the samller dummy node, that is a placeholder
+* node for a semd_t; as noted in the initASL documentation,
+* the use of a dummy node will allow for less error-prone
+* boundry conditions
+*/
+semd_PTR mkRhsEdgeSemd() {
 		/* allocate a new sem_d */
 		semd_PTR edgeSemd = allocSemd();
 		/* asign its address to be a radical
 		boundry - i.e. MAXINT */
-		edgeSemd->s_semAdd = i;
+		edgeSemd->s_semAdd = MAXINT;
 }
 
 
@@ -215,12 +229,9 @@ void initASL() {
 	will be the largest possible unsigned interger value -
 	to ensure when travsering the semd_t asl, will never
 	return null - indicating the edge of the list */
-	int MIN = 0;
-	int MAX = MAXINT;
-	int* addMin = MIN;
-	int* addMax = MAX;
-	semd_PTR minSemd = mkEdgeSemd(MIN);
-	semd_PTR maxSemd = mkEdgeSemd(MAX);
+
+	semd_PTR minSemd = mkLhsEdgeSemd(MIN);
+	semd_PTR maxSemd = mkRhsEdgeSemd(MAX);
 	/* send the edges */
 	minSemd->s_next = NULL;
 	maxSemd->s_next = NULL;
