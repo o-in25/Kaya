@@ -161,7 +161,7 @@ semd_PTR allocSemd() {
 			is the last final one */
 			semdFree_h = NULL;
 		} else {
-			semdFree_h->s_next = semdFree_h->s_next->s_next;
+			semdFree_h = semdFree_h->s_next;
 		}
 		/* clean the semd so it can be fresh */
 		openSemd = cleanSemd(openSemd);
@@ -317,7 +317,6 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 			pcb_t process queue into its corresponding process queue -
 			but with an address since insertProcQ takes a pointer
 			as an argument */
-			debugA(420);
 
 			insertProcQ(&(openSemd->s_procQ), p);
 			/* give the pcb_t its corresponding addresse */
@@ -331,6 +330,7 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 		} else {
 			/* no more free semd_t on the free list - out work
 			here is done, so mark the operation as an unsuccessful one */
+			debugA(420);
 			return TRUE;
 		}
 	}
