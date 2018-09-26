@@ -360,15 +360,19 @@ pcb_PTR removeProcQ(pcb_PTR *tp) {
 * no process queue, return null
 */
 pcb_PTR headProcQ(pcb_PTR tp) {
+	pcb_PTR headPcb = NULL;
 	/* if the tp points tp null,
 	that is, there is no process queue,
 	return null */
-	if (emptyProcQ(tp)) {
-		return NULL;
+	if(tp == null)
+	{
+		return headPcb;
+	} else {
+		headPcb = tp->p_next;
 	}
 	/* since the tp will point to head by the
 	p_next field, return that */
-	return (tp->p_next);
+	return headPcb;
 }
 
 
