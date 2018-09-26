@@ -364,7 +364,7 @@ pcb_PTR headProcQ(pcb_PTR tp) {
 	/* if the tp points tp null,
 	that is, there is no process queue,
 	return null */
-	if(tp == null)
+	if(tp == NULL)
 	{
 		return headPcb;
 	} else {
