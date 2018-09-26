@@ -324,11 +324,11 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 			/* the function was able to succesfully allocate a new
 			semd_t and asign the proccess queue in the field of the
 			pcb_t - signify this successful operation */
+			debugA(420);
 			return FALSE;
 		} else {
 			/* no more free semd_t on the free list - out work
 			here is done, so mark the operation as an unsuccessful one */
-			debugA(420);
 			return TRUE;
 		}
 	}
