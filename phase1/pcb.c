@@ -69,6 +69,7 @@ pcb_PTR cleanChild(pcb_PTR p) {
 	p->p_prevSib = NULL;
 	p->p_nextSib = NULL;
 	p->p_prnt = NULL;
+	return p;
 }
 
 /*
@@ -143,8 +144,8 @@ pcb_PTR allocPcb() {
 	simply supply the address of the free list to
 	return the nth-1 element from said list */
 	pcb_PTR rmvdPcb = removeProcQ(&(pcbFree_h));
-	if(rmdvPcb != NULL) {
-		rmvdPcb = cleanPcb();
+	if(rmvdPcb != NULL) {
+		rmvdPcb = cleanPcb(rmvdPcb);
 	}
 	/* now that the removed pcb is returned (or really, its
 	pointer is) it must be cleaned before it can be used */
@@ -406,7 +407,7 @@ void insertChild(pcb_PTR prnt, pcb_PTR p) {
 		/* since there is no child, clean it */
 		cleanChild(p);
 		prnt->p_child = p;
-		p->prnt = prnt;
+		p->p_prnt = prnt;
 	} else {
 		/* there are multiple children */
 		prnt->p_child->p_prevSib = p;
@@ -486,6 +487,7 @@ pcb_PTR outChild(pcb_PTR p) {
 	/* if the child has no parent, and is therefore
 	returned null per the function definition implementation */
 	if(p->p_prnt == NULL) {
+		
 		return NULL;
 	/* the next case to consider - the removed element is at the
 	BACK of a list whose size is >1 at least */
@@ -510,6 +512,6 @@ pcb_PTR outChild(pcb_PTR p) {
 		rmvdPcb = p;
 	}
 	if(rmvdPcb != NULL) {
-		rmdvPcb->p_prnt = NULL;
+		rmvdPcb->p_prnt = NULL;
 	}
 }
