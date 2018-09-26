@@ -90,7 +90,7 @@ int emptySemd(semd_PTR s) {
 */
 void mkFreeSemd(semd_PTR s) {
 	/* set to null */
-	semdFree->s_next = NULL;
+	s->s_next = NULL;
 }
 
 /*
@@ -130,7 +130,7 @@ static semd_PTR cleanSemd(semd_PTR s) {
 	/* clean up */
 	s->s_procQ = NULL;
 	s->s_next = NULL;
-	s->s_semAdd = NULL:
+	s->s_semAdd = NULL;
 }
 
 
@@ -173,7 +173,7 @@ static semd_PTR allocSemd() {
 		/* clean the semd so it can be fresh */
 		openSemd = cleanSemd(openSemd);
 		/* returned the new, cleaned semd_t */
-		return openSemd
+		return openSemd;
 	}
 }
 
@@ -251,7 +251,7 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 		address - the easier case */
 		/* asign the s_semAdd - per the function
 		implementation definition */
-		p->s_semAdd = semAdd;
+		p->p_semAdd = semAdd;
 		/* insert the formatted pcb_t into the process
 		queue; since our work for this was completed in
 		pcb.c, simply utilize the work of this function
@@ -259,7 +259,7 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 		the findSemd function, the NEXT semd_h must be
 		provided since that helper function does not
 		encapsulate that functionality */
-		insertProcQ(locSemd->s_next->s_procQ, p);
+		insertProcQ(&(locSemd->s_next->s_procQ), p);
 		/* since this operation is successful -i.e. the
 		entry is NOT blocked, return false to indicate this */
 		return FALSE;
@@ -293,7 +293,7 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 			pcb_t process queue into its corresponding process queue -
 			but with an address since insertProcQ takes a pointer
 			as an argument */
-			insertProcQ(&(locSemd->s_procQ), p)
+			insertProcQ(&(locSemd->s_procQ), p);
 			/* the function was able to succesfully allocate a new
 			semd_t and asign the proccess queue in the field of the
 			pcb_t - signify this successful operation */
@@ -323,12 +323,12 @@ pcb_PTR removeBlocked(int* semAdd) {
 	the n-1th semd_t is returned and NOT the semd_t in search of,
 	grab the nth semd_t; this is NOT to be confused as an index, but
 	rather as the next address pointer; since there are dummy nodes */
-	if(locSemd->s_next->semAdd != semAdd) {
+	if(locSemd->s_next->s_semAdd != semAdd) {
 		/* per function implementation definiton, return null */
 		return NULL;
 	} else {
 		/* the address has been found succesfully */
-		pcb_PTR headPcb = removeProcQ(&(semAdd->s_procQ));
+		pcb_PTR headPcb = removeProcQ(&(locSemd->s_next->s_procQ));
 		/* now it is time to check if the pcb_t process queue is
 		empty - which means that the head of the process queue
 		was the only pcb_t on the queue; if the queue is not empty, then
@@ -364,7 +364,7 @@ pcb_PTR removeBlocked(int* semAdd) {
 pcb_PTR outBlocked(pcb_PTR p) {
 		/* for convenience, make a temproary
 		semd_t to be the pcb_t specified address */
-		semd_PTR pcbSemAdd = p->p_semAdd;
+		int* pcbSemAdd = p->p_semAdd;
 		/* find the semd_t using the findSemd method
 		to search for the specified semd_t in search;
 		if this semd_t is not found, the work is done and the function
@@ -394,7 +394,7 @@ pcb_PTR outBlocked(pcb_PTR p) {
 					/* clean the semd_t */
 					locSemd->s_next->s_next = NULL;
 					/* allocate it */
-					freeSemd(locSend->s_next);
+					freeSemd(locSemd->s_next);
 				}
 			} else {
 				/* despite having a matching semaphore, if the
