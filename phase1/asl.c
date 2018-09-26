@@ -109,6 +109,49 @@ void freeSemd(semd_PTR s) {
 	semdFree_h = s;
 }
 
+/*
+* Function: nulls out all of the values of a
+* semd_t so that it is clean and can be ready to
+* used - since a semd_t cannot come off the
+* free list with defined values
+*/
+static semd_PTR cleanSemd(semd_PTR s) {
+	/* clean up */
+	s->s_procQ = NULL;
+	s->s_next = NULL;
+	s->s_semAdd = NULL:
+}
+
+
+/*
+*	Function: allocates a semd_t from the semd_t
+* free list and returns a pointer to it;
+* should the send_t free list head is null,
+* then there are no free semd_t to allocate
+*/
+static semd_PTR allocSemd() {
+	/* check if there are free semd_t on the
+	free list by checking for null */
+	if(semdFree_h == NULL) {
+		return NULL;
+	} else {
+		/* asign the new semd_t from the head - since
+		it is not null */
+		semd_PTR openSemd = semdFree_h;
+		if(semdFree_h->s_next == NULL) {
+			/* the semd_h does not have a next - it
+			is the last final one */
+			semdFree_h = NULL;
+		} else {
+			semdFree_h->s_next = semdFree->s_next->s_next;
+		}
+		/* clean the semd so it can be fresh */
+		openSemd = cleanSemd(openSemd);
+		/* returned the new, cleaned semd_t */
+		return openSemd
+	}
+}
+
 /************************************************************************************************************************/
 /*************************************** ACTIVE SEMAPHORE LIST **********************************************************/
 /************************************************************************************************************************/
@@ -325,20 +368,8 @@ pcb_PTR headBlocked(int* semAdd){
 		/* no matching semaphore desciptior - return null */
 		return NULL;
 	}
-
-
-
-
-
-
-
-
-	semd_PTR prev = searchASL(semAdd);
-	if (*(prev->s_next->s_semAdd) != *(semAdd)) {
-		return NULL;
-	}
-	return headProcQ(prev->s_next->s_procQ);
 }
+
 
 void initASL() {
 	static semd_t semdTable[MAXPROC + 2];	/* init semd free list */
@@ -364,24 +395,6 @@ semd_t mkEmptySemd() {
 	return NULL;  /* is this necessary? */
 }
 
-
-
-/* alloc semd method */
-HIDDEN semd_PTR allocSemd() {
-	if (semdFree_h == NULL){
-		return NULL;
-	}
-	/* free list is not empty */
-	semd_t firstNode = *(semdFree_h);
-	semd_PTR secondNode = firstNode.s_next;
-
-	firstNode.s_next = NULL;   /* washing dishes just before using them */
-	firstNode.s_semAdd = NULL;
-	firstNode.s_procQ = NULL;
-
-	semdFree_h = secondNode;
-	return &(firstNode);
-}
 
 /* return an asl node to the free list */
 
