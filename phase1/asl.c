@@ -64,6 +64,17 @@ semd_PTR findSemd(int* semAdd) {
 }
 
 /*
+* Function: allocates a new semd_t to be null;
+* this is isomporhpic to mkEmptyProcQ in pcb.c;
+* by allowing for a function to delegate the creation
+* of semd_t, its implementation can be changed universally
+*/
+semd_PTR mkEmptySemd() {
+	/* make a "new" semd_t */
+	return NULL;
+}
+
+/*
 * Function: evaluates if the semd_t is null or not;
 * this is employed for the sake of good encapsulation as
 * well as single responsobilities and reusability;
@@ -390,15 +401,3 @@ void initASL() {
 
 	semd_h = &(dummy1);
 }
-
-semd_t mkEmptySemd() {
-	return NULL;  /* is this necessary? */
-}
-
-
-/* return an asl node to the free list */
-
-
-/***************************************************************/
-
-#endif
