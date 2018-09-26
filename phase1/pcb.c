@@ -290,8 +290,7 @@ pcb_PTR removeProcQ(pcb_PTR *tp) {
 * return null; else, return p
 */
 pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
-	/* dereference ahead of time */
-	pcb_PTR tailPcb = (*tp);
+
 	/* removing the pcb_t from the process
 	pointed to by tp has three cases to consider;
 	first, if the tp is null, meaning there is no list for
@@ -300,29 +299,29 @@ pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
 	node on the list, the tp must be set the null - otherwise its
 	pointers must be rearranged. the last remaining case if
 	tp is an arbitrary element in the list */
-	if(emptyProcQ(tailPcb)) {
+	if(emptyProcQ(*tp)) {
 		/* no list */
 		return NULL;
 	} else {
 		/* a list of >= 1 */
 		/* what is being removed is the tp */
-		if(p == tailPcb) {
+		if(p == (*tp)) {
 			/* a list of 1 */
-			if(tailPcb->p_next == tailPcb) {
-				tailPcb = NULL;
+			if((*tp)->p_next == (*tp)) {
+				(*tp) = NULL;
 			} else {
 				/* a list of > 1 */
 				/* reasign the tail pointer */
-				tailPcb = tailPcb->p_prev;
+				(*tp) = (*tp)->p_prev;
 				/* swap the pointers with the soon to be removed pcb_t */
-				tailPcb->p_next->p_prev = tailPcb->p_next;
-				tailPcb->p_prev->p_next = tailPcb->p_prev;
+				(*tp)->p_next->p_prev = (*tp)->p_next;
+				(*tp)->p_prev->p_next = (*tp)->p_prev;
 			}
 			/* return the block */
 			return p;
 		} else {
 			/* what is being removed is not the tp */
-			pcb_PTR currentPcb = tailPcb->p_next;
+			pcb_PTR currentPcb = (*tp)->p_next;
 			/* start from the start of the queue */
 			while(currentPcb != tailPcb) {
 				/* the p matches the tp */
@@ -333,6 +332,7 @@ pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
 					/* set the next and prev to be null */
 					currentPcb->p_next = NULL;
 					currentPcb->p_prev = NULL;
+					return (*tp);
 				} else {
 					/* try again, moving up the list */
 					currentPcb = currentPcb->p_next;
