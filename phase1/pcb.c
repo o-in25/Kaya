@@ -29,14 +29,6 @@ HIDDEN pcb_PTR pcbFree_h;
 /******************************************** HELPER FUNCTIONS  *********************************************************/
 /************************************************************************************************************************/
 
-/*
-* Function: encpsulates the functionality
-* of making a state_PTR to be null;
-*/
-state_PTR mkEmptyState() {
-	/* make null */
-	return NULL;
-}
 
 /*
 * Function: nulls out all of the fields for
@@ -64,7 +56,7 @@ pcb_PTR cleanPcb(pcb_PTR p) {
 		p->p_nextSib = NULL;
 		p->p_prevSib = NULL;
 		/* clean its state */
-		p->p_s = (*(mkEmptyState()));
+		p->p_s = NULL;
 		/* clean its semaphore */
 		p->p_semAdd = NULL;
 		/* returned the cleaned node */
