@@ -381,13 +381,50 @@ void insertChild(pcb_PTR prnt, pcb_PTR p) {
 * that case
 */
 pcb_PTR removeChild(pcb_PTR prnt) {
+	/* in removing a child, three cases exist
+	that most be considered; first, that the parent
+	pcb_t has no child; in this case, simply
+	return null per the function implementation
+	definition; next, if the child being removed
+	is the last child, in which case the parent
+	pcb_t must indicate this; third, the pcbs_t
+	to be removed has >0 siblings, in which case
+	their pointers must be reasigned */
 	if(emptyChild(prnt)) {
+		/* there is no child */
 		return NULL;
 	} else {
+		/* here, there is at least >=1 siblings,
+		in which case if it is the last child, the
+		parent must capture this */
+		/* helpful dereferenced child pcb_t to avoid
+		confusing indirection */
 		pcb_PTR childPcb = (*(prnt->p_child));
-		/* helpful dereferenced child pcb_t */
-		prnt->p_child = childPcb.p_nextSib;
-		childPcb.p_prevSib = NULL;
+		/* the pcb_t is the only sibling */
+		if(childPcb.p_prevSib == NULL) {
+			/* the removed child pcb_t will
+			have no parent */
+			childPcb.p_prnt = NULL;
+			/* the parent will have no
+			pcb_t child */
+			prnt->p_child = NULL;
+		} else {
+			/* the parent has more than one child;
+			this will then involve rearanging the
+			previous child pcb_t to refelct this */
+			prnt->p_child = childPcb.p_prevSib;
+			/* since the list is null terminated
+			the next remaining child must be set to
+			null */
+			childPcb.p_prevSib->p_nextSib = NULL;
+			/* the removed child pcb_t will
+			have no parent */
+			childPcb.p_prnt = NULL;
+			/* clean the pcb_t */
+			cleanChild(&(childPcb));
+			return (&(childPcb));
+		}
+
 
 		return &(childPcb);
 	}
