@@ -12,7 +12,12 @@
 HIDDEN pcb_PTR pcbFree_h;
 
 
+/*
+* Function: encpsulates the functionality
+* of making a state_PTR to be null;
+*/
 state_PTR mkEmptyState() {
+	/* make null */
 	return NULL;
 }
 
@@ -380,7 +385,7 @@ void insertChild(pcb_PTR prnt, pcb_PTR p) {
 * function must return null to hanle
 * that case
 */
-pcb_PTR removeChild(pcb_PTR prnt) {
+pcb_PTR removeChild(pcb_PTR p) {
 	/* in removing a child, three cases exist
 	that most be considered; first, that the parent
 	pcb_t has no child; in this case, simply
@@ -390,7 +395,7 @@ pcb_PTR removeChild(pcb_PTR prnt) {
 	pcb_t must indicate this; third, the pcbs_t
 	to be removed has >0 siblings, in which case
 	their pointers must be reasigned */
-	if(emptyChild(prnt)) {
+	if(emptyChild(p)) {
 		/* there is no child */
 		return NULL;
 	} else {
@@ -399,7 +404,7 @@ pcb_PTR removeChild(pcb_PTR prnt) {
 		parent must capture this */
 		/* helpful dereferenced child pcb_t to avoid
 		confusing indirection */
-		pcb_PTR childPcb = (*(prnt->p_child));
+		pcb_t childPcb = (*(p->p_child));
 		/* the pcb_t is the only sibling */
 		if(childPcb.p_prevSib == NULL) {
 			/* the removed child pcb_t will
@@ -407,12 +412,12 @@ pcb_PTR removeChild(pcb_PTR prnt) {
 			childPcb.p_prnt = NULL;
 			/* the parent will have no
 			pcb_t child */
-			prnt->p_child = NULL;
+			p->p_child = NULL;
 		} else {
 			/* the parent has more than one child;
 			this will then involve rearanging the
 			previous child pcb_t to refelct this */
-			prnt->p_child = childPcb.p_prevSib;
+			p->p_child = childPcb.p_prevSib;
 			/* since the list is null terminated
 			the next remaining child must be set to
 			null */
@@ -424,13 +429,65 @@ pcb_PTR removeChild(pcb_PTR prnt) {
 			cleanChild(&(childPcb));
 			return (&(childPcb));
 		}
-
-
-		return &(childPcb);
 	}
 }
 
-pcb_PTR outChild(pcb_PTR p) { /* do you need to search each process block to find the one that has p as a child? */
-	pcb_PTR *prnt = &(p->p_prnt);
-	return outProcQ(prnt, p);
+/*
+* Function: makes the pcb_t given by p
+* no longer a child of the its parent
+* pcb_t, and remove it from the list;
+* however, this can be any child in the list;
+* if the pcb_t has no parent, simply return
+* null
+*/
+pcb_PTR outChild(pcb_PTR p) {
+		/* consider the case of having no parent */
+		if(p->p_prnt == NULL) {
+			/* the pcb_t has no parent */
+			return NULL;
+		} else {
+			/* the pcb_t has a parent; here, there
+			are two cases to consider: first, the
+			pcb_t that is being removed is the head
+			of the list; second, the pcb_t being
+			removed is an arbitrary element in the list */
+			if(p == p->p_prent->p_child) {
+				/* the pcb_t being removed is the head
+				of the list - in this case, call the previously
+				written function */
+				return removeChild(p->p_prnt);
+			} else {
+				/* the remaining case to consider is if the
+				child pcb_t being removed has a a sibling behind
+				it, or if the the child pcb_t has no sibling
+				behind it */
+				if(p->p_child->p_prevSib == NULL) {
+					/* rearrange the next sibling pcb_t
+					to have its next child be null, since the
+					removed pcb_t was the last child */
+					p->p_nextSib->p_prevSib = NULL;
+					/* the crux of the function - make the
+					parent be null */
+					p->p_prnt = NULL;
+					/* clean the remaining sibling */
+					p->p_nextSib = NULL;
+					/* return the cleaned parent */
+					return p;
+				} else {
+					/* the case in which the pcb_t has siblings
+					and is in the list - simply reagrange the
+					siblings */
+					p->p_prevSib->p_nextSib = p->p_nextSib;
+					p->p_nextSib->p_prevSib = p->p_prevSib
+					/* the crux of the function - make the
+					parent be null */
+					p->p_prnt = NULL;
+					/* clean the remaining sibling */
+					p->p_nextSib = NULL;
+					p->p_prevSib = NULL;
+					/* return the cleaned parent */
+					return p;
+				}
+			}
+		}
 }
