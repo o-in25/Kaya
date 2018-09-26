@@ -69,7 +69,7 @@ pcb_PTR cleanPcb(pcb_PTR p) {
 * is null, that is there is not parent,
 * then null is returned;
 */
-void cleanChild(pcb_PTR prnt) {
+pcb_PTR cleanChild(pcb_PTR prnt) {
 	/* if the parent does not have
 	* a child, return null */
 	if(emptyChild(prnt)) {
