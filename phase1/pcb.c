@@ -24,6 +24,10 @@
 /* the pcb_t free list of size 20 */
 HIDDEN pcb_PTR pcbFree_h;
 
+void debugA(int* a) {
+	int i;
+	i = 0;
+}
 
 /************************************************************************************************************************/
 /******************************************** HELPER FUNCTIONS  *********************************************************/
@@ -155,7 +159,7 @@ pcb_PTR allocPcb() {
 	simply supply the address of the free list to
 	return the nth-1 element from said list */
 	pcb_PTR temp = removeProcQ(&(pcbFree_h));
-	debugA(temp);
+	debugA((int)temp);
 	/* now that the removed pcb is returned (or really, its
 	pointer is) it must be cleaned before it can be used */
 	pcb_PTR rmvdPcb = cleanPcb(temp);
