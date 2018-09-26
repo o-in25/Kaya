@@ -24,7 +24,7 @@
 /* the pcb_t free list of size 20 */
 HIDDEN pcb_PTR pcbFree_h;
 
-void debugA(int* a) {
+void debugA(int a) {
 	int i;
 	i = 0;
 }
