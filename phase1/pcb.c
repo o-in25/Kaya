@@ -161,15 +161,7 @@ pcb_PTR allocPcb() {
 	pcb_PTR p = removeProcQ(&(pcbFree_h));
 	/* now that the removed pcb is returned (or really, its
 	pointer is) it must be cleaned before it can be used */
-	if(p == NULL) {
-		/* return null - there is no non-null pcb
-		provided */
-		return NULL;
-	} else {
-		/* if the pcb_t is not null, then its
-		fields are cleaned and it is returned
-		with null fields */
-		/* clean its previous and next fields */
+	if(p != NULL) {
 		p->p_next = NULL;
 		p->p_prev = NULL;
 		/* clean its relationships */
@@ -179,11 +171,9 @@ pcb_PTR allocPcb() {
 		p->p_prevSib = NULL;
 		/* clean its semaphore */
 		p->p_semAdd = NULL;
-		/* returned the cleaned node */
-		return p;
 	}
-	/* now that its cleaned, it can be used */
-	return rmvdPcb;
+	/* returned the cleaned node */
+	return p;
 }
 
 /*
