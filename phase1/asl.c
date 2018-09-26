@@ -1,21 +1,74 @@
+/*************************************************** asl.c **************************************************************
+	asl.c implements a semaphore list - an important OS concept; here, the asl will be seen as an integer value and
+	will keep addresses of Semaphore Descriptors, henceforth known as semd_t; much like in the pcb.c, the asl will keep an
+	asl free list with MAXPROC free semd_t; this class will encapsulate the functionality needed too perform operations on
+	the semd_t
+
+	This module contributes function definitions and a few sample fucntion implementations to the contributors put forth by
+	the Kaya OS project
+
+***************************************************** asl.c ************************************************************/
 #ifndef ASL
 #define ASL
 
+/* h files to include */
 #include "../h/const.h"
 #include "../h/types.h"
-
+/* e files to include */
 #include "../e/pcb.e"
 
+/* globals */
+/* pointer to the head of the active semd_t list - the asl */
+HIDDEN semd_PTR semd_h;
+/* pointer to the head free list of semd_t */
+HIDDEN semd_PTR semdFree_h;
 
-HIDDEN semd_t* semd_h;
-HIDDEN semd_t* semdFree_h;
+
+/************************************************************************************************************************/
+/******************************************** HELPER FUNCTIONS  *********************************************************/
+/************************************************************************************************************************/
+
+/*
+* Function: searches the semd_t asl list for
+* the specified semd_t address passed in as an
+* argument to the function; since there are two
+* dummy semd_t on the list, there are no erronous
+* exit conditions
+*/
+semd_PTR findSemd(int* semAdd) {
+	/* retrieve the head of the list */
+	semd_PTR currentSemd = semd_h;
+	/* the findSemd task will now search the semd_t free
+	list via the subsequent semd_t s_next field to
+ 	search for the next free address location; since the
+	list uses a dummy node at both the front as 0 and at
+	the end as MAXINT where MAXINT is the largest possible
+	integer, the exit condition is always met, since the
+	next semd_t must be < MAXINT */
+	/* for convenience */
+	semd_PTR nextSemd = currentSemd->s_next;
+	/* while the semd_h address is less than the
+	specified integer address */
+	while(nextSemd->s_semAdd < semAdd) {
+		/* if the loop hasnt jumped, assign to the next value
+		in the linked list */
+		currentSemd = currentSemd->s_next;
+	}
+	/* return the found smed_t */
+	return currentSemd;
+}
 
 
-int insertBlocked(int *semAdd, pcb_PTR p) { /* 3 cases */
-	semd_PTR prev = searchASL(semAdd);
+/************************************************************************************************************************/
+/*************************************** ACTIVE SEMAPHORE LIST **********************************************************/
+/************************************************************************************************************************/
+
+
+int insertBlocked(int* semAdd, pcb_PTR p) {
+	semd_PTR prev = findSemd(semAdd);
 	if (*(prev->s_next->s_semAdd) != *(semAdd)) { /* semAdd not found */
 		semd_t newSemd = allocSemd();
-		if (newSemd == NULL) {
+		if(newSemd == NULL) {
 			return TRUE;
 		}
 		newSemd.s_procQ = mkEmptyProcQ();
@@ -100,21 +153,6 @@ void initASL() {
 
 semd_t mkEmptySemd() {
 	return NULL;  /* is this necessary? */
-}
-
-/******************** helper function ***************/
-/** search semd list method **/
-/***************************************************/
-semd_PTR searchASL(int* semAdd) {
-	/* get past head dummy node */
-	semd_PTR temp = *(semd_h).s_next;
-	semd_t current = *(temp);
-	/* if the node being searched for is found */
-	while((*(current.s_semAdd)) < *semAdd) {
-		current = *(current.s_next);
-	}
-	/* return previous node */
-	return current.s_prev;
 }
 
 

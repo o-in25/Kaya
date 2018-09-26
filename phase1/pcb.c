@@ -5,7 +5,7 @@
 	a pcb_t are kepted in a doulbey liked list that is null terminated; third, it is responsible
 	for keeping process queues of pcb_t to be allocated fromon and off the free list.
 
-	This module contributes function definitions and a few sample fucntion implementations put forth by
+	This module contributes function definitions and a few sample fucntion implementations  to the contributors put forth by
 	the Kaya OS project
 
 ***************************************************** pcb.c ************************************************************/
@@ -114,10 +114,11 @@ void MkHeadChild(pcb_PTR prnt, pcb_PTR p) {
 			p->p_prnt = prnt;
 		}
 }
+
+
 /************************************************************************************************************************/
 /********************************** PCB_T ALLOCATION AND DEALLOCATION  **************************************************/
 /************************************************************************************************************************/
-
 
 
 /*
