@@ -12,13 +12,13 @@ LDAOUTFLAGS = -T $(SUPDIR)/elf32ltsmip.h.umpsaout.x
 LDCOREFLAGS =  -T $(SUPDIR)/elf32ltsmip.h.umpscore.x
 #LDAOUTFLAGS = -T $(SUPDIR)/elf32btsmip.h.umpsaout.x
 #LDCOREFLAGS =  -T $(SUPDIR)/elf32btsmip.h.umpscore.x
-CC = mipsel-linux-gcc 
+CC = mipsel-linux-gcc
 LD = mipsel-linux-ld
 AS = mipsel-linux-as -KPIC
 
 
 #main target
-all: kernel.core.umps 
+all: kernel.core.umps
 
 kernel.core.umps: kernel
 	umps2-elf2umps -k kernel
@@ -28,13 +28,13 @@ kernel: p1test.o asl.o pcb.o
 
 p1test.o: p1test.c $(DEFS)
 	$(CC) $(CFLAGS) p1test.c
- 
+
 asl.o: asl.c $(DEFS)
 	$(CC) $(CFLAGS) asl.c
 
 pcb.o: pcb.c $(DEFS)
 	$(CC) $(CFLAGS) pcb.c
- 
+
 # crti.o: crti.s
 # 	$(AS) crti.s -o crti.o
 
