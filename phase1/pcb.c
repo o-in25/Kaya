@@ -1,14 +1,14 @@
-/***************************************************** pcb.c /****************************************************************
-	pcb.c encpsulates the functionality of Process Control Blocks, henceforth known as pcb_t; the pcb.c module is responsible
-	for three major pcb_t functions: first, a free list of MAXPROC pcb_t are allocated - where MAXPROC = 20; then, pcb_t
-	themsleves are to keep a child-parent-sibling relationships, where the siblings of a pcb_t are kepted in a doulbey
-	liked list that is null terminated; third, it is responsible for keeping process queues of pcb_t to be allocated from
-	on and off the free list.
+/*************************************************** pcb.c **************************************************************
+	pcb.c encpsulates the functionality of Process Control Blocks, henceforth known as pcb_t; the pcb.c module is
+	responsible for three major pcb_t functions: first, a free list of MAXPROC pcb_t are allocated - where
+	MAXPROC = 20; then, pcb_t themsleves are to keep a child-parent-sibling relationships, where the siblings of
+	a pcb_t are kepted in a doulbey liked list that is null terminated; third, it is responsible
+	for keeping process queues of pcb_t to be allocated fromon and off the free list.
 
 	This module contributes function definitions and a few sample fucntion implementations put forth by
 	the Kaya OS project
 
-***************************************************** pcb.c /****************************************************************/
+***************************************************** pcb.c ************************************************************/
 
 
 
@@ -24,6 +24,10 @@
 /* the pcb_t free list of size 20 */
 HIDDEN pcb_PTR pcbFree_h;
 
+
+/************************************************************************************************************************/
+/******************************************** HELPER FUNCTIONS  *********************************************************/
+/************************************************************************************************************************/
 
 /*
 * Function: encpsulates the functionality
@@ -67,6 +71,54 @@ pcb_PTR cleanPcb(pcb_PTR p) {
 		return p;
 	}
 }
+
+/*
+* Function: makes the child
+* of a specified parent null
+* for p_next and p_prev; if the parent
+* is null, that is there is not parent,
+* then null is returned;
+*/
+void cleanChild(pcb_PTR prnt) {
+	/* if the parent does not have
+	* a child, return null */
+	if(emptyChild(prnt)) {
+		prnt->p_child = NULL;
+	} else {
+		/* clean the child */
+		prnt->p_child->p_prevSib = NULL;
+		prnt->p_child->p_nextSib = NULL;
+	}
+}
+
+/*
+* Function: makes the child pcb_t
+* of a parent pcb_t to be the head
+* or initial child; this simply sets
+* the values and does not return
+* anything
+*/
+void MkHeadChild(pcb_PTR prnt, pcb_PTR p) {
+	/* if there is no child, then the child
+	waill have no parents */
+		if(emptyChild(prnt)) {
+			/* make null */
+			prnt->p_child = NULL;
+		} else {
+			/* the pcb_t child is the newly
+			added p */
+			prnt->p_child = p;
+			/* the newly added pcb_t parent
+			is the pcb_t parent passed as an
+			argument */
+			p->p_prnt = prnt;
+		}
+}
+/************************************************************************************************************************/
+/********************************** PCB_T ALLOCATION AND DEALLOCATION  **************************************************/
+/************************************************************************************************************************/
+
+
 
 /*
 * Function: pcb_t that are no longer in use
@@ -155,6 +207,11 @@ pcb_PTR mkEmptyProcQ() {
 	return NULL;
 }
 
+
+/************************************************************************************************************************/
+/**************************************** PROCESS TREE MAINTENANCE  *****************************************************/
+/************************************************************************************************************************/
+
 /*
 * Function: returns a boolean expression
 * if a tp is null - that is, a tp points
@@ -195,7 +252,6 @@ void insertProcQ(pcb_PTR *tp, pcb_PTR p) {
 	/* reasign the tp */
 	tailPcb = p;
 }
-
 
 /*
 * Function: removes the first element from the
@@ -301,7 +357,10 @@ pcb_PTR headProcQ(pcb_PTR tp) {
 	return (tp->p_next);
 }
 
-/* tree maintainece (a word i'll learn how to spell eventually) */
+
+/************************************************************************************************************************/
+/**************************************** PROCESS TREE MAINTENANCE  *****************************************************/
+/************************************************************************************************************************/
 
 /*
 * Function: takes a pcb_t as an
@@ -314,48 +373,6 @@ int emptyChild(pcb_PTR p) {
 	and if otherwise - false - as captured by
 	the boolean expression */
 	return (p->p_child == NULL);
-}
-/*
-* Function: makes the child pcb_t
-* of a parent pcb_t to be the head
-* or initial child; this simply sets
-* the values and does not return
-* anything
-*/
-void MkHeadChild(pcb_PTR prnt, pcb_PTR p) {
-	/* if there is no child, then the child
-	waill have no parents */
-		if(emptyChild(prnt)) {
-			/* make null */
-			prnt->p_child = NULL;
-		} else {
-			/* the pcb_t child is the newly
-			added p */
-			prnt->p_child = p;
-			/* the newly added pcb_t parent
-			is the pcb_t parent passed as an
-			argument */
-			p->p_prnt = prnt;
-		}
-}
-
-/*
-* Function: makes the child
-* of a specified parent null
-* for p_next and p_prev; if the parent
-* is null, that is there is not parent,
-* then null is returned;
-*/
-void cleanChild(pcb_PTR prnt) {
-	/* if the parent does not have
-	* a child, return null */
-	if(emptyChild(prnt)) {
-		prnt->p_child = NULL;
-	} else {
-		/* clean the child */
-		prnt->p_child->p_prevSib = NULL;
-		prnt->p_child->p_nextSib = NULL;
-	}
 }
 
 /*
@@ -504,3 +521,4 @@ pcb_PTR outChild(pcb_PTR p) {
 			}
 		}
 }
+/************************************************ end pcb.c **************************************************************/
