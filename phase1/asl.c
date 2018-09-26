@@ -68,7 +68,7 @@ semd_PTR findSemd(int* semAdd) {
 * this is employed for the sake of good encapsulation as
 * well as single responsobilities and reusability;
 */
-void emptySemd(semd_PTR s) {
+int emptySemd(semd_PTR s) {
 	return (s == NULL);
 }
 
@@ -149,6 +149,10 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 		entry is NOT blocked, return false to indicate this */
 		return FALSE;
 	} else {
+		/* there are free semd_t on the free list because
+		the function did not return null - the sign of no remaining
+		pcb_t, so add one - the open semd_t */
+		semd_PTR openSemd = allocSemd();
 		/* this is the harder of the two cases; here, the semd_t
 		address does NOT match the address passed as an argument;
 		two things must be considered; first, there is a possibility
@@ -157,11 +161,7 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 		not be the case - as in, there IS a free and ready semd_t in
 		the free list, allocate it and indicate the operation is successful
 		with a false value */
-		if(allocSemd() != NULL) {
-			/* there are free semd_t on the free list because
-			the function did not return null - the sign of no remaining
-			pcb_t, so add one - the open semd_t */
-			semd_PTR openSemd = allocSemd();
+		if(openSemd != NULL) {
 			/* give the new semd_t its new address */
 			openSemd->s_semAdd = semAdd;
 			/* give the pcb_t its corresponding addresse */
@@ -201,7 +201,7 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 * null, meaning that emptyProcQ is null, then this semd_t must be
 * removed and sent to the semd_t free list
 */
-pcb_PTR removeBlocked(int* semAdd){
+pcb_PTR removeBlocked(int* semAdd) {
 	/* find the semd_t */
 	semd_PTR locSemd = findSemd(semAdd);
 	/* IMPORTANT! since, by the function definition of findSemd,
@@ -218,7 +218,7 @@ pcb_PTR removeBlocked(int* semAdd){
 		empty - which means that the head of the process queue
 		was the only pcb_t on the queue; if the queue is not empty, then
 		the pcb_t is simply returned - since the semd_t is still in use */
-		if(!(emptyProcQ(headPcb)) {
+		if(!(emptyProcQ(headPcb))) {
 			/* we are all set - return the pcb_t since the semd_t is
 			still in use */
 			return headPcb;
@@ -234,29 +234,105 @@ pcb_PTR removeBlocked(int* semAdd){
 			locSemd->s_next->s_next = NULL;
 			/* free it up */
 			freeSemd(locSemd->s_next);
-			/* return the head */
+		}
+		/* return the head */
+		return headPcb;
+	}
+}}
+
+/*
+* Function: remove the pcb_t passed in as the argument from
+* the semd_t that contains the specified pcb; if the pcb_t
+* does not appear in the process queue in the associated
+* semd_t, return null
+*/
+pcb_PTR outBlocked(pcb_PTR p) {
+		/* for convenience, make a temproary
+		semd_t to be the pcb_t specified address */
+		semd_PTR pcbSemAdd = p->p_semAdd;
+		/* find the semd_t using the findSemd method
+		to search for the specified semd_t in search;
+		if this semd_t is not found, the work is done and the function
+		returns null */
+		semd_PTR locSemd = findSemd(pcbSemAdd);
+		/* seach for a winner; this has to sub-cases;
+		if the semd_d does not exist, it cannot have a
+		returning pcb; if the removed pcb_t was the head -
+		that is the LAST pcb_t, then the semaphore associacted
+		must be returned to the free list; again, s_next is called
+		by the implementation definition of findSemd */
+		if(locSemd->s_next->s_semAdd == pcbSemAdd) {
+			/* the semd_t exists on the semd_t free list;
+			time to remove it */
+			pcb_PTR rmvdPcb = outProcQ(&(locSemd->s_next->s_procQ), p);
+			/* the pcb_t is returned in this function; if the
+			pcb_t is null, it cannot be manipulated and is returned
+			as null; after this; */
+			if(rmvdPcb != NULL) {
+				/* good so far - last chceck: if the removed pcb_t was the
+				last element on the pcb_t queue; IMPORTANT! if it is, then
+				a free semd_t must be allocated since it is done */
+				if(emptyProcQ(locSemd->s_next->s_procQ)){
+					/* as before, since findSemd returns the semd_t BEHIND the
+					passed in semd_t, call for its next with s_next */
+					locSemd->s_next = locSemd->s_next->s_next;
+					/* clean the semd_t */
+					locSemd->s_next->s_next = NULL;
+					/* allocate it */
+					freeSemd(locSend->s_next);
+				}
+			} else {
+				/* despite having a matching semaphore, if the
+				* pcb_t is not on the process queue to begin with,
+				this is also returned as null */
+				return NULL;
+			}
+		} else {
+			/* our work here is done - nothing found */
+			return NULL;
+		}
+	}
+
+/*
+* Function: returns a pointer to the pcb_t
+* that is at the HEAD of the pcb_t process queue
+* with its associated semd_t address;
+* if there is no associated semaphore descriptor or
+* if the process queue associated with the
+* semaphore address is empty - return null in both cases
+*/
+pcb_PTR headBlocked(int* semAdd){
+	/* first, find the semaphore via the passed in
+	semaphore address */
+	semd_PTR locSemd = findSemd(semAdd);
+	/* first case to consider; if find the semaphore desicrptor; if it there is no
+	matching semaphore desciptior, return null; call the
+	semd_t s_next, since findSemd returns the semd_t behind */
+	if(locSemd->s_next->s_semAdd == semAdd) {
+		/* semaphore address found; the last - theres a match;
+		next, check if the the pcb_t process queue associated
+		with the semd_t is null */
+		pcb_PTR headPcb = headProcQ(locSemd->s_procQ);
+		/* if the pcb_t is null return null */
+		if(headPcb == NULL) {
+			/* no head pcb_t */
+			return NULL;
+		} else {
+			/* return the pointer to the head */
 			return headPcb;
 		}
-	}
-}
-
-pcb_PTR outBlocked (pcb_PTR p){
-	int* targetSemAdd = p->p_semAdd;
-	semd_PTR prev = searchASL(targetSemAdd);
-
-	if (*(prev->s_next->s_semAdd) == *(semAdd)) {
-		pcb_PTR removed = outProcQ(*(prev).s_procQ, p);
-
-		if (emptyProcQ(prev->s_next->s_procQ)) {
-			freeSemd(prev->s_next);
-		}
-		return removed;
+	} else {
+		/* no matching semaphore desciptior - return null */
+		return NULL;
 	}
 
-	return outProcQ(&a.s_procQ, p);
-}
 
-pcb_PTR headBlocked (int *semAdd){
+
+
+
+
+
+
 	semd_PTR prev = searchASL(semAdd);
 	if (*(prev->s_next->s_semAdd) != *(semAdd)) {
 		return NULL;
