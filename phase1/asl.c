@@ -319,7 +319,7 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 			as an argument */
 			debugA(420);
 
-			insertProcQ(&(locSemd->s_procQ), p);
+			insertProcQ(&(openSemd->s_procQ), p);
 			/* give the pcb_t its corresponding addresse */
 
 			openSemd->s_semAdd = semAdd;
