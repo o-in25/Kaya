@@ -131,6 +131,7 @@ static semd_PTR cleanSemd(semd_PTR s) {
 	s->s_procQ = NULL;
 	s->s_next = NULL;
 	s->s_semAdd = NULL;
+	return s;
 }
 
 /*
@@ -174,6 +175,7 @@ semd_PTR mkLhsEdgeSemd() {
 		/* asign its address to be a radical
 		boundry - i.e. p */
 		edgeSemd->s_semAdd = 0;
+		return edgeSemd;
 }
 
 /*
@@ -188,6 +190,7 @@ semd_PTR mkRhsEdgeSemd() {
 		/* asign its address to be a radical
 		boundry - i.e. MAXINT */
 		edgeSemd->s_semAdd = MAXINT;
+		return edgeSemd;
 }
 
 
