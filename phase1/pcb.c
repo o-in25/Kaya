@@ -351,7 +351,7 @@ pcb_PTR headProcQ(pcb_PTR tp) {
 	that is, there is no process queue,
 	return null */
 	if (emptyProcQ(tp)) {
-		return NULL
+		return NULL;
 	}
 	/* since the tp will point to head by the
 	p_next field, return that */
@@ -455,8 +455,8 @@ pcb_PTR removeChild(pcb_PTR p) {
 			have no parent */
 			childPcb->p_prnt = NULL;
 			/* clean the pcb_t */
-			cleanChild(&(childPcb));
-			return (&(childPcb));
+			cleanChild(childPcb);
+			return childPcb;
 		}
 	}
 }
