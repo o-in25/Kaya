@@ -114,7 +114,7 @@ void freeSemd(semd_PTR s) {
 /************************************************************************************************************************/
 
 /*
-*	Function: insert the pcb_t provided as an a
+* Function: insert the pcb_t provided as an a
 * argument to the tail of that pcb_t process
 * queue at the semd_t address provided; this method
 * can get tricky: if there is no semd_t descriptor,
@@ -234,11 +234,10 @@ pcb_PTR removeBlocked(int* semAdd){
 			locSemd->s_next->s_next = NULL;
 			/* free it up */
 			freeSemd(locSemd->s_next);
+			/* return the head */
+			return headPcb;
 		}
-
 	}
-
-
 }
 
 pcb_PTR outBlocked (pcb_PTR p){
