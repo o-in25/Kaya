@@ -246,6 +246,91 @@ void insertProcQ(pcb_PTR *tp, pcb_PTR p) {
 * return null; else, return p
 */
 pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
+		/* when removing a pcb_t from a process queue
+		pointed to by pcb_t - there aree three cases to
+		consder. FIRST: the tp points to an empty pcb_t
+		process queue - meaning there is no list to take
+		off. SECOND: , there is only one pcb_t remaining in
+		the list - therefore its tp must be updated.
+		THIRD: the pcb_t is adjectent to 1 or more
+		pcb_t and must be adjusted */
+		if(emptyProcQ(*tp)) {
+			/* there is no process queue. our work here is done */
+			return NULL;
+		} else {
+			pcb_PTR rmvdPcb = NULL;
+			/* the process queue is not empty */
+			if((*tp) == p) {
+				/* here, the pcb_t we are searching for
+				is the tp. From here, there are the following possibilities */
+				if((*tp)->p_next == (*tp)) {
+					/* here, we are seacrhing for the tp and it is
+					the last pcb_t on the list. We therefore adjust to this
+					by making the list queue null and returning our found tp */
+					rmvdPcb = (*tp);
+					/* goodbye */
+					(*tp) = mkEmptyProcQ();
+					/* what we were looking for was the tail pointer - all done! */
+					return rmvdPcb;
+				} else {
+					/* this takes a little more work. we are looking
+					for the tp but there are pcb_t left in the list.
+					adjust the adjacent pcb_t tp accordingly */
+					rmvdPcb = (*tp);
+					/* reallocate pointers */
+					(*tp)->p_next->p_prev = (*tp)->p_next;
+					(*tp)->p_prev-p_next = (*tp)->p_next;
+					/* reasign the tp - someones lucky day */
+					(*tp) = (*tp)->p_prev;
+					return rmvdPcb;
+				}
+			} else {
+				/* since the pcb_t we are looking for is not the tp
+				of the list, we start at the head and work our way down the
+				list intil we find the pcb_t we need. if we cant find it,
+				return null */
+				pcb_PTR currentPcb = (*tp)->p_next;
+				/* keep going until we are back where we started */
+				while(currentPcb != (*tp)) {
+					if(currentPcb == p) {
+						/* a match! we found the pcb_t */
+						if(currentPcb = (*tp)->p_next) {
+							/* in this case, we had to search for the pcb_t
+							but if it is at the head, i.e. the tp next,
+							then simply implement the removeProcQ function to
+							accomplish this task and save some work */
+							return removeProcQ(tp);
+						} else {
+							/* this is perhaps the most taxing case; here,
+							we had to search for the pcb_t, and it wasnt the head.
+							if we find it, we have to do some pointer rearranging */
+							currentPcb->p_next->p_prev = currentPcb->p_prev;
+							currentPcb->p_prev->p_next = currentPcb->p_next;
+							/* jobs all done */
+							return currentPcb;
+
+						}
+					} else {
+						/* no match. make the current point to the next pcb_t */
+						currentPcb = currentPcb->p_next;
+					}
+				}
+				/* if this loop exits, then that means it wasnt in the queue
+				to begign with. return null */
+				return NULL;
+			}
+		}
+	}
+
+
+/*
+* Function: remove the pcb_t pointed to by p
+* from the process queue pointed to by tp;
+* update the process queue's tp if necessary;
+* if the desired entry is not in the indicated queue,
+* return null; else, return p
+*/
+pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
 
 	/* removing the pcb_t from the process
 	pointed to by tp has three cases to consider;
