@@ -63,6 +63,11 @@ semd_PTR findSemd(int* semAdd) {
 	return currentSemd;
 }
 
+/*
+* Function: evaluates if the semd_t is null or not;
+* this is employed for the sake of good encapsulation as
+* well as single responsobilities and reusability;
+*/
 void emptySemd(semd_PTR s) {
 	return (s == NULL);
 }
@@ -89,11 +94,18 @@ void freeSemd(semd_PTR s) {
 	to test for the case that the semd_t free list
 	is null */
 	if(emptySemd(semdFree_h)) {
+		/* if the semd_t free list is empty,
+		then it has no next semd_t once the
+		new one is added; set this value */
 		mkFreeSemd(s);
 	} else {
-		/* non-empty free list case */
+		/* the semd_t free list is not empty, so simply
+		just asign the semd_t argument's next field equal
+		to the head of the semd_t free list */
 		s->s_next = semdFree_h;
 	}
+	/* in either case, the semd_t free list head is now the
+	newly added semd_t - empty list or not */
 	semdFree_h = s;
 }
 
