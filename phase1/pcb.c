@@ -79,7 +79,7 @@ pcb_PTR cleanChild(pcb_PTR prnt) {
 		prnt->p_child->p_prevSib = NULL;
 		prnt->p_child->p_nextSib = NULL;
 	}
-	return prntl
+	return prnt;
 }
 
 /*
