@@ -319,12 +319,13 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 			as an argument */
 			insertProcQ(&(locSemd->s_procQ), p);
 			/* give the pcb_t its corresponding addresse */
+			debugA(420);
+
 			openSemd->s_semAdd = semAdd;
 			p->p_semAdd = semAdd;
 			/* the function was able to succesfully allocate a new
 			semd_t and asign the proccess queue in the field of the
 			pcb_t - signify this successful operation */
-			debugA(420);
 			return FALSE;
 		} else {
 			/* no more free semd_t on the free list - out work
