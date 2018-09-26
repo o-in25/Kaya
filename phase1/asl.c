@@ -135,6 +135,20 @@ static semd_PTR cleanSemd(semd_PTR s) {
 
 
 /*
+*	Function: builds a dummy node, that is a placeholder
+* node for a semd_t; as noted in the initASL documentation,
+* the use of a dummy node will allow for less error-prone
+* boundry conditions
+*/
+semd_PTR mkEdgeSemd(int i) {
+		/* allocate a new sem_d */
+		semd_PTR edgeSemd = allocSemd();
+		/* asign its address to be a radical
+		boundry - i.e. MAXINT */
+		edgeSemd->s_semAdd = i;
+}
+
+/*
 *	Function: allocates a semd_t from the semd_t
 * free list and returns a pointer to it;
 * should the send_t free list head is null,
@@ -381,23 +395,49 @@ pcb_PTR headBlocked(int* semAdd){
 	}
 }
 
-
+/*
+* Function: the first and perhaps most important
+* stored procedure - the allocation of the
+* active semaphore list asl of type semd_t;
+* here, the semd_t free list is allocated to be
+* of size MAXPROC, where MAXPROC = 20;
+* IMPORTANT! this implementation of the
+* semd_t free list uses 2 DUMMY nodes as to avoid
+* error-prone exit conditions - which will be referenced
+* further on in the documentation; thus, the semd_t
+* free list will have MAXPROC + 2 dummy nodes to account
+* for the space necessary to house enough semd_t on the
+* free list
+*/
 void initASL() {
-	static semd_t semdTable[MAXPROC + 2];	/* init semd free list */
-	for (int i = 0; i < MAXPROC + 2; i++) {
+	/* first, initialize the semdTable - which is the array the
+	elements of type semd_t are kept; notice the addition of the
+	dummy nodes */
+	static semd_PTR semdTable[(MAXPROC + 2)];
+	/* for each semd_t in the semd_t free list,
+	itialize the semd_t at i to be null - by
+	calling mkEmptySemd */
+	int i;
+	for (i = 0; i < MAXPROC + 2; i++) {
+		/* make each semd_t to be empty */
 		semdTable[i] = mkEmptySemd();
+		/* free it */
 		freeSemd(&(semdTable[i]));
 	}
-	semd_t dummy1 = allocSemd();
-	semd_t dummy2 = allocSemd();
-	*(dummy1.s_semAdd) = 0;
-	*(dummy1.s_semAdd) = MAXINT;
-	dummy1.s_next = &(dummy2);
-	dummy1.s_prev = NULL;
-	dummy1.s_procQ = mkEmptyProcQ();
-	dummy2.s_next = NULL;
-	dummy2.s_prev = &(dummy1);
-	dummy2.s_procQ = mkEmptyProcQ();
-
-	semd_h = &(dummy1);
+	/* here, the semd_t edge (dummy) nodes to ensure
+	that no address is greather than or less than the
+	specified address values; this makes a call to the
+	mkEdgeSemd function - which takes the address value as
+	the argument; the minium will be 0 and the maxiumum
+	will be the largest possible unsigned interger value -
+	to ensure when travsering the semd_t asl, will never
+	return null - indicating the edge of the list */
+	semd_PTR minSemd = mkEdgeSemd(0);
+	semd_PTR maxSemd = mkEdgeSemd(MAXINT);
+	/* send the edges */
+	minSemd->s_next = NULL;
+	maxSemd->s_next = NULL;
+	/* now make the head of the semd_t asl to be the first
+	placeholder semd_t */
+	semdFree_h = minSemd;
 }
