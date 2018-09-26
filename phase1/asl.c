@@ -187,7 +187,7 @@ semd_PTR mkRhsEdgeSemd() {
 		semd_PTR edgeSemd = allocSemd();
 		/* asign its address to be a radical
 		boundry - i.e. MAXINT */
-		edgeSemd->s_semAdd = MAXINT;
+		edgeSemd->s_semAdd = &(MAXINT);
 }
 
 
@@ -230,8 +230,10 @@ void initASL() {
 	to ensure when travsering the semd_t asl, will never
 	return null - indicating the edge of the list */
 
-	semd_PTR minSemd = mkLhsEdgeSemd();
-	semd_PTR maxSemd = mkRhsEdgeSemd();
+	semd_PTR minSemd = NULL;
+	semd_PTR maxSemd = NULL;
+	minSemd = mkLhsEdgeSemd();
+ 	maxSemd = mkRhsEdgeSemd();
 	/* send the edges */
 	minSemd->s_next = NULL;
 	maxSemd->s_next = NULL;
