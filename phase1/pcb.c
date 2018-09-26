@@ -1,4 +1,16 @@
-/********************************** pcb.c **********************************/
+/***************************************************** pcb.c /****************************************************************
+	pcb.c encpsulates the functionality of Process Control Blocks, henceforth known as pcb_t; the pcb.c module is responsible
+	for three major pcb_t functions: first, a free list of MAXPROC pcb_t are allocated - where MAXPROC = 20; then, pcb_t
+	themsleves are to keep a child-parent-sibling relationships, where the siblings of a pcb_t are kepted in a doulbey
+	liked list that is null terminated; third, it is responsible for keeping process queues of pcb_t to be allocated from
+	on and off the free list.
+
+	This module contributes function definitions and a few sample fucntion implementations put forth by
+	the Kaya OS project
+
+***************************************************** pcb.c /****************************************************************/
+
+
 
 /* h files to include */
 #include "../h/const.h"
@@ -9,6 +21,7 @@
 #include "../e/asl.e"
 
 /* globals */
+/* the pcb_t free list of size 20 */
 HIDDEN pcb_PTR pcbFree_h;
 
 
