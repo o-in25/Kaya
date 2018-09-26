@@ -317,9 +317,10 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 			pcb_t process queue into its corresponding process queue -
 			but with an address since insertProcQ takes a pointer
 			as an argument */
+			debugA(420);
+
 			insertProcQ(&(locSemd->s_procQ), p);
 			/* give the pcb_t its corresponding addresse */
-			debugA(420);
 
 			openSemd->s_semAdd = semAdd;
 			p->p_semAdd = semAdd;
