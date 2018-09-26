@@ -254,60 +254,24 @@ pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
 	is the tp, in which case a if the tp is the only remaining
 	node on the list, the tp must be set the null - otherwise its
 	pointers must be rearranged. the last remaining case if
-	tp is an arbitrary element in the list */
-	if(emptyProcQ((*tp))) {
-		/* no list */
+	tp is an arbitrary element in the list; we will start
+	with the first case */
+	if(emptyProcQ(*tp)) {
 		return NULL;
+	/* now the case that the pcb_t to be removed is the only one left
+	must be considered; with appropriate logic, we can set up a
+	branch of statements to then consider the case that the pcb_t
+	is in the middle of the list; begin by advancing to the next pcb_t
+	from the tp and take it from there */
+	} else if(((*tp)->p_next) == tp) {
+		/* the pcb_t to be removed is the tp */
+		pcb_PTR rmvdPcb = (*tp);
+		mkEmptyProcQ(tp);
+		return rmvdPcb;
 	} else {
-		pcb_PTR rmvdPcb = NULL;
-		/* a list of >= 1 */
-		/* what is being removed is the tp */
-		if(p == (*tp)) {
-			/* a list of 1 */
-			if(((*tp)->p_next) == (*tp)) {
-				rmvdPcb = (*tp);
-				/* clean the tp - there is nothing left
-				on the list */
-				(*tp) = mkEmptyProcQ();
-				/* remove it */
-				return rmvdPcb;
-			} else {
-
-				/* swap the pointers with the soon to be removed pcb_t */
-				(*tp)->p_next->p_prev = (*tp)->p_next;
-				(*tp)->p_prev->p_next = (*tp)->p_prev;
-				/* a list of > 1 */
-				/* reasign the tail pointer */
-				(*tp) = (*tp)->p_prev;
-			}
-			/* return the block */
-			return p;
-
-		} else {
-
-			/* what is being removed is not the tp */
-			pcb_PTR currentPcb = (*tp)->p_next;
-			/* start from the start of the queue */
-			while(currentPcb != (*tp)) {
-				/* the p matches the tp */
-				if(currentPcb == p) {
-					/* reasign the pointers */
-					rmvdPcb = currentPcb;
-					rmvdPcb->p_prev->p_next = rmvdPcb->p_next;
-					rmvdPcb->p_next->p_prev = rmvdPcb->p_prev;
-					/* set the next and prev to be null */
-					rmvdPcb->p_next = NULL;
-					rmvdPcb->p_prev = NULL;
-					return rmvdPcb;
-				} else {
-					/* try again, moving up the list */
-					currentPcb = currentPcb->p_next;
-				}
-			}
-			/* the pcb_t was not found */
-			return NULL;
-		}
+		/* now begin iteration */
 	}
+
 }
 
 /*
