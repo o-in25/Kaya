@@ -446,12 +446,7 @@ void insertChild(pcb_PTR prnt, pcb_PTR p) {
 		prnt->p_child = p;
 		/* reasign the parent */
 		p->p_prnt = prnt;
-
 	}
-	/* reasign the pcb_t head child by
-	calling the encapsulated MkHeadChild()
-	function for easibility */
-	MkHeadChild(prnt, p);
 }
 
 /*
