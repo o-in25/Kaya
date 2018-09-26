@@ -217,8 +217,8 @@ void initASL() {
 	return null - indicating the edge of the list */
 	int MIN = 0;
 	int MAX = MAXINT;
-	int* addMin = &(MIN);
-	int* addMax = &(MAX);
+	int* addMin = MIN;
+	int* addMax = MAX;
 	semd_PTR minSemd = mkEdgeSemd(MIN);
 	semd_PTR maxSemd = mkEdgeSemd(MAX);
 	/* send the edges */
