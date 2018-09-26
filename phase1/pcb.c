@@ -42,7 +42,7 @@ pcb_PTR cleanPcb(pcb_PTR p) {
 	if(p == NULL) {
 		/* return null - there is no non-null pcb
 		provided */
-		return 	NULL;
+		return NULL;
 	} else {
 		/* if the pcb_t is not null, then its
 		fields are cleaned and it is returned
@@ -311,12 +311,12 @@ pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
 			while(currentPcb != tailPcb) {
 				/* the p matches the tp */
 				if(currentPcb == p) {
-					/* set the next and prev to be null */
-					currentPcb->p_next = NULL;
-					currentPcb->p_prev = NULL;
 					/* reasign the pointers */
 					currentPcb->p_prev->p_next = currentPcb->p_next;
 					currentPcb->p_next->p_prev = currentPcb->p_prev;
+					/* set the next and prev to be null */
+					currentPcb->p_next = NULL;
+					currentPcb->p_prev = NULL;
 				} else {
 					/* try again, moving up the list */
 					currentPcb = currentPcb->p_next;
