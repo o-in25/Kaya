@@ -302,15 +302,15 @@ pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
 		/* what is being removed is the tp */
 		if(p == tailPcb) {
 			/* a list of 1 */
-			if(tailPcb.p_next == tailPcb) {
+			if(tailPcb->p_next == tailPcb) {
 				tailPcb = NULL;
 			} else {
 				/* a list of > 1 */
 				/* reasign the tail pointer */
-				tailPcb = tailPcb.p_prev;
+				tailPcb = tailPcb->p_prev;
 				/* swap the pointers with the soon to be removed pcb_t */
-				tailPcb.p_next->p_prev = tailPcb.p_next;
-				tailPcb.p_prev->p_next = tailPcb.p_prev;
+				tailPcb->p_next->p_prev = tailPcb->p_next;
+				tailPcb->p_prev->p_next = tailPcb->p_prev;
 			}
 			/* return the block */
 			return p;
@@ -325,8 +325,8 @@ pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
 					currentPcb->p_next = NULL;
 					currentPcb->p_prev = NULL;
 					/* reasign the pointers */
-					currentPcb->p_prev->p_next = currentPcb->p_next
-					currentPcb->p_next->p_prev = currentPcb->p_prev
+					currentPcb->p_prev->p_next = currentPcb->p_next;
+					currentPcb->p_next->p_prev = currentPcb->p_prev;
 				} else {
 					/* try again, moving up the list */
 					currentPcb = currentPcb->p_next;
@@ -352,7 +352,7 @@ pcb_PTR headProcQ(pcb_PTR tp) {
 	return null */
 	if (emptyProcQ(tp)) {
 		return NULL
-	};
+	}
 	/* since the tp will point to head by the
 	p_next field, return that */
 	return (tp->p_next);
@@ -433,14 +433,12 @@ pcb_PTR removeChild(pcb_PTR p) {
 		/* here, there is at least >=1 siblings,
 		in which case if it is the last child, the
 		parent must capture this */
-		/* helpful dereferenced child pcb_t to avoid
-		confusing indirection */
-		pcb_t childPcb = (*(p->p_child));
+		pcb_PTR childPcb = (p->p_child);
 		/* the pcb_t is the only sibling */
-		if(childPcb.p_prevSib == NULL) {
+		if(childPcb->p_prevSib == NULL) {
 			/* the removed child pcb_t will
 			have no parent */
-			childPcb.p_prnt = NULL;
+			childPcb->p_prnt = NULL;
 			/* the parent will have no
 			pcb_t child */
 			p->p_child = NULL;
@@ -448,14 +446,14 @@ pcb_PTR removeChild(pcb_PTR p) {
 			/* the parent has more than one child;
 			this will then involve rearanging the
 			previous child pcb_t to refelct this */
-			p->p_child = childPcb.p_prevSib;
+			p->p_child = childPcb->p_prevSib;
 			/* since the list is null terminated
 			the next remaining child must be set to
 			null */
-			childPcb.p_prevSib->p_nextSib = NULL;
+			childPcb->p_prevSib->p_nextSib = NULL;
 			/* the removed child pcb_t will
 			have no parent */
-			childPcb.p_prnt = NULL;
+			childPcb->p_prnt = NULL;
 			/* clean the pcb_t */
 			cleanChild(&(childPcb));
 			return (&(childPcb));
@@ -482,7 +480,7 @@ pcb_PTR outChild(pcb_PTR p) {
 			pcb_t that is being removed is the head
 			of the list; second, the pcb_t being
 			removed is an arbitrary element in the list */
-			if(p == p->p_prent->p_child) {
+			if(p == p->p_prnt->p_child) {
 				/* the pcb_t being removed is the head
 				of the list - in this case, call the previously
 				written function */
@@ -509,7 +507,7 @@ pcb_PTR outChild(pcb_PTR p) {
 					and is in the list - simply reagrange the
 					siblings */
 					p->p_prevSib->p_nextSib = p->p_nextSib;
-					p->p_nextSib->p_prevSib = p->p_prevSib
+					p->p_nextSib->p_prevSib = p->p_prevSib;
 					/* the crux of the function - make the
 					parent be null */
 					p->p_prnt = NULL;
