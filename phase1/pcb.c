@@ -323,7 +323,7 @@ pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
 			/* what is being removed is not the tp */
 			pcb_PTR currentPcb = (*tp)->p_next;
 			/* start from the start of the queue */
-			while(currentPcb != tailPcb) {
+			while(currentPcb != (*tp)) {
 				/* the p matches the tp */
 				if(currentPcb == p) {
 					/* reasign the pointers */
