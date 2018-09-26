@@ -234,13 +234,12 @@ int emptyProcQ(pcb_PTR tp) {
 * process queue tp
 */
 void insertProcQ(pcb_PTR *tp, pcb_PTR p) {
-	pcb_PTR tailPcb = (*tp);
 	/* in order to insert a given pcb_t into a
 	given process queue given by tp,
 	the queue must be verified for emptiness;
 	if it is not empty, this becomes the facile
 	task of rearanging the pointers */
-	if (emptyProcQ(tailPcb)) {
+	if (emptyProcQ((*tp))) {
 		/* the queue is empty, so assign this
 		pcb_t to be circular by making itself
 		its previous and next element */
@@ -250,36 +249,15 @@ void insertProcQ(pcb_PTR *tp, pcb_PTR p) {
 		/* since the list is not empty, simply
 		reasign the pointers to account for the newly
 		added element */
-		p->p_next = tailPcb->p_next;
+		p->p_next = (*tp)->p_next;
 		/* the newest element has the tail as its previous */
-		p->p_prev = tailPcb;
-		tailPcb->p_next = p;
-		tailPcb->p_next->p_prev = p;
+		(*tp)->p_next = p;
+		(*tp)->p_next->p_prev = p;
+		p->p_prev = (*tp);
+
 	}
 	/* reasign the tp */
-	tailPcb = p;
-}
-
-/*
-* Function: removes the first element from the
-* processes queue whose tp is passed in as an
-* argument; return null if the tp is null - meaning
-* there is no list
-*/
-pcb_PTR removeProcQ(pcb_PTR *tp) {
-	/* first, consider the case in which the process queue is
-	empty, then simply use the encapsulated functionality
-	of the outProcQ function */
-	if(emptyProcQ(*tp)) {
-		/* empty list */
-		return NULL;
-	} else {
-		/* since this functionality is already
-		written, use the encapsulated function */
-		pcb_PTR tailPcb = (*tp);
-		/* dereference for convenience */
-		return outProcQ(tp, tailPcb->p_next);
-	}
+	(*tp) = p;
 }
 
 /*
@@ -310,12 +288,13 @@ pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
 			if((*tp)->p_next == (*tp)) {
 				(*tp) = NULL;
 			} else {
-				/* a list of > 1 */
-				/* reasign the tail pointer */
-				(*tp) = (*tp)->p_prev;
+
 				/* swap the pointers with the soon to be removed pcb_t */
 				(*tp)->p_next->p_prev = (*tp)->p_next;
 				(*tp)->p_prev->p_next = (*tp)->p_prev;
+				/* a list of > 1 */
+				/* reasign the tail pointer */
+				(*tp) = (*tp)->p_prev;
 			}
 			/* return the block */
 			return p;
@@ -332,7 +311,7 @@ pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
 					/* set the next and prev to be null */
 					currentPcb->p_next = NULL;
 					currentPcb->p_prev = NULL;
-					return (*tp);
+					return currentPcb;
 				} else {
 					/* try again, moving up the list */
 					currentPcb = currentPcb->p_next;
@@ -343,6 +322,28 @@ pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
 		}
 	}
 }
+
+/*
+* Function: removes the first element from the
+* processes queue whose tp is passed in as an
+* argument; return null if the tp is null - meaning
+* there is no list
+*/
+pcb_PTR removeProcQ(pcb_PTR *tp) {
+	/* first, consider the case in which the process queue is
+	empty, then simply use the encapsulated functionality
+	of the outProcQ function */
+	if(emptyProcQ(*tp)) {
+		/* empty list */
+		return NULL;
+	} else {
+		/* since this functionality is already
+		written, use the encapsulated function */
+		/* dereference for convenience */
+		return outProcQ(tp, (*tp)->p_next);
+	}
+}
+
 
 
 /*
