@@ -292,7 +292,6 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 		the function did not return null - the sign of no remaining
 		pcb_t, so add one - the open semd_t */
 		semd_PTR openSemd = allocSemd();
-		debugA(420);
 		/* this is the harder of the two cases; here, the semd_t
 		address does NOT match the address passed as an argument;
 		two things must be considered; first, there is a possibility
@@ -319,6 +318,7 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 			but with an address since insertProcQ takes a pointer
 			as an argument */
 			insertProcQ(&(locSemd->s_procQ), p);
+			debugA(420);
 			/* give the pcb_t its corresponding addresse */
 			openSemd->s_semAdd = semAdd;
 			p->p_semAdd = semAdd;
