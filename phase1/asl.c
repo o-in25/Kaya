@@ -133,28 +133,13 @@ static semd_PTR cleanSemd(semd_PTR s) {
 	s->s_semAdd = NULL;
 }
 
-
-/*
-*	Function: builds a dummy node, that is a placeholder
-* node for a semd_t; as noted in the initASL documentation,
-* the use of a dummy node will allow for less error-prone
-* boundry conditions
-*/
-semd_PTR mkEdgeSemd(int i) {
-		/* allocate a new sem_d */
-		semd_PTR edgeSemd = allocSemd();
-		/* asign its address to be a radical
-		boundry - i.e. MAXINT */
-		edgeSemd->s_semAdd = i;
-}
-
 /*
 *	Function: allocates a semd_t from the semd_t
 * free list and returns a pointer to it;
 * should the send_t free list head is null,
 * then there are no free semd_t to allocate
 */
-static semd_PTR allocSemd() {
+semd_PTR allocSemd() {
 	/* check if there are free semd_t on the
 	free list by checking for null */
 	if(semdFree_h == NULL) {
@@ -168,7 +153,7 @@ static semd_PTR allocSemd() {
 			is the last final one */
 			semdFree_h = NULL;
 		} else {
-			semdFree_h->s_next = semdFree->s_next->s_next;
+			semdFree_h->s_next = semdFree_h->s_next->s_next;
 		}
 		/* clean the semd so it can be fresh */
 		openSemd = cleanSemd(openSemd);
@@ -176,6 +161,21 @@ static semd_PTR allocSemd() {
 		return openSemd;
 	}
 }
+
+/*
+*	Function: builds a dummy node, that is a placeholder
+* node for a semd_t; as noted in the initASL documentation,
+* the use of a dummy node will allow for less error-prone
+* boundry conditions
+*/
+semd_PTR mkEdgeSemd(int* i) {
+		/* allocate a new sem_d */
+		semd_PTR edgeSemd = allocSemd();
+		/* asign its address to be a radical
+		boundry - i.e. MAXINT */
+		edgeSemd->s_semAdd = i;
+}
+
 
 /************************************************************************************************************************/
 /*************************************** ACTIVE SEMAPHORE LIST **********************************************************/
@@ -199,7 +199,7 @@ void initASL() {
 	/* first, initialize the semdTable - which is the array the
 	elements of type semd_t are kept; notice the addition of the
 	dummy nodes */
-	static semd_PTR semdTable[(MAXPROC + 2)];
+	static semd_t semdTable[(MAXPROC + 2)];
 	/* for each semd_t in the semd_t free list,
 	itialize the semd_t at i to be null - by
 	calling mkEmptySemd */
@@ -353,7 +353,7 @@ pcb_PTR removeBlocked(int* semAdd) {
 		/* return the head */
 		return headPcb;
 	}
-}}
+}
 
 /*
 * Function: remove the pcb_t passed in as the argument from
