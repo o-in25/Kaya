@@ -142,7 +142,6 @@ pcb_PTR allocPcb() {
 	/* since removeProcQ is a generic function,
 	simply supply the address of the free list to
 	return the nth-1 element from said list */
-<<<<<<< HEAD
 	pcb_PTR rmvdPcb = removeProcQ(&(pcbFree_h));
 	if(rmdvPcb != NULL) {
 		rmvdPcb = cleanPcb();
@@ -150,32 +149,6 @@ pcb_PTR allocPcb() {
 	/* now that the removed pcb is returned (or really, its
 	pointer is) it must be cleaned before it can be used */
 
-=======
-	pcb_PTR p = removeProcQ(&(pcbFree_h));
-	/* now that the removed pcb is returned (or really, its
-	pointer is) it must be cleaned before it can be used */
-	if(p == NULL) {
-		/* return null - there is no non-null pcb
-		provided */
-		return NULL;
-	} else {
-		/* if the pcb_t is not null, then its
-		fields are cleaned and it is returned
-		with null fields */
-		/* clean its previous and next fields */
-		p->p_next = NULL;
-		p->p_prev = NULL;
-		/* clean its relationships */
-		p->p_prnt = NULL;
-		p->p_child = NULL;
-		p->p_nextSib = NULL;
-		p->p_prevSib = NULL;
-		/* clean its semaphore */
-		p->p_semAdd = NULL;
-		/* returned the cleaned node */
-		return p;
-	}
->>>>>>> 3c02d357692228d3b34d3d2fc672b0547d4ba82e
 	/* now that its cleaned, it can be used */
 	return rmvdPcb;
 }
@@ -291,16 +264,12 @@ pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
 		if(p == (*tp)) {
 			/* a list of 1 */
 			if((*tp)->p_next == (*tp)) {
-<<<<<<< HEAD
 				rmvdPcb = (*tp);
 				/* clean the tp - there is nothing left
 				on the list */
 				(*tp) = mkEmptyProcQ();
 				/* remove it */
 				return rmvdPcb;
-=======
-				(*tp) = NULL;
->>>>>>> 3c02d357692228d3b34d3d2fc672b0547d4ba82e
 			} else {
 
 				/* swap the pointers with the soon to be removed pcb_t */
@@ -347,17 +316,11 @@ pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
 */
 pcb_PTR removeProcQ(pcb_PTR *tp) {
 	/* first, consider the case in which the process queue is
-<<<<<<< HEAD
 	empty */
-=======
-	empty, then simply use the encapsulated functionality
-	of the outProcQ function */
->>>>>>> 3c02d357692228d3b34d3d2fc672b0547d4ba82e
 	if(emptyProcQ(*tp)) {
 		/* empty list */
 		return NULL;
 	} else {
-<<<<<<< HEAD
 		pcb_PTR rmvdPcb = NULL;
 		/* next what must be considered are the cases for having the
 		tp be the only element in the list, in which
@@ -383,12 +346,6 @@ pcb_PTR removeProcQ(pcb_PTR *tp) {
 		}
 		return rmvdPcb;
 
-=======
-		/* since this functionality is already
-		written, use the encapsulated function */
-		/* dereference for convenience */
-		return outProcQ(tp, (*tp)->p_next);
->>>>>>> 3c02d357692228d3b34d3d2fc672b0547d4ba82e
 	}
 }
 
