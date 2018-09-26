@@ -63,6 +63,39 @@ semd_PTR findSemd(int* semAdd) {
 	return currentSemd;
 }
 
+void emptySemd(semd_PTR s) {
+	return (s == NULL);
+}
+
+/*
+* Function: makes the semd_t next field pointed
+* to by the function argument to be null; this
+* is helpful as to seperate allocation of responsobilities
+*/
+void mkFreeSemd(semd_PTR s) {
+	/* set to null */
+	semdFree->s_next = NULL;
+}
+
+/*
+* Function: takes a semd_t and points it onto
+* the semd_t free list; if there is nothing on
+* the semd_t free list, a free list is "created"
+* by making the newly added semd_t next semd_t
+* to be null; if its not empty
+*/
+void freeSemd(semd_PTR s) {
+	/* call the encapsulated emptySemd function
+	to test for the case that the semd_t free list
+	is null */
+	if(emptySemd(semdFree_h)) {
+		mkFreeSemd(s);
+	} else {
+		/* non-empty free list case */
+		s->s_next = semdFree_h;
+	}
+	semdFree_h = s;
+}
 
 /************************************************************************************************************************/
 /*************************************** ACTIVE SEMAPHORE LIST **********************************************************/
@@ -115,7 +148,7 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 		if(allocSemd() != NULL) {
 			/* there are free semd_t on the free list because
 			the function did not return null - the sign of no remaining
-			pcb_t, so add one */
+			pcb_t, so add one - the open semd_t */
 			semd_PTR openSemd = allocSemd();
 			/* give the new semd_t its new address */
 			openSemd->s_semAdd = semAdd;
@@ -146,21 +179,54 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 	}
 }
 
-
+/*
+* Function: search the asl semd_t list for the specified
+* semd_t address; in the case that it is not found, simply
+* exit and return null; in the case that it is found, remove
+* the HEAD pcb_t from that process queue of the found semd_t
+* descriptor and return its pointer; this, too, like insertBlocked
+* can be tricky in its own right: if this process queue then becomes
+* null, meaning that emptyProcQ is null, then this semd_t must be
+* removed and sent to the semd_t free list
+*/
 pcb_PTR removeBlocked(int* semAdd){
-	/* find previous node */
-	semd_PTR prev = searchASL(semAdd);
-	/* did we find the right node? */
-	if (*(prev->s_next->s_semAdd) == *(semAdd)) {
-		pcb_PTR removed = removeProcQ(*(prev).s_procQ);
-
-		if (emptyProcQ(prev->s_next->s_procQ)) {
-			freeSemd(prev->s_next);
+	/* find the semd_t */
+	semd_PTR locSemd = findSemd(semAdd);
+	/* IMPORTANT! since, by the function definition of findSemd,
+	the n-1th semd_t is returned and NOT the semd_t in search of,
+	grab the nth semd_t; this is NOT to be confused as an index, but
+	rather as the next address pointer; since there are dummy nodes */
+	if(locSemd->s_next->semAdd != semAdd) {
+		/* per function implementation definiton, return null */
+		return NULL;
+	} else {
+		/* the address has been found succesfully */
+		pcb_PTR headPcb = removeProcQ(&(semAdd->s_procQ));
+		/* now it is time to check if the pcb_t process queue is
+		empty - which means that the head of the process queue
+		was the only pcb_t on the queue; if the queue is not empty, then
+		the pcb_t is simply returned - since the semd_t is still in use */
+		if(!(emptyProcQ(headPcb)) {
+			/* we are all set - return the pcb_t since the semd_t is
+			still in use */
+			return headPcb;
+		} else {
+			/* we have "issues" - the semd_t is now free; since we have
+			finite i.e. MAXPROC available semd_t at any given time, it is time
+			to free this one up so it can be used later; IMORTANT! the
+			pointers must be rearanged to handle the n-th in progress
+			semd_t on the free list; since the locSemd is the previous
+			smed_t, asign its next to be the next, next semd_t */
+			locSemd->s_next = locSemd->s_next->s_next;
+			/* the semd_t is cleaned */
+			locSemd->s_next->s_next = NULL;
+			/* free it up */
+			freeSemd(locSemd->s_next);
 		}
-		return removed;
+
 	}
-	/* semd not found */
-	return NULL;
+
+
 }
 
 pcb_PTR outBlocked (pcb_PTR p){
@@ -231,17 +297,7 @@ HIDDEN semd_PTR allocSemd() {
 }
 
 /* return an asl node to the free list */
-void freeSemd(semd_PTR s) {
-	/* empty free list case */
-	if (*(semdFree_h) == NULL) {
-		(*semdFree_h) = s;
-	}
 
-	/* non-empty free list case */
-	semd_t head = (*semdFree_h);
-	semdFree_h->s_next = s;
-	s->s_next = head;
-}
 
 /***************************************************************/
 
