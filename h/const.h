@@ -12,7 +12,7 @@
 #define MAXINT 2147483647
 /* Maximum 32-bit signed
 
-/* Hardware & software constants */
+/* Hardware and software constants */
 #define PAGESIZE		4096	/* page size in bytes */
 #define WORDLEN			4		/* word size in bytes */
 #define PTEMAGICNO		0x2A

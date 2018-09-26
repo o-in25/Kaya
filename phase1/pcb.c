@@ -152,7 +152,7 @@ pcb_PTR allocPcb() {
 	/* since removeProcQ is a generic function,
 	simply supply the address of the free list to
 	return the nth-1 element from said list */
-	pcb_PTR temp = removeProcQ(&pcbFree_h);
+	pcb_PTR temp = removeProcQ(&(pcbFree_h);
 	/* now that the removed pcb is returned (or really, its
 	pointer is) it must be cleaned before it can be used */
 	pcb_PTR rmvdPcb = cleanPcb(temp);
