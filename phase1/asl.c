@@ -318,7 +318,6 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 			but with an address since insertProcQ takes a pointer
 			as an argument */
 			insertProcQ(&(locSemd->s_procQ), p);
-			debugA(420);
 			/* give the pcb_t its corresponding addresse */
 			openSemd->s_semAdd = semAdd;
 			p->p_semAdd = semAdd;
@@ -329,6 +328,7 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 		} else {
 			/* no more free semd_t on the free list - out work
 			here is done, so mark the operation as an unsuccessful one */
+			debugA(420);
 			return TRUE;
 		}
 	}
