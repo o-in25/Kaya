@@ -24,6 +24,11 @@
 /* the pcb_t free list of size 20 */
 HIDDEN pcb_PTR pcbFree_h;
 
+void debugA(int* a) {
+	int i;
+	i = 0;
+}
+
 /************************************************************************************************************************/
 /******************************************** HELPER FUNCTIONS  *********************************************************/
 /************************************************************************************************************************/
@@ -69,17 +74,11 @@ pcb_PTR cleanPcb(pcb_PTR p) {
 * is null, that is there is not parent,
 * then null is returned;
 */
-pcb_PTR cleanChild(pcb_PTR prnt) {
-	/* if the parent does not have
-	* a child, return null */
-	if(emptyChild(prnt)) {
-		prnt->p_child = NULL;
-	} else {
-		/* clean the child */
-		prnt->p_child->p_prevSib = NULL;
-		prnt->p_child->p_nextSib = NULL;
-	}
-	return prnt;
+pcb_PTR cleanChild(pcb_PTR p) {
+	/* clean the child */
+	p->p_prevSib = NULL;
+	p->p_nextSib = NULL;
+	p->p_prnt = NULL;
 }
 
 /*
@@ -153,10 +152,30 @@ pcb_PTR allocPcb() {
 	/* since removeProcQ is a generic function,
 	simply supply the address of the free list to
 	return the nth-1 element from said list */
-	pcb_PTR temp = removeProcQ(&(pcbFree_h));
+	pcb_PTR p = removeProcQ(&(pcbFree_h));
 	/* now that the removed pcb is returned (or really, its
 	pointer is) it must be cleaned before it can be used */
-	pcb_PTR rmvdPcb = cleanPcb(temp);
+	if(p == NULL) {
+		/* return null - there is no non-null pcb
+		provided */
+		return NULL;
+	} else {
+		/* if the pcb_t is not null, then its
+		fields are cleaned and it is returned
+		with null fields */
+		/* clean its previous and next fields */
+		p->p_next = NULL;
+		p->p_prev = NULL;
+		/* clean its relationships */
+		p->p_prnt = NULL;
+		p->p_child = NULL;
+		p->p_nextSib = NULL;
+		p->p_prevSib = NULL;
+		/* clean its semaphore */
+		p->p_semAdd = NULL;
+		/* returned the cleaned node */
+		return p;
+	}
 	/* now that its cleaned, it can be used */
 	return rmvdPcb;
 }
@@ -219,13 +238,12 @@ int emptyProcQ(pcb_PTR tp) {
 * process queue tp
 */
 void insertProcQ(pcb_PTR *tp, pcb_PTR p) {
-	pcb_PTR tailPcb = (*tp);
 	/* in order to insert a given pcb_t into a
 	given process queue given by tp,
 	the queue must be verified for emptiness;
 	if it is not empty, this becomes the facile
 	task of rearanging the pointers */
-	if (emptyProcQ(tailPcb)) {
+	if (emptyProcQ((*tp))) {
 		/* the queue is empty, so assign this
 		pcb_t to be circular by making itself
 		its previous and next element */
@@ -235,45 +253,15 @@ void insertProcQ(pcb_PTR *tp, pcb_PTR p) {
 		/* since the list is not empty, simply
 		reasign the pointers to account for the newly
 		added element */
-		p->p_next = tailPcb->p_next;
+		p->p_next = (*tp)->p_next;
 		/* the newest element has the tail as its previous */
-		p->p_prev = tailPcb;
-		tailPcb->p_next = p;
-		tailPcb->p_next->p_prev = p;
+		(*tp)->p_next = p;
+		(*tp)->p_next->p_prev = p;
+		p->p_prev = (*tp);
+
 	}
 	/* reasign the tp */
-	tailPcb = p;
-}
-
-/*
-* Function: removes the first element from the
-* processes queue whose tp is passed in as an
-* argument; return null if the tp is null - meaning
-* there is no list
-*/
-pcb_PTR removeProcQ(pcb_PTR *tp) {
-	/* first, consider the case in which the process queue is
-	empty, then simply use the encapsulated functionality
-	of the outProcQ function */
-	if(emptyProcQ(*tp)) {
-		/* empty list */
-		return NULL;
-	} else {
-		/* dereference for convenience */
-		if((*tp)->p_next == *tp) {
-			pcb_PTR rmvdPcb = (*tp);
-			(*tp) = mkEmptyProcQ();
-			return rmvdPcb;
-		} else {
-			pcb_PTR rmvdPcb = (*tp)->p_next;
-			(*tp)->p_next->p_next->p_prev = (*tp);
-			(*tp)->p_next = (*tp)->p_next->p_next;
-			return rmvdPcb;
-		}
-
-		/* dereference for convenience */
-		return outProcQ(tp, tailPcb->p_next);
-	}
+	(*tp) = p;
 }
 
 /*
@@ -284,8 +272,7 @@ pcb_PTR removeProcQ(pcb_PTR *tp) {
 * return null; else, return p
 */
 pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
-	/* dereference ahead of time */
-	pcb_PTR tailPcb = (*tp);
+
 	/* removing the pcb_t from the process
 	pointed to by tp has three cases to consider;
 	first, if the tp is null, meaning there is no list for
@@ -294,31 +281,40 @@ pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
 	node on the list, the tp must be set the null - otherwise its
 	pointers must be rearranged. the last remaining case if
 	tp is an arbitrary element in the list */
-	if(emptyProcQ(tailPcb)) {
+	if(emptyProcQ(*tp)) {
 		/* no list */
 		return NULL;
 	} else {
+		pcb_PTR rmvdPcb = NULL;
 		/* a list of >= 1 */
 		/* what is being removed is the tp */
-		if(p == tailPcb) {
+		if(p == (*tp)) {
 			/* a list of 1 */
-			if(tailPcb->p_next == tailPcb) {
-				tailPcb = NULL;
+			if((*tp)->p_next == (*tp)) {
+				rmvdPcb = (*tp);
+				/* clean the tp - there is nothing left
+				on the list */
+				(*tp) = mkEmptyProcQ();
+				/* remove it */
+				return rmvdPcb;
 			} else {
+
+				/* swap the pointers with the soon to be removed pcb_t */
+				(*tp)->p_next->p_prev = (*tp)->p_next;
+				(*tp)->p_prev->p_next = (*tp)->p_prev;
 				/* a list of > 1 */
 				/* reasign the tail pointer */
-				tailPcb = tailPcb->p_prev;
-				/* swap the pointers with the soon to be removed pcb_t */
-				tailPcb->p_next->p_prev = tailPcb->p_next;
-				tailPcb->p_prev->p_next = tailPcb->p_prev;
+				(*tp) = (*tp)->p_prev;
 			}
 			/* return the block */
 			return p;
+
 		} else {
+
 			/* what is being removed is not the tp */
-			pcb_PTR currentPcb = tailPcb->p_next;
+			pcb_PTR currentPcb = (*tp)->p_next;
 			/* start from the start of the queue */
-			while(currentPcb != tailPcb) {
+			while(currentPcb != (*tp)) {
 				/* the p matches the tp */
 				if(currentPcb == p) {
 					/* reasign the pointers */
@@ -327,6 +323,7 @@ pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
 					/* set the next and prev to be null */
 					currentPcb->p_next = NULL;
 					currentPcb->p_prev = NULL;
+					return currentPcb;
 				} else {
 					/* try again, moving up the list */
 					currentPcb = currentPcb->p_next;
@@ -337,6 +334,48 @@ pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
 		}
 	}
 }
+
+/*
+* Function: removes the first element from the
+* processes queue whose tp is passed in as an
+* argument; return null if the tp is null - meaning
+* there is no list
+*/
+pcb_PTR removeProcQ(pcb_PTR *tp) {
+	/* first, consider the case in which the process queue is
+	empty */
+	if(emptyProcQ(*tp)) {
+		/* empty list */
+		return NULL;
+	} else {
+		pcb_PTR rmvdPcb = NULL;
+		/* next what must be considered are the cases for having the
+		tp be the only element in the list, in which
+		case, its pointers must be reasigned */
+		if((*tp)->p_next == (*tp)) {
+			/* tp is the last remaining */
+			/* get the return value - no reason to
+			call p_next - it is the head */
+			rmvdPcb = (*tp);
+			/* asign the next to be null, since
+			it was just removed */
+			(*tp) = mkEmptyProcQ();
+		} else {
+			/* the case where there is >1 elements in the tree;
+			this cam be tricky, as poimters get reasigned; first,
+			get the head of the list */
+			rmvdPcb = (*tp)->p_next;
+			/* here, reasign the the tp, so it is pointing
+			at the next item's next item */
+			(*tp)->p_next->p_next->p_prev = (*tp);
+			/* reasign the pt to be the next */
+			(*tp)->p_next = ((*tp)->p_next->p_next);
+		}
+		return rmvdPcb;
+
+	}
+}
+
 
 
 /*
@@ -392,15 +431,22 @@ void insertChild(pcb_PTR prnt, pcb_PTR p) {
 	must be set as the parent pcb_t */
 	if(emptyChild(prnt)) {
 		/* since there is no child, clean it */
-		cleanChild(prnt);
+		cleanChild(p);
+		prnt->p_child = p;
+		p->prnt = prnt;
 	} else {
-		/* asign the parent pcb_t next
-		child's next sibling to the back
-		of the child list */
-		prnt->p_child->p_nextSib = p;
-		p->p_prevSib = prnt->p_child;
-		/* the end of the list */
-		p->p_nextSib = NULL;
+		/* there are multiple children */
+		prnt->p_child->p_prevSib = p;
+		/* mark the next sibling as having
+		no other sibling */
+		p->p_prevSib = NULL;
+		/* the the the new pcb_t behind the child */
+		p->p_nextSib = prnt->p_child;
+		/* asign the new child */
+		prnt->p_child = p;
+		/* reasign the parent */
+		p->p_prnt = prnt;
+
 	}
 	/* reasign the pcb_t head child by
 	calling the encapsulated MkHeadChild()
@@ -435,29 +481,27 @@ pcb_PTR removeChild(pcb_PTR p) {
 		parent must capture this */
 		pcb_PTR childPcb = (p->p_child);
 		/* the pcb_t is the only sibling */
-		if(childPcb->p_prevSib == NULL) {
+		if(p->p_child->p_nextSib == NULL) {
+			/* no remaining children */
+			p->p_child = NULL;
 			/* the removed child pcb_t will
 			have no parent */
-			childPcb->p_prnt = NULL;
-			/* the parent will have no
-			pcb_t child */
-			p->p_child = NULL;
+			return cleanChild(childPcb);
+
 		} else {
 			/* the parent has more than one child;
 			this will then involve rearanging the
 			previous child pcb_t to refelct this */
-			p->p_child = childPcb->p_prevSib;
-			/* since the list is null terminated
+			p->p_child = p->p_child->p_nextSib;
+			/* since the list is null
 			the next remaining child must be set to
 			null */
-			childPcb->p_prevSib->p_nextSib = NULL;
+			p->p_child->p_prevSib = NULL;
 			/* the removed child pcb_t will
 			have no parent */
-			childPcb->p_prnt = NULL;
 			/* clean the pcb_t */
-			cleanChild(childPcb);
+			return cleanChild(childPcb);
 		}
-		return childPcb;
 	}
 }
 
@@ -470,53 +514,34 @@ pcb_PTR removeChild(pcb_PTR p) {
 * null
 */
 pcb_PTR outChild(pcb_PTR p) {
-		/* consider the case of having no parent */
-		if(p->p_prnt == NULL) {
-			/* the pcb_t has no parent */
-			return NULL;
-		} else {
-			/* the pcb_t has a parent; here, there
-			are two cases to consider: first, the
-			pcb_t that is being removed is the head
-			of the list; second, the pcb_t being
-			removed is an arbitrary element in the list */
-			if(p == p->p_prnt->p_child) {
-				/* the pcb_t being removed is the head
-				of the list - in this case, call the previously
-				written function */
-				return removeChild(p->p_prnt);
-			} else {
-				/* the remaining case to consider is if the
-				child pcb_t being removed has a a sibling behind
-				it, or if the the child pcb_t has no sibling
-				behind it */
-				if(p->p_child->p_prevSib == NULL) {
-					/* rearrange the next sibling pcb_t
-					to have its next child be null, since the
-					removed pcb_t was the last child */
-					p->p_nextSib->p_prevSib = NULL;
-					/* the crux of the function - make the
-					parent be null */
-					p->p_prnt = NULL;
-					/* clean the remaining sibling */
-					p->p_nextSib = NULL;
-					/* return the cleaned parent */
-					return p;
-				} else {
-					/* the case in which the pcb_t has siblings
-					and is in the list - simply reagrange the
-					siblings */
-					p->p_prevSib->p_nextSib = p->p_nextSib;
-					p->p_nextSib->p_prevSib = p->p_prevSib;
-					/* the crux of the function - make the
-					parent be null */
-					p->p_prnt = NULL;
-					/* clean the remaining sibling */
-					p->p_nextSib = NULL;
-					p->p_prevSib = NULL;
-					/* return the cleaned parent */
-					return p;
-				}
-			}
-		}
+	pcb_PTR rmvdPcb = NULL;
+	/* if the child has no parent, and is therefore
+	returned null per the function definition implementation */
+	if(p->p_prnt == NULL) {
+		return NULL;
+	/* the next case to consider - the removed element is at the
+	BACK of a list whose size is >1 at least */
+} else if(p->p_nextSib == NULL) {
+		/* in this case, the pcb_t is at the
+		end of the list */
+		/* remove the parent */;
+		p->p_prevSib->p_nextSib = NULL;
+		rmvdPcb = p;
+	/* the next case to consider - the removed element is at the
+	FRONT of a list whose size is >1 at least */
+	} else if(p->p_prnt->p_child == p) {
+		/* since this child being removed is the head,
+		simply call the function to do so */
+		return removeChild(p);
+	} else {
+		/* in this case, since the pcb_t is not the last,
+		and not the first, it must be a middle one, since
+		the verification would not have gotten this far */
+		p->p_prevSib->p_nextSib = p->p_nextSib;
+		p->p_nextSib->p_prevSib = p->p_prevSib;
+		rmvdPcb = p;
+	}
+	if(rmvdPcb != NULL) {
+		rmdvPcb->p_prnt = NULL;
+	}
 }
