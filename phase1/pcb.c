@@ -40,31 +40,21 @@ void debugA(int* a) {
 * the function will return null
 */
 pcb_PTR cleanPcb(pcb_PTR p) {
-	/* if the pcb_t is null, then
-	there are no values we can clean, so
-	we return null */
-
-	if(p == NULL) {
-		/* return null - there is no non-null pcb
-		provided */
-		return NULL;
-	} else {
-		/* if the pcb_t is not null, then its
-		fields are cleaned and it is returned
-		with null fields */
-		/* clean its previous and next fields */
-		p->p_next = NULL;
-		p->p_prev = NULL;
-		/* clean its relationships */
-		p->p_prnt = NULL;
-		p->p_child = NULL;
-		p->p_nextSib = NULL;
-		p->p_prevSib = NULL;
-		/* clean its semaphore */
-		p->p_semAdd = NULL;
-		/* returned the cleaned node */
-		return p;
-	}
+	/* if the pcb_t is not null, then its
+	fields are cleaned and it is returned
+	with null fields */
+	/* clean its previous and next fields */
+	p->p_next = NULL;
+	p->p_prev = NULL;
+	/* clean its relationships */
+	p->p_prnt = NULL;
+	p->p_child = NULL;
+	p->p_nextSib = NULL;
+	p->p_prevSib = NULL;
+	/* clean its semaphore */
+	p->p_semAdd = NULL;
+	/* returned the cleaned node */
+	return p;
 }
 
 /*
@@ -152,30 +142,13 @@ pcb_PTR allocPcb() {
 	/* since removeProcQ is a generic function,
 	simply supply the address of the free list to
 	return the nth-1 element from said list */
-	pcb_PTR p = removeProcQ(&(pcbFree_h));
+	pcb_PTR rmvdPcb = removeProcQ(&(pcbFree_h));
+	if(rmdvPcb != NULL) {
+		rmvdPcb = cleanPcb();
+	}
 	/* now that the removed pcb is returned (or really, its
 	pointer is) it must be cleaned before it can be used */
-	if(p == NULL) {
-		/* return null - there is no non-null pcb
-		provided */
-		return NULL;
-	} else {
-		/* if the pcb_t is not null, then its
-		fields are cleaned and it is returned
-		with null fields */
-		/* clean its previous and next fields */
-		p->p_next = NULL;
-		p->p_prev = NULL;
-		/* clean its relationships */
-		p->p_prnt = NULL;
-		p->p_child = NULL;
-		p->p_nextSib = NULL;
-		p->p_prevSib = NULL;
-		/* clean its semaphore */
-		p->p_semAdd = NULL;
-		/* returned the cleaned node */
-		return p;
-	}
+
 	/* now that its cleaned, it can be used */
 	return rmvdPcb;
 }
