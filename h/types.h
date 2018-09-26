@@ -117,7 +117,7 @@ typedef struct pcb_t {
 typedef struct semd_t {
 	struct semd_PTR s_next;
 	struct semd_PTR s_prev;
-	int *s_semAdd;
+	int* s_semAdd;
 	pcb_PTR s_procQ;
 }  semd_t, *semd_PTR;
 

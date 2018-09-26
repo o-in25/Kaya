@@ -8,8 +8,8 @@
 	the Kaya OS project
 
 ***************************************************** asl.c ************************************************************/
-#ifndef ASL
-#define ASL
+
+
 
 /* h files to include */
 #include "../h/const.h"
@@ -38,23 +38,28 @@ HIDDEN semd_PTR semdFree_h;
 semd_PTR findSemd(int* semAdd) {
 	/* retrieve the head of the list */
 	semd_PTR currentSemd = semd_h;
-	/* the findSemd task will now search the semd_t free
-	list via the subsequent semd_t s_next field to
- 	search for the next free address location; since the
-	list uses a dummy node at both the front as 0 and at
-	the end as MAXINT where MAXINT is the largest possible
-	integer, the exit condition is always met, since the
-	next semd_t must be < MAXINT */
-	/* for convenience */
-	semd_PTR nextSemd = currentSemd->s_next;
+	/* IMPORTANT! the first semd_t must be skipped since
+	the first semd_t will be a dummy node */
+	currentSemd = currentSemd->s_next;
 	/* while the semd_h address is less than the
 	specified integer address */
-	while(nextSemd->s_semAdd < semAdd) {
-		/* if the loop hasnt jumped, assign to the next value
-		in the linked list */
+	while(currentSemd->s_next->s_semAdd < semAdd) {
+		/* the findSemd task will now search the semd_t free
+		list via the subsequent semd_t s_next field to
+		search for the next free address location; since the
+		list uses a dummy node at both the front as 0 and at
+		the end as MAXINT where MAXINT is the largest possible
+		integer, the exit condition is always met, since the
+		next semd_t must be < MAXINT */
 		currentSemd = currentSemd->s_next;
+		/* the loop hasnt jumped, assign to the next value
+		in the linked list - as done above */
 	}
-	/* return the found smed_t */
+	/* IMPORTANT! return the found smed_t; since this function
+	returns the n-1th semd_t, the wrapper function that
+	calls this MUST call s_next on the returning semd_t,
+	otherwise the current semd_t will be returned to
+	provide further reusability and encapsulation */
 	return currentSemd;
 }
 
@@ -63,33 +68,84 @@ semd_PTR findSemd(int* semAdd) {
 /*************************************** ACTIVE SEMAPHORE LIST **********************************************************/
 /************************************************************************************************************************/
 
-
+/*
+*	Function: insert the pcb_t provided as an a
+* argument to the tail of that pcb_t process
+* queue at the semd_t address provided; this method
+* can get tricky: if there is no semd_t descriptor,
+* as in, there is it is not active because it is
+* nonexistent in the asl list a new semd_t must initalized,
+* an be allocated to take its place - however, if the
+* free list is blocked - return true; in a successful operation
+* the function returns null
+*/
 int insertBlocked(int* semAdd, pcb_PTR p) {
-	semd_PTR prev = findSemd(semAdd);
-	if (*(prev->s_next->s_semAdd) != *(semAdd)) { /* semAdd not found */
-		semd_t newSemd = allocSemd();
-		if(newSemd == NULL) {
+	/* determine in the prospcetive insert is blocked */
+	/* find the location of the closest semd_t */
+	semd_PTR locSemd = findSemd(semAdd);
+	/* with the retrieved location, find if it matches
+	the desciption - if it does not, this must be taken
+	care of later in the function */
+	if(locSemd->s_next->s_semAdd == semAdd) {
+		/* the located semd_t matches the semaphore
+		address - the easier case */
+		/* asign the s_semAdd - per the function
+		implementation definition */
+		p->s_semAdd = semAdd;
+		/* insert the formatted pcb_t into the process
+		queue; since our work for this was completed in
+		pcb.c, simply utilize the work of this function
+		to couple the modules; per the documentation on
+		the findSemd function, the NEXT semd_h must be
+		provided since that helper function does not
+		encapsulate that functionality */
+		insertProcQ(locSemd->s_next->s_procQ, p);
+		/* since this operation is successful -i.e. the
+		entry is NOT blocked, return false to indicate this */
+		return FALSE;
+	} else {
+		/* this is the harder of the two cases; here, the semd_t
+		address does NOT match the address passed as an argument;
+		two things must be considered; first, there is a possibility
+		that the semd_t free list is empty - meaning this operation
+		could not be completed - yielding false; should, this
+		not be the case - as in, there IS a free and ready semd_t in
+		the free list, allocate it and indicate the operation is successful
+		with a false value */
+		if(allocSemd() != NULL) {
+			/* there are free semd_t on the free list because
+			the function did not return null - the sign of no remaining
+			pcb_t, so add one */
+			semd_PTR openSemd = allocSemd();
+			/* give the new semd_t its new address */
+			openSemd->s_semAdd = semAdd;
+			/* give the pcb_t its corresponding addresse */
+			p->p_semAdd = openSemd->s_semAdd;
+			/* arrange the new semd_t so that is in the appropriate place in
+			the semd_t free list */
+			openSemd->s_next = locSemd->s_next;
+			locSemd->s_next = openSemd;
+			/* pointers rearranged;
+			asign its necessary fields to function */
+			openSemd->s_semAdd = semAdd;
+			openSemd->s_procQ = mkEmptyProcQ();
+			/* everything is all set - insert the newly added
+			pcb_t process queue into its corresponding process queue -
+			but with an address since insertProcQ takes a pointer
+			as an argument */
+			insertProcQ(&(locSemd->s_procQ), p)
+			/* the function was able to succesfully allocate a new
+			semd_t and asign the proccess queue in the field of the
+			pcb_t - signify this successful operation */
+			return FALSE;
+		} else {
+			/* no more free semd_t on the free list - out work
+			here is done, so mark the operation as an unsuccessful one */
 			return TRUE;
 		}
-		newSemd.s_procQ = mkEmptyProcQ();
-		*(newSemd.s_semAdd) = *(semAdd);
-
-		newSemd.s_prev = prev;
-		newSemd.s_next = prev->s_next;
-		prev->s_next->s_prev = &(newSemd);
-		prev->s_next = &(newSemd);
-
-		(*p).p_semAdd = semAdd;
-		insertProcQ(newSemd.s_procQ, p);
-
-		return FALSE;
 	}
-	/* semAdd found */
-	(*p).p_semAdd = semAdd;
-	insertProcQ(prev->s_next->s_procQ, p);
-
-	return FALSE;
 }
+
 
 pcb_PTR removeBlocked(int* semAdd){
 	/* find previous node */
