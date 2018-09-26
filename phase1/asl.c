@@ -23,6 +23,13 @@ HIDDEN semd_PTR semd_h;
 /* pointer to the head free list of semd_t */
 HIDDEN semd_PTR semdFree_h;
 
+/************************************************************************************************************************/
+/******************************************** DEBUG FUNCTIONS  *********************************************************/
+/************************************************************************************************************************/
+void debugA(int a) {
+	int i;
+	i = 0;
+}
 
 /************************************************************************************************************************/
 /******************************************** HELPER FUNCTIONS  *********************************************************/
@@ -285,6 +292,7 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 		the function did not return null - the sign of no remaining
 		pcb_t, so add one - the open semd_t */
 		semd_PTR openSemd = allocSemd();
+		debugA(420);
 		/* this is the harder of the two cases; here, the semd_t
 		address does NOT match the address passed as an argument;
 		two things must be considered; first, there is a possibility
@@ -311,6 +319,9 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 			but with an address since insertProcQ takes a pointer
 			as an argument */
 			insertProcQ(&(locSemd->s_procQ), p);
+			/* give the pcb_t its corresponding addresse */
+			openSemd->s_semAdd = semAdd;
+			p->p_semAdd = semAdd;
 			/* the function was able to succesfully allocate a new
 			semd_t and asign the proccess queue in the field of the
 			pcb_t - signify this successful operation */
