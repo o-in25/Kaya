@@ -187,7 +187,7 @@ semd_PTR mkRhsEdgeSemd() {
 		semd_PTR edgeSemd = allocSemd();
 		/* asign its address to be a radical
 		boundry - i.e. MAXINT */
-		edgeSemd->s_semAdd = &(MAXINT);
+		edgeSemd->s_semAdd = MAXINT;
 }
 
 
