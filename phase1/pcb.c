@@ -39,6 +39,7 @@ pcb_PTR cleanPcb(pcb_PTR p) {
 	/* if the pcb_t is null, then
 	there are no values we can clean, so
 	we return null */
+
 	if(p == NULL) {
 		/* return null - there is no non-null pcb
 		provided */
@@ -154,6 +155,7 @@ pcb_PTR allocPcb() {
 	simply supply the address of the free list to
 	return the nth-1 element from said list */
 	pcb_PTR temp = removeProcQ(&(pcbFree_h));
+	debugA(temp);
 	/* now that the removed pcb is returned (or really, its
 	pointer is) it must be cleaned before it can be used */
 	pcb_PTR rmvdPcb = cleanPcb(temp);
