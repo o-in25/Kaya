@@ -133,7 +133,7 @@ void freeSemd(semd_PTR s) {
 * used - since a semd_t cannot come off the
 * free list with defined values
 */
-static semd_PTR cleanSemd(semd_PTR s) {
+semd_PTR cleanSemd(semd_PTR s) {
 	/* clean up */
 	s->s_procQ = NULL;
 	s->s_next = NULL;
@@ -151,6 +151,8 @@ semd_PTR allocSemd() {
 	/* check if there are free semd_t on the
 	free list by checking for null */
 	if(semdFree_h == NULL) {
+		debugA(420);
+
 		return NULL;
 	} else {
 		/* asign the new semd_t from the head - since
@@ -330,7 +332,6 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 		} else {
 			/* no more free semd_t on the free list - out work
 			here is done, so mark the operation as an unsuccessful one */
-			debugA(420);
 			return TRUE;
 		}
 	}
