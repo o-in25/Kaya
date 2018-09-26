@@ -201,13 +201,10 @@ void initASL() {
 	dummy nodes */
 	static semd_t semdTable[(MAXPROC + 2)];
 	/* for each semd_t in the semd_t free list,
-	itialize the semd_t at i to be null - by
-	calling mkEmptySemd */
+	itialize the semd_t at i to be freed */
 	int i;
 	for (i = 0; i < MAXPROC + 2; i++) {
 		/* make each semd_t to be empty */
-		semdTable[i] = mkEmptySemd();
-		/* free it */
 		freeSemd(&(semdTable[i]));
 	}
 	/* here, the semd_t edge (dummy) nodes to ensure
@@ -218,8 +215,10 @@ void initASL() {
 	will be the largest possible unsigned interger value -
 	to ensure when travsering the semd_t asl, will never
 	return null - indicating the edge of the list */
-	semd_PTR minSemd = mkEdgeSemd(0);
-	semd_PTR maxSemd = mkEdgeSemd(MAXINT);
+	int MIN = 0;
+	int MAX = MAXINT;
+	semd_PTR minSemd = mkEdgeSemd(&(MIN));
+	semd_PTR maxSemd = mkEdgeSemd(&(MAX));
 	/* send the edges */
 	minSemd->s_next = NULL;
 	maxSemd->s_next = NULL;
