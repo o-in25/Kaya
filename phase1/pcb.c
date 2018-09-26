@@ -446,8 +446,8 @@ pcb_PTR removeChild(pcb_PTR p) {
 			childPcb->p_prnt = NULL;
 			/* clean the pcb_t */
 			cleanChild(childPcb);
-			return childPcb;
 		}
+		return childPcb;
 	}
 }
 
