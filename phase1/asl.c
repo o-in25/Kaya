@@ -52,7 +52,7 @@ semd_PTR findSemd(int* semAdd) {
 	the first semd_t will be a dummy node */
 	/* while the semd_h address is less than the
 	specified integer address */
-	while(currentSemd->s_next->s_semAdd < semAdd) {
+	while(semAdd > currentSemd->s_next->s_semAdd ) {
 		debugA(420);
 
 		/* the findSemd task will now search the semd_t free
