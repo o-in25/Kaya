@@ -48,16 +48,14 @@ void debugB(int b) {
 * exit conditions
 */
 static semd_PTR findSemd(int* semAdd) {
-	debugA((int)*semAdd);
 	/* retrieve the head of the list */
 	semd_PTR currentSemd = semd_h;
-	debugB((int)currentSemd);
 
 	/* IMPORTANT! the first semd_t must be skipped since
 	the first semd_t will be a dummy node */
 	/* while the semd_h address is less than the
 	specified integer address */
-	while((currentSemd->s_prev != NULL) && (semAdd > currentSemd->s_prev->s_semAdd)) {
+	while((semAdd) > (currentSemd->s_next->s_semAdd)) {
 
 		/* the findSemd task will now search the semd_t free
 		list via the subsequent semd_t s_next field to
@@ -66,7 +64,7 @@ static semd_PTR findSemd(int* semAdd) {
 		the end as MAXINT where MAXINT is the largest possible
 		integer, the exit condition is always met, since the
 		next semd_t must be < MAXINT */
-		currentSemd = currentSemd->s_prev;
+		currentSemd = currentSemd->s_next;
 		/* the loop hasnt jumped, assign to the next value
 		in the linked list - as done above */
 	}
@@ -164,24 +162,24 @@ semd_PTR allocSemd() {
 	free list by checking for null */
 	if(semdFree_h == NULL) {
 		return NULL;
-	} else {
-		/* asign the new semd_t from the head - since
-		it is not null */
-		semd_PTR openSemd = semdFree_h;
-		if(semdFree_h->s_next == NULL) {
-			/* the semd_h does not have a next - it
-			is the last final one */
-			semdFree_h = NULL;
-		} else {
-			semdFree_h = semdFree_h->s_next;
-		}
-		/* clean the semd so it can be fresh */
-		openSemd->s_procQ = NULL;
-		openSemd->s_next = NULL;
-		openSemd->s_semAdd = NULL;
-		/* returned the new, cleaned semd_t */
-		return openSemd;
 	}
+	/* else */
+	/* asign the new semd_t from the head - since
+	it is not null */
+	semd_PTR openSemd = semdFree_h;
+	if(semdFree_h->s_next == NULL) {
+		/* the semd_h does not have a next - it
+		is the last final one */
+		semdFree_h = NULL;
+	} else {
+		semdFree_h = semdFree_h->s_next;
+	}
+	/* clean the semd so it can be fresh */
+	openSemd->s_procQ = NULL;
+	openSemd->s_next = NULL;
+	openSemd->s_semAdd = NULL;
+	/* returned the new, cleaned semd_t */
+	return openSemd;
 }
 
 /*
@@ -255,19 +253,18 @@ void initASL() {
 	return null - indicating the edge of the list */
 
 	/* two extra nodes placed as dummies on the semaphore list */
-/* initialize the active array with 2 dummy nodes */
-semd_h = &(semdTable[MAXPROC + 1]);
-semd_h -> s_next = NULL;
-/* last node in active list */
-semd_h -> s_semAdd = (int*)MAXINT;
-semd_h -> s_procQ = NULL;
+	/* initialize the active array with 2 dummy nodes */
+	semd_h = &(semdTable[MAXPROC + 1]);
+	semd_h -> s_next = NULL;
+	/* last node in active list */
+	semd_h -> s_semAdd = (int*)MAXINT;
+	semd_h -> s_procQ = NULL;
 
-(semdTable[MAXPROC]).s_next = semd_h;
-semd_h = &(semdTable[MAXPROC]);
-semd_h -> s_semAdd = 0; /* frist node in active list */
-semd_h -> s_procQ = NULL;
+	(semdTable[MAXPROC]).s_next = semd_h;
+	semd_h = &(semdTable[MAXPROC]);
+	semd_h -> s_semAdd = 0;
+	semd_h -> s_procQ = NULL;
 }
-
 /*
 * Function: insert the pcb_t provided as an a
 * argument to the tail of that pcb_t process
@@ -303,48 +300,46 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 		/* since this operation is successful -i.e. the
 		entry is NOT blocked, return false to indicate this */
 		return FALSE;
-	} else {
-		/* there are free semd_t on the free list because
-		the function did not return null - the sign of no remaining
-		pcb_t, so add one - the open semd_t */
-		semd_PTR openSemd = allocSemd();
-		/* this is the harder of the two cases; here, the semd_t
-		address does NOT match the address passed as an argument;
-		two things must be considered; first, there is a possibility
-		that the semd_t free list is empty - meaning this operation
-		could not be completed - yielding false; should, this
-		not be the case - as in, there IS a free and ready semd_t in
-		the free list, allocate it and indicate the operation is successful
-		with a false value */
-		if(openSemd == NULL) {
-			/* no more free semd_t on the free list - out work
-			here is done, so mark the operation as an unsuccessful one */
-			return TRUE;
-		} else {
-			/* arrange the new semd_t so that is in the appropriate place in
-			the semd_t free list */
-			openSemd->s_next = locSemd->s_next;
-			locSemd->s_next = openSemd;
-			/* pointers rearranged;
-			asign its necessary fields to function */
-			openSemd->s_semAdd = semAdd;
-			openSemd->s_procQ = mkEmptyProcQ();
-			/* everything is all set - insert the newly added
-			pcb_t process queue into its corresponding process queue -
-			but with an address since insertProcQ takes a pointer
-			as an argument */
-			insertProcQ(&(openSemd->s_procQ), p);
-			/* give the pcb_t its corresponding addresse */
-			/* give the new semd_t its new address */
-			openSemd->s_semAdd = semAdd;
-			/* give the pcb_t its corresponding addresse */
-			p->p_semAdd = semAdd;
-			/* the function was able to succesfully allocate a new
-			semd_t and asign the proccess queue in the field of the
-			pcb_t - signify this successful operation */
-			return FALSE;
-		}
 	}
+	/* there are free semd_t on the free list because
+	the function did not return null - the sign of no remaining
+	pcb_t, so add one - the open semd_t */
+	semd_PTR openSemd = allocSemd();
+	/* this is the harder of the two cases; here, the semd_t
+	address does NOT match the address passed as an argument;
+	two things must be considered; first, there is a possibility
+	that the semd_t free list is empty - meaning this operation
+	could not be completed - yielding false; should, this
+	not be the case - as in, there IS a free and ready semd_t in
+	the free list, allocate it and indicate the operation is successful
+	with a false value */
+	if(openSemd == NULL) {
+		/* no more free semd_t on the free list - out work
+		here is done, so mark the operation as an unsuccessful one */
+		return TRUE;
+	}
+	/* arrange the new semd_t so that is in the appropriate place in
+	the semd_t free list */
+	openSemd->s_next = locSemd->s_next;
+	locSemd->s_next = openSemd;
+	/* pointers rearranged;
+	asign its necessary fields to function */
+	openSemd->s_semAdd = semAdd;
+	openSemd->s_procQ = mkEmptyProcQ();
+	/* everything is all set - insert the newly added
+	pcb_t process queue into its corresponding process queue -
+	but with an address since insertProcQ takes a pointer
+	as an argument */
+	insertProcQ(&(openSemd->s_procQ), p);
+	/* give the pcb_t its corresponding addresse */
+	/* give the new semd_t its new address */
+	openSemd->s_semAdd = semAdd;
+	/* give the pcb_t its corresponding addresse */
+	p->p_semAdd = semAdd;
+	/* the function was able to succesfully allocate a new
+	semd_t and asign the proccess queue in the field of the
+	pcb_t - signify this successful operation */
+	return FALSE;
 }
 
 /*
