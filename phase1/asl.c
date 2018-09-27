@@ -151,8 +151,6 @@ semd_PTR allocSemd() {
 	/* check if there are free semd_t on the
 	free list by checking for null */
 	if(semdFree_h == NULL) {
-		debugA(420);
-
 		return NULL;
 	} else {
 		/* asign the new semd_t from the head - since
@@ -305,6 +303,7 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 		if(openSemd == NULL) {
 			/* no more free semd_t on the free list - out work
 			here is done, so mark the operation as an unsuccessful one */
+			debugA(420);
 			return TRUE;
 		} else {
 			/* arrange the new semd_t so that is in the appropriate place in
