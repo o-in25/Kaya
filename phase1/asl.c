@@ -229,7 +229,7 @@ void initASL() {
 	/* for each semd_t in the semd_t free list,
 	itialize the semd_t at i to be freed */
 	int i;
-	for (i = 0; i < MAXPROC + 2; i++) {
+	for (i = 0; i < MAXPROC; i++) {
 		/* make each semd_t to be empty */
 		freeSemd(&(semdTable[i]));
 	}
@@ -242,16 +242,18 @@ void initASL() {
 	to ensure when travsering the semd_t asl, will never
 	return null - indicating the edge of the list */
 
-	semd_PTR minSemd = NULL;
-	semd_PTR maxSemd = NULL;
-	minSemd = mkLhsEdgeSemd();
- 	maxSemd = mkRhsEdgeSemd();
-	/* send the edges */
-	minSemd->s_next = NULL;
-	maxSemd->s_next = NULL;
-	/* now make the head of the semd_t asl to be the first
-	placeholder semd_t */
-	semdFree_h = minSemd;
+	/* two extra nodes placed as dummies on the semaphore list */
+/* initialize the active array with 2 dummy nodes */
+semd_h = &(semdTable[MAXPROC + 1]);
+semd_h -> s_next = NULL;
+/* last node in active list */
+semd_h -> s_semAdd = (int*)MAX_INT;
+semd_h -> s_procQ = NULL;
+
+(semdTable[MAXPROC]).s_next = semd_h;
+semd_h = &(semdTable[MAXPROC]);
+semd_h -> s_semAdd = 0; /* frist node in active list */
+semd_h -> s_procQ = NULL;
 }
 
 /*
@@ -305,7 +307,6 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 		if(openSemd == NULL) {
 			/* no more free semd_t on the free list - out work
 			here is done, so mark the operation as an unsuccessful one */
-			debugA(420);
 			return TRUE;
 		} else {
 			/* arrange the new semd_t so that is in the appropriate place in
