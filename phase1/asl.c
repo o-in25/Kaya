@@ -302,11 +302,11 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 		not be the case - as in, there IS a free and ready semd_t in
 		the free list, allocate it and indicate the operation is successful
 		with a false value */
-		if(openSemd != NULL) {
-			/* give the new semd_t its new address */
-			openSemd->s_semAdd = semAdd;
-			/* give the pcb_t its corresponding addresse */
-			p->p_semAdd = openSemd->s_semAdd;
+		if(openSemd == NULL) {
+			/* no more free semd_t on the free list - out work
+			here is done, so mark the operation as an unsuccessful one */
+			return TRUE;
+		} else {
 			/* arrange the new semd_t so that is in the appropriate place in
 			the semd_t free list */
 			openSemd->s_next = locSemd->s_next;
@@ -319,20 +319,16 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 			pcb_t process queue into its corresponding process queue -
 			but with an address since insertProcQ takes a pointer
 			as an argument */
-
 			insertProcQ(&(openSemd->s_procQ), p);
 			/* give the pcb_t its corresponding addresse */
-
+			/* give the new semd_t its new address */
 			openSemd->s_semAdd = semAdd;
+			/* give the pcb_t its corresponding addresse */
 			p->p_semAdd = semAdd;
 			/* the function was able to succesfully allocate a new
 			semd_t and asign the proccess queue in the field of the
 			pcb_t - signify this successful operation */
 			return FALSE;
-		} else {
-			/* no more free semd_t on the free list - out work
-			here is done, so mark the operation as an unsuccessful one */
-			return TRUE;
 		}
 	}
 }
