@@ -422,9 +422,11 @@ pcb_PTR outBlocked(pcb_PTR p) {
 			rmvdPcb->p_semAdd = NULL;
 			return rmvdPcb;
 			/* return this cleaned pcb_t */
-		} else {
-		
 		}
+
+		/* error condition: there is no associated sempaphore desciptior
+		with the given address */
+		return NULL;
 	}
 /*
 * Function: returns a pointer to the pcb_t
