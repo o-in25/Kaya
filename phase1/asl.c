@@ -420,12 +420,13 @@ pcb_PTR outBlocked(pcb_PTR p) {
 			to disassociate that pcb_t with a semd_t. this is a simple manipulation of
 			the struct fields */
 			rmvdPcb->p_semAdd = NULL;
-			return rmvdPcb;
+			
 			/* return this cleaned pcb_t */
+		} else {
+			/* error condition: there is no associated sempaphore desciptior
+			with the given address */
+			return NULL;
 		}
-		/* error condition: there is no associated sempaphore desciptior
-		with the given address */
-		return NULL;
 	}
 /*
 * Function: returns a pointer to the pcb_t
