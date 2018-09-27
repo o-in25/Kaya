@@ -53,6 +53,8 @@ semd_PTR findSemd(int* semAdd) {
 	/* while the semd_h address is less than the
 	specified integer address */
 	while(currentSemd->s_next->s_semAdd < semAdd) {
+		debugA(420);
+
 		/* the findSemd task will now search the semd_t free
 		list via the subsequent semd_t s_next field to
 		search for the next free address location; since the
@@ -272,7 +274,6 @@ semd_h -> s_procQ = NULL;
 * the function returns null
 */
 int insertBlocked(int* semAdd, pcb_PTR p) {
-	debugA(420);
 	/* determine in the prospcetive insert is blocked */
 	/* find the location of the closest semd_t */
 	semd_PTR locSemd = findSemd(semAdd);
