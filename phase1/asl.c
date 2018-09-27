@@ -359,7 +359,7 @@ pcb_PTR removeBlocked(int* semAdd) {
 	the n-1th semd_t is returned and NOT the semd_t in search of,
 	grab the nth semd_t; this is NOT to be confused as an index, but
 	rather as the next address pointer; since there are dummy nodes */
-	if(locSemd->s_next->s_semAdd != semAdd || locSemd->s_next == NULL) {
+	if(locSemd->s_next->s_semAdd != semAdd) {
 		/* per function implementation definiton, return null */
 		return NULL;
 	} else {
