@@ -425,7 +425,7 @@ pcb_PTR outBlocked(pcb_PTR p) {
 		}
 		/* error condition: there is no associated sempaphore desciptior
 		with the given address */
-		return NULL
+		return NULL;
 	}
 /*
 * Function: returns a pointer to the pcb_t
