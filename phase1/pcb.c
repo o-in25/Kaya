@@ -28,10 +28,7 @@ HIDDEN pcb_PTR pcbFree_h;
 /************************************************************************************************************************/
 /******************************************** HELPER FUNCTIONS  *********************************************************/
 /************************************************************************************************************************/
-void debugA(int a) {
-	int i;
-	i = 0;
-}
+
 
 /*
 * Function: nulls out all of the fields for
@@ -211,7 +208,6 @@ int emptyProcQ(pcb_PTR tp) {
 * process queue tp
 */
 void insertProcQ(pcb_PTR *tp, pcb_PTR p) {
-	debugA(420);
 	/* in order to insert a given pcb_t into a
 	given process queue given by tp,
 	the queue must be verified for emptiness;
