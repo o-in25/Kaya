@@ -31,6 +31,11 @@ void debugA(int a) {
 	i = 0;
 }
 
+void debugB(int b) {
+	int i;
+	i = 0;
+}
+
 /************************************************************************************************************************/
 /******************************************** HELPER FUNCTIONS  *********************************************************/
 /************************************************************************************************************************/
@@ -43,8 +48,11 @@ void debugA(int a) {
 * exit conditions
 */
 static semd_PTR findSemd(int* semAdd) {
+	debugA((int)*semAdd);
 	/* retrieve the head of the list */
 	semd_PTR currentSemd = semd_h;
+	debugB((int)*currentSemd);
+
 	if(semAdd == NULL){
 		semAdd = (int*) MAXINT;
 	}
