@@ -51,7 +51,7 @@ static semd_PTR findSemd(int* semAdd) {
 	debugA((int)*semAdd);
 	/* retrieve the head of the list */
 	semd_PTR currentSemd = semd_h;
-	debugB((int)*currentSemd);
+	debugB((int)currentSemd);
 
 	if(semAdd == NULL){
 		semAdd = (int*) MAXINT;
@@ -180,7 +180,7 @@ semd_PTR allocSemd() {
 		/* clean the semd so it can be fresh */
 		openSemd->s_procQ = NULL;
 		openSemd->s_next = NULL;
-		openSemd->s_semAdd = mkEmptyProcQ();
+		openSemd->s_semAdd = NULL;
 		/* returned the new, cleaned semd_t */
 		return openSemd;
 	}
