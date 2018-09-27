@@ -247,7 +247,7 @@ void initASL() {
 semd_h = &(semdTable[MAXPROC + 1]);
 semd_h -> s_next = NULL;
 /* last node in active list */
-semd_h -> s_semAdd = (int*)MAX_INT;
+semd_h -> s_semAdd = (int*)MAXINT;
 semd_h -> s_procQ = NULL;
 
 (semdTable[MAXPROC]).s_next = semd_h;
