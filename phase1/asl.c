@@ -57,7 +57,7 @@ static semd_PTR findSemd(int* semAdd) {
 	the first semd_t will be a dummy node */
 	/* while the semd_h address is less than the
 	specified integer address */
-	while((currentSemd->s_prev != NULL) && (semAdd > currentSemd->s_prev->s_semAdd)) {
+	while((currentSemd->s_prev->s_next != NULL) && (semAdd > currentSemd->s_prev->s_next->s_semAdd)) {
 		debugA(420);
 
 		/* the findSemd task will now search the semd_t free
@@ -67,7 +67,7 @@ static semd_PTR findSemd(int* semAdd) {
 		the end as MAXINT where MAXINT is the largest possible
 		integer, the exit condition is always met, since the
 		next semd_t must be < MAXINT */
-		currentSemd = currentSemd->s_prev;
+		currentSemd = currentSemd->s_prev->s_next;
 		/* the loop hasnt jumped, assign to the next value
 		in the linked list - as done above */
 	}
