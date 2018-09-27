@@ -208,12 +208,13 @@ int emptyProcQ(pcb_PTR tp) {
 * process queue tp
 */
 void insertProcQ(pcb_PTR *tp, pcb_PTR p) {
+	debugA(420);
 	/* in order to insert a given pcb_t into a
 	given process queue given by tp,
 	the queue must be verified for emptiness;
 	if it is not empty, this becomes the facile
 	task of rearanging the pointers */
-	if (emptyProcQ((*tp))) {
+	if (emptyProcQ(*tp)) {
 		/* the queue is empty, so assign this
 		pcb_t to be circular by making itself
 		its previous and next element */
