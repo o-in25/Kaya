@@ -42,7 +42,7 @@ void debugA(int a) {
 * dummy semd_t on the list, there are no erronous
 * exit conditions
 */
-semd_PTR findSemd(int* semAdd) {
+static semd_PTR findSemd(int* semAdd) {
 	/* retrieve the head of the list */
 	semd_PTR currentSemd = semd_h;
 	if(semAdd == NULL){
@@ -52,7 +52,7 @@ semd_PTR findSemd(int* semAdd) {
 	the first semd_t will be a dummy node */
 	/* while the semd_h address is less than the
 	specified integer address */
-	while(semAdd > currentSemd->s_next->s_semAdd ) {
+	while((currentSemd->s_next != NULL) && (semAdd > currentSemd->s_next->s_semAdd)) {
 		debugA(420);
 
 		/* the findSemd task will now search the semd_t free
