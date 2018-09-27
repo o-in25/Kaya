@@ -350,7 +350,7 @@ pcb_PTR removeBlocked(int* semAdd) {
 	the n-1th semd_t is returned and NOT the semd_t in search of,
 	grab the nth semd_t; this is NOT to be confused as an index, but
 	rather as the next address pointer; since there are dummy nodes */
-	if(locSemd->s_next->s_semAdd != semAdd) {
+	if(locSemd->s_next->s_semAdd != semAdd || locSemd->s_next == NULL) {
 		/* per function implementation definiton, return null */
 		return NULL;
 	} else {
@@ -360,22 +360,20 @@ pcb_PTR removeBlocked(int* semAdd) {
 		empty - which means that the head of the process queue
 		was the only pcb_t on the queue; if the queue is not empty, then
 		the pcb_t is simply returned - since the semd_t is still in use */
-		if(!(emptyProcQ(headPcb))) {
-			/* we are all set - return the pcb_t since the semd_t is
-			still in use */
-			return headPcb;
-		} else {
+		if(emptyProcQ(locSemd->s_next->s_procQ)) {
 			/* we have "issues" - the semd_t is now free; since we have
 			finite i.e. MAXPROC available semd_t at any given time, it is time
 			to free this one up so it can be used later; IMORTANT! the
 			pointers must be rearanged to handle the n-th in progress
 			semd_t on the free list; since the locSemd is the previous
-			smed_t, asign its next to be the next, next semd_t */
-			locSemd->s_next = locSemd->s_next->s_next;
+			smed_t, asign its next to be the next, next semd_t. create
+			a temporary semd_t to assist in this process */
+			semd_PTR headSemd = locSemd->s_next;
+			locSemd->s_next = headSemd->s_next;
 			/* the semd_t is cleaned */
-			locSemd->s_next->s_next = NULL;
+			headSemd->s_next = NULL;
 			/* free it up */
-			freeSemd(locSemd->s_next);
+			freeSemd(headSemd);
 		}
 		/* return the head */
 		return headPcb;
