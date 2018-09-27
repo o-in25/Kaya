@@ -57,8 +57,7 @@ static semd_PTR findSemd(int* semAdd) {
 	the first semd_t will be a dummy node */
 	/* while the semd_h address is less than the
 	specified integer address */
-	while((currentSemd->s_prev->s_next != NULL) && (semAdd > currentSemd->s_prev->s_next->s_semAdd)) {
-		debugA(420);
+	while((currentSemd->s_prev != NULL) && (semAdd > currentSemd->s_prev->s_semAdd)) {
 
 		/* the findSemd task will now search the semd_t free
 		list via the subsequent semd_t s_next field to
@@ -67,7 +66,7 @@ static semd_PTR findSemd(int* semAdd) {
 		the end as MAXINT where MAXINT is the largest possible
 		integer, the exit condition is always met, since the
 		next semd_t must be < MAXINT */
-		currentSemd = currentSemd->s_prev->s_next;
+		currentSemd = currentSemd->s_prev;
 		/* the loop hasnt jumped, assign to the next value
 		in the linked list - as done above */
 	}
@@ -78,6 +77,7 @@ static semd_PTR findSemd(int* semAdd) {
 	provide further reusability and encapsulation */
 	return currentSemd;
 }
+
 
 /*
 * Function: allocates a new semd_t to be null;
@@ -132,9 +132,10 @@ void freeSemd(semd_PTR s) {
 		/* the semd_t free list is not empty, so simply
 		just asign the semd_t argument's next field equal
 		to the head of the semd_t free list */
+		s->s_next = semdFree_h;
+
 		semdFree_h = s;
 		/* asign then next semd_t */
-		s->s_next = semdFree_h;
 	}
 }
 

@@ -81,6 +81,7 @@ void MkHeadChild(pcb_PTR prnt, pcb_PTR p) {
 		if(emptyChild(prnt)) {
 			/* make null */
 			prnt->p_child = NULL;
+
 		} else {
 			/* the pcb_t child is the newly
 			added p */
@@ -355,7 +356,6 @@ pcb_PTR removeProcQ(pcb_PTR *tp) {
 			(*tp)->p_next = ((*tp)->p_next->p_next);
 		}
 		return rmvdPcb;
-
 	}
 }
 
