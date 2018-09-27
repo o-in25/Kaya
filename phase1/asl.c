@@ -423,9 +423,7 @@ pcb_PTR outBlocked(pcb_PTR p) {
 			return rmvdPcb;
 			/* return this cleaned pcb_t */
 		} else {
-			/* error condition: there is no associated sempaphore desciptior
-			with the given address */
-			return NULL;
+		
 		}
 	}
 /*
