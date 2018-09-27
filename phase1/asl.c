@@ -125,7 +125,7 @@ void freeSemd(semd_PTR s) {
 		to the head of the semd_t free list */
 		semdFree_h = s;
 		/* asign then next semd_t */
-		s->s_next = semdList_h;
+		s->s_next = semdFree_h;
 	}
 }
 
