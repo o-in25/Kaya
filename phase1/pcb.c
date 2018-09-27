@@ -220,16 +220,17 @@ void insertProcQ(pcb_PTR *tp, pcb_PTR p) {
 		its previous and next element */
 		p->p_next = p;
 		p->p_prev = p;
-	}
-	/* since the list is not empty, simply
-	reasign the pointers to account for the newly
-	added element */
-	p->p_next = (*tp)->p_next;
-	/* the newest element has the tail as its previous */
-	(*tp)->p_next = p;
-	(*tp)->p_next->p_prev = p;
-	p->p_prev = (*tp);
+	} else {
+		/* since the list is not empty, simply
+		reasign the pointers to account for the newly
+		added element */
+		p->p_next = (*tp)->p_next;
+		/* the newest element has the tail as its previous */
+		(*tp)->p_next = p;
+		(*tp)->p_next->p_prev = p;
+		p->p_prev = (*tp);
 
+	}
 	/* reasign the tp */
 	(*tp) = p;
 }
@@ -355,6 +356,7 @@ pcb_PTR removeProcQ(pcb_PTR *tp) {
 			(*tp)->p_next = ((*tp)->p_next->p_next);
 		}
 		return rmvdPcb;
+
 	}
 }
 
