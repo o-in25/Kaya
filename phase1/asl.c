@@ -112,19 +112,21 @@ void freeSemd(semd_PTR s) {
 	to test for the case that the semd_t free list
 	is null */
 	if(emptySemd(semdFree_h)) {
+		/* since there is no semd_t free list make the
+		supplied argument the head of list */
+		semdFree_h = s;
 		/* if the semd_t free list is empty,
 		then it has no next semd_t once the
 		new one is added; set this value */
-		mkFreeSemd(s);
+		semdFree_h->s_next = NULL;
 	} else {
 		/* the semd_t free list is not empty, so simply
 		just asign the semd_t argument's next field equal
 		to the head of the semd_t free list */
-		s->s_next = semdFree_h;
+		semdFree_h = s;
+		/* asign then next semd_t */
+		s->s_next = semdList_h;
 	}
-	/* in either case, the semd_t free list head is now the
-	newly added semd_t - empty list or not */
-	semdFree_h = s;
 }
 
 /*
