@@ -388,7 +388,7 @@ pcb_PTR removeBlocked(int* semAdd) {
 */
 pcb_PTR outBlocked(pcb_PTR p) {
 		/* find the location of the semaphore */
-		semd_PTR locSemd = findSemd(p->semAdd);
+		semd_PTR locSemd = findSemd(p->p_semAdd);
 		/* seach for a winner; this has to sub-cases;
 		if the semd_d does not exist, it cannot have a
 		returning pcb; if the removed pcb_t was the head -
@@ -422,52 +422,7 @@ pcb_PTR outBlocked(pcb_PTR p) {
 			with the given address */
 			return NULL;
 		}
-
-
-
-		/* for convenience, make a temproary
-		semd_t to be the pcb_t specified address */
-		int* pcbSemAdd = p->p_semAdd;
-		/* find the semd_t using the findSemd method
-		to search for the specified semd_t in search;
-		if this semd_t is not found, the work is done and the function
-		returns null */
-		semd_PTR locSemd = findSemd(pcbSemAdd);
-		/* seach for a winner; this has to sub-cases;
-		if the semd_d does not exist, it cannot have a
-		returning pcb; if the removed pcb_t was the head -
-		that is the LAST pcb_t, then the semaphore associacted
-		must be returned to the free list; again, s_next is called
-		by the implementation definition of findSemd */
-		if(locSemd->s_next->s_semAdd != pcbSemAdd) {
-			/* the semd_t exists on the semd_t free list;
-			time to remove it */
-			pcb_PTR rmvdPcb = outProcQ(&(locSemd->s_next->s_procQ), p);
-			/* the pcb_t is returned in this function; if the
-			pcb_t is null, it cannot be manipulated and is returned
-			as null; after this; */
-			if(rmvdPcb == NULL) {
-				/* despite having a matching semaphore, if the
-				* pcb_t is not on the process queue to begin with,
-				this is also returned as null */
-				return NULL;
-			} else {
-				/* good so far - last chceck: if the removed pcb_t was the
-				last element on the pcb_t queue; IMPORTANT! if it is, then
-				a free semd_t must be allocated since it is done */
-				if(emptyProcQ(locSemd->s_next->s_procQ)){
-					/* as before, since findSemd returns the semd_t BEHIND the
-					passed in semd_t, call for its next with s_next */
-					locSemd->s_next = locSemd->s_next->s_next;
-					/* clean the semd_t */
-					locSemd->s_next->s_next = NULL;
-					/* allocate it */
-					freeSemd(locSemd->s_next);
-				}
-			}
-		}
 	}
-
 /*
 * Function: returns a pointer to the pcb_t
 * that is at the HEAD of the pcb_t process queue
