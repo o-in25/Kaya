@@ -48,41 +48,35 @@ void debugB(int b) {
 * exit conditions
 */
 static semd_PTR findSemd(int* semAdd) {
-	if(semAdd == NULL) {
-		return NULL;
-	} else {
-		debugA((int)*semAdd);
-		/* retrieve the head of the list */
-		semd_PTR currentSemd = semd_h;
-		debugB((int)currentSemd);
-		if(currentSemd != NULL || currentSemd->s_next != NULL) {
+	debugA((int)*semAdd);
+	/* retrieve the head of the list */
+	semd_PTR currentSemd = semd_h;
+	debugB((int)currentSemd);
 
-					/* IMPORTANT! the first semd_t must be skipped since
-					the first semd_t will be a dummy node */
-					/* while the semd_h address is less than the
-					specified integer address */
-					while((currentSemd->s_next != NULL) && (semAdd > currentSemd->s_next->s_semAdd)) {
-						debugA(420);
+	/* IMPORTANT! the first semd_t must be skipped since
+	the first semd_t will be a dummy node */
+	/* while the semd_h address is less than the
+	specified integer address */
+	while((currentSemd->s_prev != NULL) && (semAdd > currentSemd->s_prev->s_semAdd)) {
+		debugA(420);
 
-						/* the findSemd task will now search the semd_t free
-						list via the subsequent semd_t s_next field to
-						search for the next free address location; since the
-						list uses a dummy node at both the front as 0 and at
-						the end as MAXINT where MAXINT is the largest possible
-						integer, the exit condition is always met, since the
-						next semd_t must be < MAXINT */
-						currentSemd = currentSemd->s_next;
-						/* the loop hasnt jumped, assign to the next value
-						in the linked list - as done above */
-					}
-					/* IMPORTANT! return the found smed_t; since this function
-					returns the n-1th semd_t, the wrapper function that
-					calls this MUST call s_next on the returning semd_t,
-					otherwise the current semd_t will be returned to
-					provide further reusability and encapsulation */
-					return currentSemd;
-		}
+		/* the findSemd task will now search the semd_t free
+		list via the subsequent semd_t s_next field to
+		search for the next free address location; since the
+		list uses a dummy node at both the front as 0 and at
+		the end as MAXINT where MAXINT is the largest possible
+		integer, the exit condition is always met, since the
+		next semd_t must be < MAXINT */
+		currentSemd = currentSemd->s_prev;
+		/* the loop hasnt jumped, assign to the next value
+		in the linked list - as done above */
 	}
+	/* IMPORTANT! return the found smed_t; since this function
+	returns the n-1th semd_t, the wrapper function that
+	calls this MUST call s_next on the returning semd_t,
+	otherwise the current semd_t will be returned to
+	provide further reusability and encapsulation */
+	return currentSemd;
 }
 
 /*
