@@ -172,7 +172,7 @@ semd_PTR allocSemd() {
 		semdFree_h = semdFree_h->s_next;
 		openSemd->s_next = NULL;
 	}
-	debug(300);
+	debugA(300);
 	openSemd->s_next = NULL;
 	/* clean the semd so it can be fresh */
 	openSemd->s_procQ = mkEmptyProcQ();
