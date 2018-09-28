@@ -345,10 +345,7 @@ pcb_PTR removeBlocked(int* semAdd) {
 	the n-1th semd_t is returned and NOT the semd_t in search of,
 	grab the nth semd_t; this is NOT to be confused as an index, but
 	rather as the next address pointer; since there are dummy nodes */
-	if(locSemd->s_next->s_semAdd != semAdd) {
-		/* per function implementation definiton, return null */
-		return NULL;
-	} else {
+	if(locSemd->s_next->s_semAdd == semAdd) {
 		/* the address has been found succesfully */
 		pcb_PTR headPcb = removeProcQ(&(locSemd->s_next->s_procQ));
 		/* now it is time to check if the pcb_t process queue is
@@ -364,15 +361,19 @@ pcb_PTR removeBlocked(int* semAdd) {
 			smed_t, asign its next to be the next, next semd_t. create
 			a temporary semd_t to assist in this process */
 			semd_PTR headSemd = locSemd->s_next;
-			locSemd->s_next = headSemd->s_next;
+			locSemd->s_next = headSemd->s_next->s_next;
 			/* the semd_t is cleaned */
 			headSemd->s_next = NULL;
 			/* free it up */
 			freeSemd(headSemd);
 		}
+		/* no longer has a semd_t address */
+		headPcb->p_semAdd = NULL;
 		/* return the head */
 		return headPcb;
 	}
+	/* per function implementation definiton, return null */
+	return NULL;
 }
 
 /*
