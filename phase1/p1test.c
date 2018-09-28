@@ -19,10 +19,7 @@
 #include "../e/pcb.e"
 #include "../e/asl.e"
 
-int debugA(int a) {
-	int i;
-	i = 0;
-}
+
 
 
 #define MAXPROC	20
@@ -274,8 +271,7 @@ void main() {
 
 	/* check if semaphore descriptors are returned to free list */
 	p = removeBlocked(&sem[11]);
-	debugA((p == NULL));
-	if (insertBlocked(&sem[11],p))
+	if(insertBlocked(&sem[11],p))
 		adderrbuf("removeBlocked: fails to return to free list   ");
 
 	if (insertBlocked(&onesem, procp[9]) == FALSE)

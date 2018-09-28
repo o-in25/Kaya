@@ -26,7 +26,10 @@ HIDDEN semd_PTR semdFree_h;
 /************************************************************************************************************************/
 /******************************************** DEBUG FUNCTIONS  *********************************************************/
 /************************************************************************************************************************/
-
+int debugA(int a) {
+	int i;
+	i = 0;
+}
 
 /************************************************************************************************************************/
 /******************************************** HELPER FUNCTIONS  *********************************************************/
@@ -42,7 +45,7 @@ HIDDEN semd_PTR semdFree_h;
 static semd_PTR findSemd(int* semAdd) {
 	/* retrieve the head of the list */
 	semd_PTR currentSemd = semd_h;
-	if(semAdd == NULL){
+	if(semAdd == NULL) {
 			semAdd = (int*) MAXINT;
 		}
 	/* IMPORTANT! the first semd_t must be skipped since
@@ -163,12 +166,13 @@ semd_PTR allocSemd() {
 	if(semdFree_h == NULL) {
 		return NULL;
 	}
-	if(semdFree_h->s_next == NULL){
+	if(semdFree_h->s_next == NULL) {
 			semdFree_h = NULL;
 	} else {
 		semdFree_h = semdFree_h->s_next;
 		openSemd->s_next = NULL;
 	}
+	debug(300);
 	openSemd->s_next = NULL;
 	/* clean the semd so it can be fresh */
 	openSemd->s_procQ = mkEmptyProcQ();
