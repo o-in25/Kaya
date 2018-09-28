@@ -153,6 +153,7 @@ semd_PTR cleanSemd(semd_PTR s) {
 semd_PTR allocSemd() {
 	/* check if there are free semd_t on the
 	free list by checking for null */
+	semd_PTR openSemd = semdFree_h;
 	if(semdFree_h == NULL) {
 		return NULL;
 	}
