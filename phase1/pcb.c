@@ -326,38 +326,36 @@ pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
 * there is no list
 */
 pcb_PTR removeProcQ(pcb_PTR *tp) {
+	pcb_PTR rmvdPcb = NULL;
 	/* first, consider the case in which the process queue is
 	empty */
 	if(emptyProcQ(*tp)) {
 		/* empty list */
 		return NULL;
-	} else {
-		pcb_PTR rmvdPcb = NULL;
-		/* next what must be considered are the cases for having the
-		tp be the only element in the list, in which
-		case, its pointers must be reasigned */
-		if((*tp)->p_next == (*tp)) {
-			/* tp is the last remaining */
-			/* get the return value - no reason to
-			call p_next - it is the head */
-			rmvdPcb = (*tp);
-			/* asign the next to be null, since
-			it was just removed */
-			(*tp) = mkEmptyProcQ();
-		} else {
-			/* the case where there is >1 elements in the tree;
-			this cam be tricky, as poimters get reasigned; first,
-			get the head of the list */
-			rmvdPcb = (*tp)->p_next;
-			/* here, reasign the the tp, so it is pointing
-			at the next item's next item */
-			(*tp)->p_next->p_next->p_prev = (*tp);
-			/* reasign the pt to be the next */
-			(*tp)->p_next = ((*tp)->p_next->p_next);
-		}
-		return rmvdPcb;
-
 	}
+	/* next what must be considered are the cases for having the
+	tp be the only element in the list, in which
+	case, its pointers must be reasigned */
+	 else if(((*tp)->p_next) == (*tp)) {
+		/* tp is the last remaining */
+		/* get the return value - no reason to
+		call p_next - it is the head */
+		rmvdPcb = (*tp);
+		/* asign the next to be null, since
+		it was just removed */
+		(*tp) = mkEmptyProcQ();
+		return rmvdPcb;
+	}
+	/* the case where there is >1 elements in the tree;
+	this cam be tricky, as poimters get reasigned; first,
+	get the head of the list */
+	rmvdPcb = (*tp)->p_next;
+	/* here, reasign the the tp, so it is pointing
+	at the next item's next item */
+	(*tp)->p_next->p_next->p_prev = (*tp);
+	/* reasign the pt to be the next */
+	(*tp)->p_next = ((*tp)->p_next->p_next);
+	return rmvdPcb;
 }
 
 
