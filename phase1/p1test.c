@@ -266,7 +266,7 @@ void main() {
 	}
 	addokbuf("insertBlocked test #2 started  \n");
 	for (i = 0; i < 10; i++) {
-		if(i == 1) {
+		if(i == 0) {
 
 			debugA(420);
 		}
