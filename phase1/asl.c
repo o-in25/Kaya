@@ -160,7 +160,7 @@ semd_PTR allocSemd() {
 		return NULL;
 	}
 	if(semdFree_h->s_next == NULL){
-			semdList_h = NULL;
+			semdFree_h = NULL;
 	} else {
 		semdFree_h = semdFree_h->s_next;
 		openSemd->s_next = NULL;
