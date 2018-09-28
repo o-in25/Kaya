@@ -267,9 +267,12 @@ void main() {
 	addokbuf("insertBlocked test #2 started  \n");
 	for (i = 0; i < 10; i++) {
 		procp[i] = allocPcb();
-		debugA(420);
-		if (insertBlocked(&sem[i], procp[i]))
+		if (insertBlocked(&sem[i], procp[i])) {
 			adderrbuf("insertBlocked(2): unexpected TRUE   ");
+		}
+		if(i == 9) {
+			debugA(420);
+		}
 	}
 
 	/* check if semaphore descriptors are returned to free list */
