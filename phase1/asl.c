@@ -139,11 +139,15 @@ void freeSemd(semd_PTR s) {
 * free list with defined values
 */
 semd_PTR cleanSemd(semd_PTR s) {
-	/* clean up */
-	s->s_procQ = NULL;
-	s->s_next = NULL;
-	s->s_semAdd = NULL;
-	return s;
+	if(s == NULL) {
+		return NULL;
+	} else {
+		/* clean up */
+		s->s_procQ = NULL;
+		s->s_next = NULL;
+		s->s_semAdd = NULL;
+		return s;
+	}
 }
 
 /*
