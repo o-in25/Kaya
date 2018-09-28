@@ -117,7 +117,7 @@ void freePcb(pcb_PTR p) {
 	/* insert into a specified process queue - that is,
 	the free list; use the predefined encapsulated function
 	to achieve this */
-	insertProcQ(&pcbFree_h, p);
+	insertProcQ(&(pcbFree_h), p);
 }
 
 

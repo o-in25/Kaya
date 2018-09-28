@@ -169,6 +169,7 @@ semd_PTR allocSemd() {
 		semdFree_h = semdFree_h->s_next;
 		openSemd->s_next = NULL;
 	}
+	openSemd->s_next = NULL;
 	/* clean the semd so it can be fresh */
 	openSemd->s_procQ = mkEmptyProcQ();
 	openSemd->s_semAdd = NULL;
@@ -423,7 +424,6 @@ pcb_PTR outBlocked(pcb_PTR p) {
 			return rmvdPcb;
 			/* return this cleaned pcb_t */
 		}
-
 		/* error condition: there is no associated sempaphore desciptior
 		with the given address */
 		return NULL;
