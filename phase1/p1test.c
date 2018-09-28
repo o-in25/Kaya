@@ -19,6 +19,10 @@
 #include "../e/pcb.e"
 #include "../e/asl.e"
 
+int debugA(int a) {
+	int i;
+	i = 0;
+}
 
 
 #define MAXPROC	20
@@ -263,6 +267,7 @@ void main() {
 	addokbuf("insertBlocked test #2 started  \n");
 	for (i = 0; i < 10; i++) {
 		procp[i] = allocPcb();
+		debugA(420);
 		if (insertBlocked(&sem[i], procp[i]))
 			adderrbuf("insertBlocked(2): unexpected TRUE   ");
 	}
