@@ -159,13 +159,12 @@ semd_PTR allocSemd() {
 	if(semdFree_h == NULL) {
 		return NULL;
 	}
-	if(semdList_h->s_next == NULL){
+	if(semdFree_h->s_next == NULL){
 			semdList_h = NULL;
 	} else {
 		semdFree_h = semdFree_h->s_next;
 		openSemd->s_next = NULL;
 	}
-	semdFree_h = semdFree_h->s_next;
 	/* clean the semd so it can be fresh */
 	openSemd->s_procQ = mkEmptyProcQ();
 	openSemd->s_semAdd = NULL;
