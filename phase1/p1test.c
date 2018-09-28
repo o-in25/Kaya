@@ -19,10 +19,6 @@
 #include "../e/pcb.e"
 #include "../e/asl.e"
 
-int debugA(int a) {
-	int i;
-	i = 0;
-}
 
 
 #define MAXPROC	20
@@ -269,9 +265,6 @@ void main() {
 		procp[i] = allocPcb();
 		if (insertBlocked(&sem[i], procp[i]))
 			adderrbuf("insertBlocked(2): unexpected TRUE   ");
-		if(i == 0) {
-			debugA(420);
-		}
 	}
 
 	/* check if semaphore descriptors are returned to free list */

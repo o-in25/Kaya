@@ -107,6 +107,7 @@ void mkFreeSemd(semd_PTR s) {
 * to be null; if its not empty
 */
 void freeSemd(semd_PTR s) {
+
 	/* call the encapsulated emptySemd function
 	to test for the case that the semd_t free list
 	is null */
@@ -154,17 +155,6 @@ semd_PTR allocSemd() {
 	free list by checking for null */
 	if(semdFree_h == NULL) {
 		return NULL;
-	}
-	/* else */
-	/* asign the new semd_t from the head - since
-	it is not null */
-	semd_PTR openSemd = semdFree_h;
-	if(semdFree_h->s_next == NULL) {
-		/* the semd_h does not have a next - it
-		is the last final one */
-		semdFree_h = NULL;
-	} else {
-		semdFree_h = semdFree_h->s_next;
 	}
 	semdFree_h = semdFree_h->s_next;
 	/* clean the semd so it can be fresh */
