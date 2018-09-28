@@ -49,7 +49,7 @@ static semd_PTR findSemd(int* semAdd) {
 	the first semd_t will be a dummy node */
 	/* while the semd_h address is less than the
 	specified integer address */
-	while((semAdd) > (currentSemd->s_next->s_semAdd)) {
+	while((semAdd) > (currentSemd->s_next->s_semAdd) && (currentSemd->s_next)	 != NULL) {
 
 		/* the findSemd task will now search the semd_t free
 		list via the subsequent semd_t s_next field to
