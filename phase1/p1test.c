@@ -273,9 +273,8 @@ void main() {
 	}
 
 	/* check if semaphore descriptors are returned to free list */
-	debugA(420);
-
 	p = removeBlocked(&sem[11]);
+	debugA(250);
 	if (insertBlocked(&sem[11],p))
 		adderrbuf("removeBlocked: fails to return to free list   ");
 
