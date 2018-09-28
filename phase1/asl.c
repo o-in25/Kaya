@@ -174,8 +174,9 @@ semd_PTR allocSemd() {
 	} else {
 		semdFree_h = semdFree_h->s_next;
 	}
+	semdFree_h = semdFree_h->s_next;
 	/* clean the semd so it can be fresh */
-	openSemd->s_procQ = NULL;
+	openSemd->s_procQ = mkEmptyProcQ();
 	openSemd->s_next = NULL;
 	openSemd->s_semAdd = NULL;
 	/* returned the new, cleaned semd_t */
