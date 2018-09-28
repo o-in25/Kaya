@@ -42,7 +42,9 @@ HIDDEN semd_PTR semdFree_h;
 static semd_PTR findSemd(int* semAdd) {
 	/* retrieve the head of the list */
 	semd_PTR currentSemd = semd_h;
-
+	if(semAdd == NULL){
+			semAdd = (int*) MAX_INT;
+		}
 	/* IMPORTANT! the first semd_t must be skipped since
 	the first semd_t will be a dummy node */
 	/* while the semd_h address is less than the
