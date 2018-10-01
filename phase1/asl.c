@@ -215,8 +215,8 @@ semd_PTR allocSemd() {
 	semdFree_h = semdFree_h->s_next;
 	addokbuf("Set the next....");
 	pcb_PTR temp = mkEmptyProcQ();
-	if(temp != NULL) {
-		addokbuf("IT DONT BE NULL MUTHAFUCKA!!....");
+	if(temp == NULL) {
+		addokbuf("IT BE NULL MUTHAFUCKA!!....");
 	}
 	openSemd->s_procQ = temp;
 	addokbuf("No more procq....");
