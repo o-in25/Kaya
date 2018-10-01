@@ -267,7 +267,7 @@ void main() {
 	addokbuf("insertBlocked test #2 started  \n");
 	for (i = 0; i < 10; i++) {
 		procp[i] = allocPcb();
-		debugA(420);
+		debugA(i);
 		if (insertBlocked(&sem[i], procp[i])) {
 			adderrbuf("insertBlocked(2): unexpected TRUE   ");
 		}
