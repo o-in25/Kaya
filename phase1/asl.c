@@ -303,7 +303,7 @@ void initASL() {
 
 
 	semdMin->s_next = semdMax;
- 	semdFree_h = semdMin;
+ 	semd_h = semdMin;
 }
 /*
 * Function: insert the pcb_t provided as an a
