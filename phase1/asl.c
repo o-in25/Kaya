@@ -76,7 +76,7 @@ static semd_PTR findSemd(int* semAdd) {
 	the first semd_t will be a dummy node */
 	/* while the semd_h address is less than the
 	specified integer address */
-	while((semAdd) > (currentSemd->s_next->s_semAdd) && (currentSemd->s_next)	 != NULL) {
+	while(semAdd > currentSemd->s_next->s_semAdd) {
 
 		/* the findSemd task will now search the semd_t free
 		list via the subsequent semd_t s_next field to
@@ -423,7 +423,7 @@ pcb_PTR removeBlocked(int* semAdd) {
 			smed_t, asign its next to be the next, next semd_t. create
 			a temporary semd_t to assist in this process */
 			semd_PTR headSemd = locSemd->s_next;
-			locSemd->s_next = headSemd->s_next->s_next;
+			locSemd->s_next = headSemd->s_next;
 			/* the semd_t is cleaned */
 			/* free it up */
 			freeSemd(headSemd);
