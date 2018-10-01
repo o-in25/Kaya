@@ -372,7 +372,6 @@ pcb_PTR removeBlocked(int* semAdd) {
 			semd_PTR headSemd = locSemd->s_next;
 			locSemd->s_next = headSemd->s_next->s_next;
 			/* the semd_t is cleaned */
-			headSemd->s_next = NULL;
 			/* free it up */
 			freeSemd(headSemd);
 		}
