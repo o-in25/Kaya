@@ -208,11 +208,12 @@ semd_PTR allocSemd() {
 	*/
 	semd_PTR openSemd;
 	if(semdFree_h == NULL) {
-		addokbuf("IT BE NULL AS FUCK SON");
 		return NULL;
 	}
 	openSemd = semdFree_h;
 	semdFree_h = semdFree_h->s_next;
+	addokbuf("SIKE");
+
 	openSemd->s_procQ = mkEmptyProcQ();
 	openSemd->s_semAdd = 0;
 	openSemd->s_next = NULL;
