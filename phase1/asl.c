@@ -304,12 +304,15 @@ void initASL() {
 int insertBlocked(int* semAdd, pcb_PTR p) {
 	/* determine in the prospcetive insert is blocked */
 	/* find the location of the closest semd_t */
+	addokbuf("b");
 	semd_PTR locSemd = findSemd(semAdd);
+	addokbuf("c");
 	debugA(200);
 	/* with the retrieved location, find if it matches
 	the desciption - if it does not, this must be taken
 	care of later in the function */
 	if((locSemd->s_next->s_semAdd) == semAdd) {
+		addokbuf("d");
 		/* the located semd_t matches the semaphore
 		address - the easier case */
 		/* asign the s_semAdd - per the function
@@ -322,7 +325,9 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 		the findSemd function, the NEXT semd_h must be
 		provided since that helper function does not
 		encapsulate that functionality */
+		addokbuf("e");
 		insertProcQ(&(locSemd->s_next->s_procQ), p);
+		addokbuf("f");
 		/* since this operation is successful -i.e. the
 		entry is NOT blocked, return false to indicate this */
 		return FALSE;
@@ -331,6 +336,7 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 	the function did not return null - the sign of no remaining
 	pcb_t, so add one - the open semd_t */
 	debugC(300);
+	addokbuf("g");
 	semd_PTR openSemd = allocSemd();
 	debugF(600);
 	/* this is the harder of the two cases; here, the semd_t
@@ -350,6 +356,7 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 	the semd_t free list */
 	openSemd->s_next = locSemd->s_next;
 	locSemd->s_next = openSemd;
+	addokbuf("h");
 	/* pointers rearranged;
 	asign its necessary fields to function */
 	openSemd->s_semAdd = semAdd;
@@ -358,6 +365,7 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 	pcb_t process queue into its corresponding process queue -
 	but with an address since insertProcQ takes a pointer
 	as an argument */
+	addokbuf("i");
 	insertProcQ(&(openSemd->s_procQ), p);
 	/* give the pcb_t its corresponding addresse */
 	/* give the new semd_t its new address */
