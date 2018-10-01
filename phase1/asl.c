@@ -214,12 +214,16 @@ semd_PTR allocSemd() {
 	addokbuf("Semfree....");
 	semdFree_h = semdFree_h->s_next;
 	addokbuf("Set the next....");
-	openSemd->s_procQ = NULL;
-	addokbuf("No more procq....");
-
-	openSemd->s_semAdd = NULL;
 	addokbuf("No more address....");
+	openSemd->s_semAdd = NULL;
+	addokbuf("No more procq....");
 	openSemd->s_next = NULL;
+	addokbuf("No more procq....");
+	if(openSemd->s_procQ != NULL) {
+		addokbuf("THE MUTHAFUCKIN SEMD HAS A FUCKIN PROCQ....");
+	}
+	openSemd->s_procQ = mkEmptyProcQ();
+
 	addokbuf("DONE!");
 	return openSemd;
 }
