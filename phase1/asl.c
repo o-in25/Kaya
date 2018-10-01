@@ -290,16 +290,20 @@ void initASL() {
 
 	/* two extra nodes placed as dummies on the semaphore list */
 	/* initialize the active array with 2 dummy nodes */
-	semd_h = &(semdTable[MAXPROC + 1]);
-	semd_h -> s_next = NULL;
-	/* last node in active list */
-	semd_h -> s_semAdd = (int*)MAXINT;
-	semd_h -> s_procQ = NULL;
+	semd_PTR semdMin;
+	semd_PTR semdMax;
 
-	(semdTable[MAXPROC]).s_next = semd_h;
-	semd_h = &(semdTable[MAXPROC]);
-	semd_h -> s_semAdd = 0;
-	semd_h -> s_procQ = NULL;
+	semdMin = &(semdTable[MAXPROC]);
+	semdMax = &(semdTable[MAXPROC + 1]);
+
+	semdMax->s_semAdd = MAXINT;
+	semdMin->s_semAdd = 0;
+	semdMax->s_procQ = mkEmptyProcQ();
+	semdMin->s_procQ = mkEmptyProcQ();
+
+	
+	semdMin->s_next = semdMax;
+	semdMin = semdFree_h;
 }
 /*
 * Function: insert the pcb_t provided as an a
