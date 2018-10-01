@@ -215,6 +215,7 @@ semd_PTR allocSemd() {
 	openSemd->s_procQ = mkEmptyProcQ();
 	openSemd->s_semAdd = NULL;
 	openSemd->s_next = NULL;
+	addokbuf("DONE!");
 	return openSemd;
 }
 
