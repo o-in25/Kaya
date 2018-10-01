@@ -301,9 +301,9 @@ void initASL() {
 	semdMax->s_procQ = mkEmptyProcQ();
 	semdMin->s_procQ = mkEmptyProcQ();
 
-	
+
 	semdMin->s_next = semdMax;
-	semdMin = semdFree_h;
+ 	semdFree_h = semdMin;
 }
 /*
 * Function: insert the pcb_t provided as an a
