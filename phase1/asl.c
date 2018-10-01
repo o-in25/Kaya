@@ -214,15 +214,15 @@ semd_PTR allocSemd() {
 	addokbuf("Semfree....");
 	semdFree_h = semdFree_h->s_next;
 	addokbuf("Set the next....");
+	addokbuf("No more procq....");
+	if(openSemd->s_procQ != NULL) {
+		addokbuf("THE MUTHAFUCKIN SEMD HAS A FUCKIN PROC....");
+	}
+	openSemd->s_procQ = mkEmptyProcQ();
 	addokbuf("No more address....");
 	openSemd->s_semAdd = NULL;
 	addokbuf("No more procq....");
 	openSemd->s_next = NULL;
-	addokbuf("No more procq....");
-	if(openSemd->s_procQ != NULL) {
-		addokbuf("THE MUTHAFUCKIN SEMD HAS A FUCKIN PROCQ....");
-	}
-	openSemd->s_procQ = mkEmptyProcQ();
 
 	addokbuf("DONE!");
 	return openSemd;
@@ -304,7 +304,7 @@ void initASL() {
 	semd_PTR semdMax;
 
 	semdMin = &(semdTable[MAXPROC]);
-	semdMax = &(semdTable[MAXPROC + 1]);
+	semdMax = &(semdTable[(MAXPROC + 1)]);
 
 	semdMax->s_semAdd = MAXINT;
 	semdMin->s_semAdd = 0;
