@@ -26,8 +26,30 @@ HIDDEN semd_PTR semdFree_h;
 /************************************************************************************************************************/
 /******************************************** DEBUG FUNCTIONS  *********************************************************/
 /************************************************************************************************************************/
+int debugB(int a) {
+	int i;
+	i = 0;
+}
 
+int debugC(int a) {
+	int i;
+	i = 0;
+}
 
+int debugD(int a) {
+	int i;
+	i = 0;
+}
+
+int debugE(int a) {
+	int i;
+	i = 0;
+}
+
+int debugF(int a) {
+	int i;
+	i = 0;
+}
 /************************************************************************************************************************/
 /******************************************** HELPER FUNCTIONS  *********************************************************/
 /************************************************************************************************************************/
@@ -67,6 +89,7 @@ static semd_PTR findSemd(int* semAdd) {
 	calls this MUST call s_next on the returning semd_t,
 	otherwise the current semd_t will be returned to
 	provide further reusability and encapsulation */
+	debugB(100);
 	return currentSemd;
 }
 
@@ -161,6 +184,7 @@ semd_PTR allocSemd() {
 	free list by checking for null */
 	semd_PTR openSemd = semdFree_h;
 	if(semdFree_h == NULL) {
+		debugE(500);
 		return NULL;
 	}
 	if(semdFree_h->s_next == NULL) {
@@ -174,6 +198,7 @@ semd_PTR allocSemd() {
 	openSemd->s_procQ = mkEmptyProcQ();
 	openSemd->s_semAdd = NULL;
 	/* returned the new, cleaned semd_t */
+	debugD(400);
 	return openSemd;
 }
 
@@ -275,6 +300,7 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 	/* determine in the prospcetive insert is blocked */
 	/* find the location of the closest semd_t */
 	semd_PTR locSemd = findSemd(semAdd);
+	debugA(200);
 	/* with the retrieved location, find if it matches
 	the desciption - if it does not, this must be taken
 	care of later in the function */
@@ -299,7 +325,9 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 	/* there are free semd_t on the free list because
 	the function did not return null - the sign of no remaining
 	pcb_t, so add one - the open semd_t */
+	debugC(300);
 	semd_PTR openSemd = allocSemd();
+	debugF(600);
 	/* this is the harder of the two cases; here, the semd_t
 	address does NOT match the address passed as an argument;
 	two things must be considered; first, there is a possibility
