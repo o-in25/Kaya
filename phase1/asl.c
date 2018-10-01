@@ -208,6 +208,7 @@ semd_PTR allocSemd() {
 	*/
 	semd_PTR openSemd;
 	if(semdFree_h == NULL) {
+		addokbuf("IT BE NULL AS FUCK SON");
 		return NULL;
 	}
 	openSemd = semdFree_h;
