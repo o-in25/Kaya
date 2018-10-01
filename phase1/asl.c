@@ -278,7 +278,7 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 	/* with the retrieved location, find if it matches
 	the desciption - if it does not, this must be taken
 	care of later in the function */
-	if(locSemd->s_next->s_semAdd == semAdd) {
+	if((locSemd->s_next->s_semAdd) == semAdd) {
 		/* the located semd_t matches the semaphore
 		address - the easier case */
 		/* asign the s_semAdd - per the function
