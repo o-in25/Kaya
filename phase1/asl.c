@@ -212,10 +212,8 @@ semd_PTR allocSemd() {
 	}
 	openSemd = semdFree_h;
 	semdFree_h = semdFree_h->s_next;
-	addokbuf("SIKE");
-
 	openSemd->s_procQ = mkEmptyProcQ();
-	openSemd->s_semAdd = 0;
+	openSemd->s_semAdd = NULL;
 	openSemd->s_next = NULL;
 	return openSemd;
 }
