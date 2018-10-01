@@ -19,7 +19,7 @@
 #include "../e/pcb.e"
 #include "../e/asl.e"
 
-int debugA(int a) {
+int debugZ(int a) {
 	int i;
 	i = 0;
 }
@@ -274,7 +274,7 @@ void main() {
 
 	/* check if semaphore descriptors are returned to free list */
 	p = removeBlocked(&sem[11]);
-	debugA(250);
+	debugZ(90);
 	if(insertBlocked(&sem[11],p))
 		adderrbuf("removeBlocked: fails to return to free list   ");
 
