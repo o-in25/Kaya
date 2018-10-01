@@ -338,6 +338,7 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 	debugC(300);
 	addokbuf("g");
 	semd_PTR openSemd = allocSemd();
+	addokbuf("1");
 	debugF(600);
 	/* this is the harder of the two cases; here, the semd_t
 	address does NOT match the address passed as an argument;
