@@ -217,7 +217,8 @@ semd_PTR allocSemd() {
 	if(openSemd->s_procQ != NULL) {
 		addokbuf("IT DONT BE NULL....");
 	}
-	openSemd->s_procQ = NULL;
+	pcb_PTR temp = mkEmptyProcQ();
+	openSemd->s_procQ = temp;
 	addokbuf("No more procq....");
 
 	openSemd->s_semAdd = NULL;
