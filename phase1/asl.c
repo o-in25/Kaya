@@ -186,7 +186,7 @@ semd_PTR cleanSemd(semd_PTR s) {
 */
 semd_PTR allocSemd() {
 	/* check if there are free semd_t on the
-	free list by checking for null */
+	free list by checking for null
 	semd_PTR openSemd = semdFree_h;
 	if(semdFree_h == NULL) {
 		debugE(500);
@@ -199,11 +199,22 @@ semd_PTR allocSemd() {
 		openSemd->s_next = NULL;
 	}
 	openSemd->s_next = NULL;
-	/* clean the semd so it can be fresh */
+	/* clean the semd so it can be fresh
 	openSemd->s_procQ = mkEmptyProcQ();
 	openSemd->s_semAdd = NULL;
-	/* returned the new, cleaned semd_t */
+	/* returned the new, cleaned semd_t
 	debugD(400);
+	return openSemd;
+	*/
+	semd_PTR openSemd;
+	if(semdFree_h == NULL) {
+		return NULL;
+	}
+	openSemd = semdFree_h;
+	semdFree_h = semdFree_h->s_next;
+	openSemd->s_procQ = mkEmptyProcQ();
+	openSemd->s_semAdd = 0;
+	openSemd->s_next = NULL;
 	return openSemd;
 }
 
