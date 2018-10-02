@@ -276,7 +276,7 @@ void initASL() {
  semdFreelist_ = NULL;
  /* insert MAXPROC nodes onto the free list */
 for(i=0;i<MAXPROC;++i){
- freeSEMD(&(semArr[i]));
+ freeSemd(&(semArr[i]));
 }
  /* two extra nodes placed as dummies on the semaphore list */
 /* initialize the active array with 2 dummy nodes */
