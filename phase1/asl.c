@@ -246,6 +246,7 @@ void initASL() {
 	semdAsl_h = &(semArr[MAXPROC]);
 	semdAsl_h -> s_semAdd = 0;
 	semdAsl_h -> s_procQ = NULL;
+	
 }
 
 
