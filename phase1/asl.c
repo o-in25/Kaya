@@ -99,36 +99,6 @@ static semd_PTR findSemd(int* semAdd) {
 
 
 /*
-* Function: allocates a new semd_t to be null;
-* this is isomporhpic to mkEmptyProcQ in pcb.c;
-* by allowing for a function to delegate the creation
-* of semd_t, its implementation can be changed universally
-*/
-semd_PTR mkEmptySemd() {
-	/* make a "new" semd_t */
-	return NULL;
-}
-
-/*
-* Function: evaluates if the semd_t is null or not;
-* this is employed for the sake of good encapsulation as
-* well as single responsobilities and reusability;
-*/
-int emptySemd(semd_PTR s) {
-	return (s == NULL);
-}
-
-/*
-* Function: makes the semd_t next field pointed
-* to by the function argument to be null; this
-* is helpful as to seperate allocation of responsobilities
-*/
-void mkFreeSemd(semd_PTR s) {
-	/* set to null */
-	s->s_next = NULL;
-}
-
-/*
 * Function: takes a semd_t and points it onto
 * the semd_t free list; if there is nothing on
 * the semd_t free list, a free list is "created"
@@ -136,10 +106,8 @@ void mkFreeSemd(semd_PTR s) {
 * to be null; if its not empty
 */
 void freeSemd(semd_PTR s) {
-
-	/* call the encapsulated emptySemd function
-	to test for the case that the semd_t free list
-	is null */
+	/* check if the free list is null - the first case in 
+	the options */
 	if(semdFl_h == NULL) {
 		/* since there is no semd_t free list make the
 		supplied argument the head of list */
@@ -237,14 +205,16 @@ void initASL() {
 	return null - indicating the edge of the list */
 	/* max node */
 	semdAsl_h = &(semArr[MAXPROC + 1]);
-	semdAsl_h -> s_semAdd = (int*)MAXINT;
+	/* clean the node */
 	semdAsl_h -> s_next = NULL;
+	semdAsl_h -> s_semAdd = (int*)MAXINT;
 	semdAsl_h -> s_procQ = mkEmptyProcQ();
 	/* min node */
 	(semArr[MAXPROC]).s_next = semdAsl_h;
+	/* clean the node */
 	semdAsl_h = &(semArr[MAXPROC]);
 	semdAsl_h -> s_semAdd = 0;
-	semdAsl_h -> s_procQ = NULL;
+	semdAsl_h -> s_procQ = mkEmptyProcQ();
 	
 }
 
