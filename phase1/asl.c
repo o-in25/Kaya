@@ -69,9 +69,12 @@ int debugF(int a) {
 static semd_PTR findSemd(int* semAdd) {
 	/* retrieve the head of the list */
 	semd_PTR currentSemd = semdAsl_h;
+	/* if the semaphore address is null, set the 
+	address to be the MAXINT - so that the loop may iterate 
+	correctly and does not return null */
 	if(semAdd == NULL) {
 			semAdd = (int*) MAXINT;
-		}
+	}
 	/* IMPORTANT! the first semd_t must be skipped since
 	the first semd_t will be a dummy node */
 	/* while the semdAsl_h address is less than the
