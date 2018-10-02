@@ -244,7 +244,7 @@ void initASL() {
 	return null - indicating the edge of the list */
 	(semArr[MAXPROC]).s_next = semdAsl_h;
 	semdAsl_h = &(semArr[MAXPROC]);
-	semdAsl_h -> s_semAdd = 0; /* frist node in active list */
+	semdAsl_h -> s_semAdd = 0;
 	semdAsl_h -> s_procQ = NULL;
 }
 
