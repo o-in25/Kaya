@@ -19,11 +19,6 @@
 #include "../e/pcb.e"
 #include "../e/asl.e"
 
-int debugZ(int a) {
-	int i;
-	i = 0;
-}
-
 
 #define MAXPROC	20
 #define	MAXSEM	MAXPROC
@@ -267,18 +262,14 @@ void main() {
 	addokbuf("insertBlocked test #2 started  \n");
 	for (i = 0; i < 10; i++) {
 		procp[i] = allocPcb();
-		if (insertBlocked(&sem[i], procp[i])) {
+		if (insertBlocked(&sem[i], procp[i]))
 			adderrbuf("insertBlocked(2): unexpected TRUE   ");
-		}
 	}
 
 	/* check if semaphore descriptors are returned to free list */
 	p = removeBlocked(&sem[11]);
-	debugZ(90);
-	if(insertBlocked(&sem[11],p)){
-		addokbuf("a");
+	if (insertBlocked(&sem[11],p))
 		adderrbuf("removeBlocked: fails to return to free list   ");
-	}
 
 	if (insertBlocked(&onesem, procp[9]) == FALSE)
 		adderrbuf("insertBlocked: inserted more than MAXPROC   ");
@@ -323,5 +314,4 @@ void main() {
 	addokbuf("ASL module ok   \n");
 	addokbuf("So Long and Thanks for All the Fish\n");
 
-	return 0;
 }
