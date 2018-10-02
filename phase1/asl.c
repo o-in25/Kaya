@@ -73,14 +73,13 @@ static semd_PTR findSemd(int* semAdd) {
 	address to be the MAXINT - so that the loop may iterate 
 	correctly and does not return null */
 	if(semAdd == NULL) {
-			semAdd = (int*) MAXINT;
+		semAdd = (int*) MAXINT;
 	}
 	/* IMPORTANT! the first semd_t must be skipped since
 	the first semd_t will be a dummy node */
 	/* while the semdAsl_h address is less than the
 	specified integer address */
 	while((semAdd) > (currentSemd->s_next->s_semAdd)) {
-
 		/* the findSemd task will now search the semd_t free
 		list via the subsequent semd_t s_next field to
 		search for the next free address location; since the
@@ -124,9 +123,8 @@ void freeSemd(semd_PTR s) {
 		just asign the semd_t argument's next field equal
 		to the head of the semd_t free list */
 		s->s_next = semdFl_h;
-
+		/* asign then next semd_t to be the head */
 		semdFl_h = s;
-		/* asign then next semd_t */
 	}
 }
 
@@ -141,7 +139,7 @@ semd_PTR cleanSemd(semd_PTR s) {
 		return NULL;
 	} else {
 		/* clean up */
-		s->s_procQ = NULL;
+		s->s_procQ = mkEmptyProcQ();
 		s->s_next = NULL;
 		s->s_semAdd = NULL;
 		return s;
@@ -163,9 +161,7 @@ semd_PTR allocSemd() {
 	}
 	semdFl_h = semdFl_h->s_next;
 	/* adjust the pointer */
-	openSemd->s_procQ = mkEmptyProcQ();
-	openSemd->s_semAdd = NULL;
-	openSemd->s_next = NULL;
+	openSemd = cleanSemd(openSemd);
 	return openSemd;
 }
 
