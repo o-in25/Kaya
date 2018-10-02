@@ -227,13 +227,6 @@ void initASL() {
 	for(i=0;i<MAXPROC;++i){
 		freeSemd(&(semArr[i]));
 	}
- 	/* two extra nodes placed as dummies on the semaphore list */
-	/* initialize the active array with 2 dummy nodes */
-	semdAsl_h = &(semArr[MAXPROC + 1]);
-	semdAsl_h -> s_next = NULL;
-	 /* last node in active list */
-	semdAsl_h -> s_semAdd = (int*)MAXINT;
-	semdAsl_h -> s_procQ = NULL;
 	/* here, the semd_t edge (dummy) nodes to ensure
 	that no address is greather than or less than the
 	specified address values; this makes a call to the
@@ -242,6 +235,12 @@ void initASL() {
 	will be the largest possible unsigned interger value -
 	to ensure when travsering the semd_t asl, will never
 	return null - indicating the edge of the list */
+	/* max node */
+	semdAsl_h = &(semArr[MAXPROC + 1]);
+	semdAsl_h -> s_semAdd = (int*)MAXINT;
+	semdAsl_h -> s_next = NULL;
+	semdAsl_h -> s_procQ = mkEmptyProcQ();
+	/* min node */
 	(semArr[MAXPROC]).s_next = semdAsl_h;
 	semdAsl_h = &(semArr[MAXPROC]);
 	semdAsl_h -> s_semAdd = 0;
