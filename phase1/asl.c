@@ -18,6 +18,8 @@
 #include "../e/pcb.e"
 
 /* globals */
+HIDDEN semd_PTR semdFreelist_;
+
 /* pointer to the head free list of semd_t */
 HIDDEN semd_PTR semdFreelist_h;
 
@@ -272,6 +274,7 @@ void initASL() {
 	static semd_t semArr[MAXPROC + 2];
  int i;
  semdActiveList_h = NULL;
+ semdFreelist_ = NULL;
  semdFreeList_h = NULL;
  /* insert MAXPROC nodes onto the free list */
 for(i=0;i<MAXPROC;++i){
