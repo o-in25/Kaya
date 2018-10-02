@@ -268,17 +268,34 @@ semd_PTR mkRhsEdgeSemd() {
 * free list
 */
 void initASL() {
+	static semd_t semArr[MAXPROC + 2];
+ int i;
+ semdActiveList_h = NULL;
+ semdFreeList_h = NULL;
+ /* insert MAXPROC nodes onto the free list */
+for(i=0;i<MAXPROC;++i){
+ freeSEMD(&(semArr[i]));
+}
+ /* two extra nodes placed as dummies on the semaphore list */
+/* initialize the active array with 2 dummy nodes */
+semdActiveList_h = &(semArr[MAXPROC + 1]);
+semdActiveList_h -> s_next = NULL;
+ /* last node in active list */
+semdActiveList_h -> s_semAdd = (int*)MAX_INT;
+semdActiveList_h -> s_procQ = NULL;
+
+(semArr[MAXPROC]).s_next = semdActiveList_h;
+semdActiveList_h = &(semArr[MAXPROC]);
+semdActiveList_h -> s_semAdd = 0; /* frist node in active list */
+semdActiveList_h -> s_procQ = NULL;
 	/* first, initialize the semdTable - which is the array the
 	elements of type semd_t are kept; notice the addition of the
-	dummy nodes */
-	static semd_t semdTable[(MAXPROC + 2)];
-	semdActiveList_h = NULL;
-	semdFreeList_h = NULL;
-	/* for each semd_t in the semd_t free list,
-	itialize the semd_t at i to be freed */
+	dummy nodes
+	for each semd_t in the semd_t free list,
+	itialize the semd_t at i to be freed
 	int i;
 	for (i = 0; i < MAXPROC; i++) {
-		/* make each semd_t to be empty */
+		/* make each semd_t to be empty
 		freeSemd(&(semdTable[i]));
 	}
 	/* here, the semd_t edge (dummy) nodes to ensure
@@ -291,17 +308,18 @@ void initASL() {
 	return null - indicating the edge of the list */
 
 	/* two extra nodes placed as dummies on the semaphore list */
-	/* initialize the active array with 2 dummy nodes */
+	/* initialize the active array with 2 dummy nodes
 	semdActiveList_h = &(semdTable[MAXPROC + 1]);
 	semdActiveList_h -> s_next = NULL;
-    /* last node in active list */
-	semdActiveList_h -> s_semAdd = (int*)MAX_INT;
+    /* last node in active list
+	semdActiveList_h -> s_semAdd = (int*)MAXINT;
 	semdActiveList_h -> s_procQ = NULL;
 
 	(semdTable[MAXPROC]).s_next = semdActiveList_h;
 	semdActiveList_h = &(semdTable[MAXPROC]);
-	semdActiveList_h -> s_semAdd = 0; /* frist node in active list */
+	semdActiveList_h -> s_semAdd = 0; /* frist node in active list
 	semdActiveList_h -> s_procQ = NULL;
+	*/
 }
 /*
 * Function: insert the pcb_t provided as an a
