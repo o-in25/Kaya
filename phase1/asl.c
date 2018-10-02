@@ -18,12 +18,10 @@
 #include "../e/pcb.e"
 
 /* globals */
-HIDDEN semd_PTR semdFreelist_;
-
 /* pointer to the head free list of semd_t */
-
+HIDDEN semd_PTR semdFl_h;
 /* pointer to the head of the active semd_t list - the asl */
-HIDDEN semd_PTR semdActiveList_h;
+HIDDEN semd_PTR semdAsl_h;
 
 /************************************************************************************************************************/
 /******************************************** DEBUG FUNCTIONS  *********************************************************/
@@ -70,13 +68,13 @@ int debugF(int a) {
 */
 static semd_PTR findSemd(int* semAdd) {
 	/* retrieve the head of the list */
-	semd_PTR currentSemd = semdActiveList_h;
+	semd_PTR currentSemd = semdAsl_h;
 	if(semAdd == NULL) {
 			semAdd = (int*) MAXINT;
 		}
 	/* IMPORTANT! the first semd_t must be skipped since
 	the first semd_t will be a dummy node */
-	/* while the semdActiveList_h address is less than the
+	/* while the semdAsl_h address is less than the
 	specified integer address */
 	while((semAdd) > (currentSemd->s_next->s_semAdd)) {
 
@@ -142,21 +140,21 @@ void freeSemd(semd_PTR s) {
 	/* call the encapsulated emptySemd function
 	to test for the case that the semd_t free list
 	is null */
-	if(semdFreelist_ == NULL) {
+	if(semdFl_h == NULL) {
 		/* since there is no semd_t free list make the
 		supplied argument the head of list */
-		semdFreelist_ = s;
+		semdFl_h = s;
 		/* if the semd_t free list is empty,
 		then it has no next semd_t once the
 		new one is added; set this value */
-		semdFreelist_->s_next = NULL;
+		semdFl_h->s_next = NULL;
 	} else {
 		/* the semd_t free list is not empty, so simply
 		just asign the semd_t argument's next field equal
 		to the head of the semd_t free list */
-		s->s_next = semdFreelist_;
+		s->s_next = semdFl_h;
 
-		semdFreelist_ = s;
+		semdFl_h = s;
 		/* asign then next semd_t */
 	}
 }
@@ -187,66 +185,19 @@ semd_PTR cleanSemd(semd_PTR s) {
 */
 semd_PTR allocSemd() {
 	/* check if there are free semd_t on the
-	free list by checking for null
-	semd_PTR openSemd = semdFreelist_;
-	if(semdFreelist_ == NULL) {
-		debugE(500);
+	free list by checking for null */
+	semd_PTR openSemd = semdFl_h;
+	if(semdFl_h == NULL) {
 		return NULL;
 	}
-	if(semdFreelist_->s_next == NULL) {
-			semdFreelist_ = NULL;
-	} else {
-		semdFreelist_ = semdFreelist_->s_next;
-		openSemd->s_next = NULL;
-	}
-	openSemd->s_next = NULL;
-	/* clean the semd so it can be fresh
-	openSemd->s_procQ = mkEmptyProcQ();
-	openSemd->s_semAdd = NULL;
-	/* returned the new, cleaned semd_t
-	debugD(400);
-	return openSemd;
-	*/
-	semd_PTR openSemd = semdFreelist_;
-	if(semdFreelist_ == NULL) {
-		return NULL;
-	}
-	semdFreelist_ = semdFreelist_->s_next;
+	semdFl_h = semdFl_h->s_next;
+	/* adjust the pointer */
 	openSemd->s_procQ = mkEmptyProcQ();
 	openSemd->s_semAdd = NULL;
 	openSemd->s_next = NULL;
 	return openSemd;
 }
 
-/*
-*	Function: builds the bigger dummy node, that is a placeholder
-* node for a semd_t; as noted in the initASL documentation,
-* the use of a dummy node will allow for less error-prone
-* boundry conditions
-*/
-semd_PTR mkLhsEdgeSemd() {
-		/* allocate a new sem_d */
-		semd_PTR edgeSemd = allocSemd();
-		/* asign its address to be a radical
-		boundry - i.e. p */
-		edgeSemd->s_semAdd = 0;
-		return edgeSemd;
-}
-
-/*
-*	Function: builds the samller dummy node, that is a placeholder
-* node for a semd_t; as noted in the initASL documentation,
-* the use of a dummy node will allow for less error-prone
-* boundry conditions
-*/
-semd_PTR mkRhsEdgeSemd() {
-		/* allocate a new sem_d */
-		semd_PTR edgeSemd = allocSemd();
-		/* asign its address to be a radical
-		boundry - i.e. MAXINT */
-		edgeSemd->s_semAdd = 2147483646;
-		return edgeSemd;
-}
 
 
 /************************************************************************************************************************/
@@ -269,35 +220,20 @@ semd_PTR mkRhsEdgeSemd() {
 */
 void initASL() {
 	static semd_t semArr[MAXPROC + 2];
- int i;
- semdActiveList_h = NULL;
- semdFreelist_ = NULL;
- /* insert MAXPROC nodes onto the free list */
-for(i=0;i<MAXPROC;++i){
- freeSemd(&(semArr[i]));
-}
- /* two extra nodes placed as dummies on the semaphore list */
-/* initialize the active array with 2 dummy nodes */
-semdActiveList_h = &(semArr[MAXPROC + 1]);
-semdActiveList_h -> s_next = NULL;
- /* last node in active list */
-semdActiveList_h -> s_semAdd = (int*)MAXINT;
-semdActiveList_h -> s_procQ = NULL;
-
-(semArr[MAXPROC]).s_next = semdActiveList_h;
-semdActiveList_h = &(semArr[MAXPROC]);
-semdActiveList_h -> s_semAdd = 0; /* frist node in active list */
-semdActiveList_h -> s_procQ = NULL;
-	/* first, initialize the semdTable - which is the array the
-	elements of type semd_t are kept; notice the addition of the
-	dummy nodes
-	for each semd_t in the semd_t free list,
-	itialize the semd_t at i to be freed
 	int i;
-	for (i = 0; i < MAXPROC; i++) {
-		/* make each semd_t to be empty
-		freeSemd(&(semdTable[i]));
+	semdAsl_h = NULL;
+	semdFl_h = NULL;
+	 /* insert MAXPROC nodes onto the free list */
+	for(i=0;i<MAXPROC;++i){
+		freeSemd(&(semArr[i]));
 	}
+ 	/* two extra nodes placed as dummies on the semaphore list */
+	/* initialize the active array with 2 dummy nodes */
+	semdAsl_h = &(semArr[MAXPROC + 1]);
+	semdAsl_h -> s_next = NULL;
+	 /* last node in active list */
+	semdAsl_h -> s_semAdd = (int*)MAXINT;
+	semdAsl_h -> s_procQ = NULL;
 	/* here, the semd_t edge (dummy) nodes to ensure
 	that no address is greather than or less than the
 	specified address values; this makes a call to the
@@ -306,21 +242,13 @@ semdActiveList_h -> s_procQ = NULL;
 	will be the largest possible unsigned interger value -
 	to ensure when travsering the semd_t asl, will never
 	return null - indicating the edge of the list */
-
-	/* two extra nodes placed as dummies on the semaphore list */
-	/* initialize the active array with 2 dummy nodes
-	semdActiveList_h = &(semdTable[MAXPROC + 1]);
-	semdActiveList_h -> s_next = NULL;
-    /* last node in active list
-	semdActiveList_h -> s_semAdd = (int*)MAXINT;
-	semdActiveList_h -> s_procQ = NULL;
-
-	(semdTable[MAXPROC]).s_next = semdActiveList_h;
-	semdActiveList_h = &(semdTable[MAXPROC]);
-	semdActiveList_h -> s_semAdd = 0; /* frist node in active list
-	semdActiveList_h -> s_procQ = NULL;
-	*/
+	(semArr[MAXPROC]).s_next = semdAsl_h;
+	semdAsl_h = &(semArr[MAXPROC]);
+	semdAsl_h -> s_semAdd = 0; /* frist node in active list */
+	semdAsl_h -> s_procQ = NULL;
 }
+
+
 /*
 * Function: insert the pcb_t provided as an a
 * argument to the tail of that pcb_t process
@@ -349,7 +277,7 @@ int insertBlocked(int* semAdd, pcb_PTR p) {
 		queue; since our work for this was completed in
 		pcb.c, simply utilize the work of this function
 		to couple the modules; per the documentation on
-		the findSemd function, the NEXT semdActiveList_h must be
+		the findSemd function, the NEXT semdAsl_h must be
 		provided since that helper function does not
 		encapsulate that functionality */
 		insertProcQ(&(locSemd->s_next->s_procQ), p);
