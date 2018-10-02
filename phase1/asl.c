@@ -156,13 +156,13 @@ static semd_PTR allocSemd() {
 * free list
 */
 void initASL() {
-	static semd_t semArr[MAXPROC + 2];
+	static semd_t semdTable[MAXPROC + 2];
 	int i;
 	semdAsl_h = NULL;
 	semdFl_h = NULL;
 	 /* insert MAXPROC nodes onto the free list */
 	for(i=0;i<MAXPROC;++i){
-		freeSemd(&(semArr[i]));
+		freeSemd(&(semdTable[i]));
 	}
 	/* here, the semd_t edge (dummy) nodes to ensure
 	that no address is greather than or less than the
@@ -173,16 +173,16 @@ void initASL() {
 	to ensure when travsering the semd_t asl, will never
 	return null - indicating the edge of the list */
 	/* max node */
-	semdAsl_h = &(semArr[MAXPROC + 1]);
+	semdAsl_h = &(semdTable[MAXPROC + 1]);
 	/* clean the node */
 	semdAsl_h -> s_next = NULL;
 	semdAsl_h -> s_procQ = mkEmptyProcQ();
 	/* set the address to be MAXINT */
 	semdAsl_h -> s_semAdd = (int*)MAXINT;
 	/* min node */
-	(semArr[MAXPROC]).s_next = semdAsl_h;
+	(semdTable[MAXPROC]).s_next = semdAsl_h;
 	/* clean the node */
-	semdAsl_h = &(semArr[MAXPROC]);
+	semdAsl_h = &(semdTable[MAXPROC]);
 	semdAsl_h -> s_procQ = mkEmptyProcQ();
 	/* set the node to be 0 */
 	semdAsl_h -> s_semAdd = 0;

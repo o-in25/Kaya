@@ -22,7 +22,7 @@
 
 /* globals */
 /* the pcb_t free list of size 20 */
-static pcb_PTR pcbFree_h;
+static pcb_PTR pcbFl_h;
 
 
 /************************************************************************************************************************/
@@ -117,7 +117,7 @@ void freePcb(pcb_PTR p) {
 	/* insert into a specified process queue - that is,
 	the free list; use the predefined encapsulated function
 	to achieve this */
-	insertProcQ(&(pcbFree_h), p);
+	insertProcQ(&(pcbFl_h), p);
 }
 
 
@@ -140,7 +140,7 @@ pcb_PTR allocPcb() {
 	/* since removeProcQ is a generic function,
 	simply supply the address of the free list to
 	return the nth-1 element from said list */
-	pcb_PTR rmvdPcb = removeProcQ(&(pcbFree_h));
+	pcb_PTR rmvdPcb = removeProcQ(&(pcbFl_h));
 	if(rmvdPcb != NULL) {
 		rmvdPcb = cleanPcb(rmvdPcb);
 	}
@@ -169,7 +169,7 @@ void initPcbs() {
 	p will have itself asigned to its previous and next - allowing
 	for the n+1th element to then be allocated to the nth previous
 	and next - and so on */
-	pcbFree_h = mkEmptyProcQ();
+	pcbFl_h = mkEmptyProcQ();
 	for (i = 0; i < MAXPROC; i++) {
 		/* insert the element into the freepcb function; since it takes
 		a pointer, simply supply the address */
