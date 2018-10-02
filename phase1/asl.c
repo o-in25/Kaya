@@ -508,16 +508,7 @@ pcb_PTR headBlocked(int* semAdd){
 		next, check if the the pcb_t process queue associated
 		with the semd_t is null */
 		pcb_PTR headPcb = headProcQ(locSemd->s_procQ);
-		/* if the pcb_t is null return null */
-		if(headPcb == NULL) {
-			/* no head pcb_t */
-			return NULL;
-		} else {
-			/* return the pointer to the head */
-			return headPcb;
-		}
-	} else {
-		/* no matching semaphore desciptior - return null */
-		return NULL;
+		return headPcb;
 	}
+	return NULL;
 }
