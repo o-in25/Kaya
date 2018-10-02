@@ -24,38 +24,6 @@ HIDDEN semd_PTR semdFl_h;
 HIDDEN semd_PTR semdAsl_h;
 
 /************************************************************************************************************************/
-/******************************************** DEBUG FUNCTIONS  *********************************************************/
-/************************************************************************************************************************/
-int debugA(int a) {
-	int i;
-	i = 0;
-}
-
-int debugB(int a) {
-	int i;
-	i = 0;
-}
-
-int debugC(int a) {
-	int i;
-	i = 0;
-}
-
-int debugD(int a) {
-	int i;
-	i = 0;
-}
-
-int debugE(int a) {
-	int i;
-	i = 0;
-}
-
-int debugF(int a) {
-	int i;
-	i = 0;
-}
-/************************************************************************************************************************/
 /******************************************** HELPER FUNCTIONS  *********************************************************/
 /************************************************************************************************************************/
 
@@ -156,6 +124,8 @@ semd_PTR allocSemd() {
 	/* check if there are free semd_t on the
 	free list by checking for null */
 	semd_PTR openSemd = semdFl_h;
+	/* if the free list head is null, simply return null - 
+	where are done here */
 	if(semdFl_h == NULL) {
 		return NULL;
 	}
@@ -206,14 +176,16 @@ void initASL() {
 	semdAsl_h = &(semArr[MAXPROC + 1]);
 	/* clean the node */
 	semdAsl_h -> s_next = NULL;
-	semdAsl_h -> s_semAdd = (int*)MAXINT;
 	semdAsl_h -> s_procQ = mkEmptyProcQ();
+	/* set the address to be MAXINT */
+	semdAsl_h -> s_semAdd = (int*)MAXINT;
 	/* min node */
 	(semArr[MAXPROC]).s_next = semdAsl_h;
 	/* clean the node */
 	semdAsl_h = &(semArr[MAXPROC]);
-	semdAsl_h -> s_semAdd = 0;
 	semdAsl_h -> s_procQ = mkEmptyProcQ();
+	/* set the node to be 0 */
+	semdAsl_h -> s_semAdd = 0;
 	
 }
 
