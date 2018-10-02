@@ -20,10 +20,6 @@
 #include "../e/asl.e"
 
 
-int debugA(int a) {
-	int i;
-	i = 0;
-}
 
 #define MAXPROC	20
 #define	MAXSEM	MAXPROC
