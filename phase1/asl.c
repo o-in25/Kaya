@@ -78,7 +78,7 @@ static semd_PTR findSemd(int* semAdd) {
 	the first semd_t will be a dummy node */
 	/* while the semdActiveList_h address is less than the
 	specified integer address */
-	while(semAdd > currentSemd->s_next->s_semAdd) {
+	while((semAdd) > (currentSemd->s_next->s_semAdd)) {
 
 		/* the findSemd task will now search the semd_t free
 		list via the subsequent semd_t s_next field to
@@ -507,7 +507,7 @@ pcb_PTR headBlocked(int* semAdd){
 		/* semaphore address found; the last - theres a match;
 		next, check if the the pcb_t process queue associated
 		with the semd_t is null */
-		pcb_PTR headPcb = headProcQ(locSemd->s_procQ);
+		pcb_PTR headPcb = headProcQ(locSemd->s_next->s_procQ);
 		return headPcb;
 	}
 	return NULL;
