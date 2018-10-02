@@ -10,14 +10,14 @@ There are two versions of the μMPS hardware; the original μMPS emulator, and �
 ## Level 1: The additional services provided in ROM. ## 
 This includes the services provided by the ROM-Excpt handler (i.e. processor state save and load), the ROM-TLB-Refill handler (i.e. searching PTE’s for matching entries and loading them into the TLB), and the additional ROM services/instructions (i.e. LDST, FORK, PANIC, and HALT). The μMPS2 Principles of Operation contains a complete description of both Level 0 and 1.
 
-## Level 2: The Queues Manager (Phase 1 – described in Chapter 2). ## 
+## Level 2: The Queues Manager (Phase 1). ## 
 Based on the key operating systems concept that active entities at one layer are just data structures at lower layers, this layer supports the management of queues of structures; ProcBlk’s.
 
 
-## Level 3: The Kernel (Phase 2 – described in Chapter 3). ##
+## Level 3: The Kernel (Phase 2). ##
 This level implements eight new kernel-mode process management and synchronization primitives in addition to multiprogramming, a process scheduler, device interrupt handlers, and deadlock detection.
 
-## Level 4: The Support Level (Phase 3 – described in Chapter 4). ## 
+## Level 4: The Support Level (Phase 3). ## 
 Level 3 is extended to support a system that can support multiple user-level cooperating processes that can request I/O and which run in their own virtual address space. Furthermore, this level adds user-level synchronization, and a pro- cess sleep/delay facility.
 
 ## Level 5: The File System (Phase 4) ## 
