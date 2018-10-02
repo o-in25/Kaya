@@ -19,9 +19,9 @@
 
 /* globals */
 /* pointer to the head free list of semd_t */
-HIDDEN semd_PTR semdFl_h;
+static semd_PTR semdFl_h;
 /* pointer to the head of the active semd_t list - the asl */
-HIDDEN semd_PTR semdAsl_h;
+static semd_PTR semdAsl_h;
 
 /************************************************************************************************************************/
 /******************************************** HELPER FUNCTIONS  *********************************************************/
@@ -75,7 +75,7 @@ static semd_PTR findSemd(int* semAdd) {
 * by making the newly added semd_t next semd_t
 * to be null; if its not empty
 */
-void freeSemd(semd_PTR s) {
+static void freeSemd(semd_PTR s) {
 	/* check if the free list is null - the first case in 
 	the options */
 	if(semdFl_h == NULL) {
@@ -102,7 +102,7 @@ void freeSemd(semd_PTR s) {
 * used - since a semd_t cannot come off the
 * free list with defined values
 */
-semd_PTR cleanSemd(semd_PTR s) {
+static semd_PTR cleanSemd(semd_PTR s) {
 	if(s == NULL) {
 		return NULL;
 	} else {
@@ -120,7 +120,7 @@ semd_PTR cleanSemd(semd_PTR s) {
 * should the send_t free list head is null,
 * then there are no free semd_t to allocate
 */
-semd_PTR allocSemd() {
+static semd_PTR allocSemd() {
 	/* check if there are free semd_t on the
 	free list by checking for null */
 	semd_PTR openSemd = semdFl_h;

@@ -22,7 +22,7 @@
 
 /* globals */
 /* the pcb_t free list of size 20 */
-HIDDEN pcb_PTR pcbFree_h;
+static pcb_PTR pcbFree_h;
 
 
 /************************************************************************************************************************/
