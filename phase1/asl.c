@@ -18,10 +18,11 @@
 #include "../e/pcb.e"
 
 /* globals */
-/* pointer to the head of the active semd_t list - the asl */
-HIDDEN semd_PTR semdActiveList_h;
 /* pointer to the head free list of semd_t */
 HIDDEN semd_PTR semdFreelist_h;
+
+/* pointer to the head of the active semd_t list - the asl */
+HIDDEN semd_PTR semdActiveList_h;
 
 /************************************************************************************************************************/
 /******************************************** DEBUG FUNCTIONS  *********************************************************/
@@ -281,7 +282,7 @@ for(i=0;i<MAXPROC;++i){
 semdActiveList_h = &(semArr[MAXPROC + 1]);
 semdActiveList_h -> s_next = NULL;
  /* last node in active list */
-semdActiveList_h -> s_semAdd = (int*)MAX_INT;
+semdActiveList_h -> s_semAdd = (int*)MAXINT;
 semdActiveList_h -> s_procQ = NULL;
 
 (semArr[MAXPROC]).s_next = semdActiveList_h;
