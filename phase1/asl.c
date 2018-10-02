@@ -21,7 +21,6 @@
 HIDDEN semd_PTR semdFreelist_;
 
 /* pointer to the head free list of semd_t */
-HIDDEN semd_PTR semdFreelist_h;
 
 /* pointer to the head of the active semd_t list - the asl */
 HIDDEN semd_PTR semdActiveList_h;
@@ -144,21 +143,21 @@ void freeSemd(semd_PTR s) {
 	/* call the encapsulated emptySemd function
 	to test for the case that the semd_t free list
 	is null */
-	if(semdFreelist_h == NULL) {
+	if(semdFreelist_ == NULL) {
 		/* since there is no semd_t free list make the
 		supplied argument the head of list */
-		semdFreelist_h = s;
+		semdFreelist_ = s;
 		/* if the semd_t free list is empty,
 		then it has no next semd_t once the
 		new one is added; set this value */
-		semdFreelist_h->s_next = NULL;
+		semdFreelist_->s_next = NULL;
 	} else {
 		/* the semd_t free list is not empty, so simply
 		just asign the semd_t argument's next field equal
 		to the head of the semd_t free list */
-		s->s_next = semdFreelist_h;
+		s->s_next = semdFreelist_;
 
-		semdFreelist_h = s;
+		semdFreelist_ = s;
 		/* asign then next semd_t */
 	}
 }
@@ -190,15 +189,15 @@ semd_PTR cleanSemd(semd_PTR s) {
 semd_PTR allocSemd() {
 	/* check if there are free semd_t on the
 	free list by checking for null
-	semd_PTR openSemd = semdFreelist_h;
-	if(semdFreelist_h == NULL) {
+	semd_PTR openSemd = semdFreelist_;
+	if(semdFreelist_ == NULL) {
 		debugE(500);
 		return NULL;
 	}
-	if(semdFreelist_h->s_next == NULL) {
-			semdFreelist_h = NULL;
+	if(semdFreelist_->s_next == NULL) {
+			semdFreelist_ = NULL;
 	} else {
-		semdFreelist_h = semdFreelist_h->s_next;
+		semdFreelist_ = semdFreelist_->s_next;
 		openSemd->s_next = NULL;
 	}
 	openSemd->s_next = NULL;
@@ -209,11 +208,11 @@ semd_PTR allocSemd() {
 	debugD(400);
 	return openSemd;
 	*/
-	semd_PTR openSemd = semdFreelist_h;
-	if(semdFreelist_h == NULL) {
+	semd_PTR openSemd = semdFreelist_;
+	if(semdFreelist_ == NULL) {
 		return NULL;
 	}
-	semdFreelist_h = semdFreelist_h->s_next;
+	semdFreelist_ = semdFreelist_->s_next;
 	openSemd->s_procQ = mkEmptyProcQ();
 	openSemd->s_semAdd = NULL;
 	openSemd->s_next = NULL;
@@ -275,7 +274,6 @@ void initASL() {
  int i;
  semdActiveList_h = NULL;
  semdFreelist_ = NULL;
- semdFreeList_h = NULL;
  /* insert MAXPROC nodes onto the free list */
 for(i=0;i<MAXPROC;++i){
  freeSEMD(&(semArr[i]));
