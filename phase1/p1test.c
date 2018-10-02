@@ -20,6 +20,11 @@
 #include "../e/asl.e"
 
 
+debugA(int a) {
+	int i;
+	i = 0;
+}
+
 #define MAXPROC	20
 #define	MAXSEM	MAXPROC
 
@@ -313,5 +318,5 @@ void main() {
 	addokbuf("headBlocked and outBlocked ok   \n");
 	addokbuf("ASL module ok   \n");
 	addokbuf("So Long and Thanks for All the Fish\n");
-
+	debugA(100);
 }
