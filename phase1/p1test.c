@@ -323,4 +323,5 @@ void main() {
 	addokbuf("ASL module ok   \n");
 	addokbuf("So Long and Thanks for All the Fish\n");
 
+	return 0;
 }
