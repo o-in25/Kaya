@@ -20,7 +20,7 @@
 #include "../e/asl.e"
 
 
-debugA(int a) {
+int debugA(int a) {
 	int i;
 	i = 0;
 }
