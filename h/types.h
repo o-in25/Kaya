@@ -41,7 +41,7 @@ typedef struct {
 	unsigned int inst_dev[DEVINTNUM];
 	unsigned int interrupt_dev[DEVINTNUM];
 	device_t   devreg[DEVINTNUM * DEVPERINT];
-} devregarea_t;
+} devregarea_t, *devregarea_PTR;
 
 
 #define STATEREGNUM	31

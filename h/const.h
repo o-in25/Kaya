@@ -41,6 +41,7 @@
 #define INTERVALTMR	0x10000020
 #define TIMESCALEADDR	0x10000024
 
+#define ALLOFF 0
 
 /* utility constants */
 #define	TRUE		1
