@@ -7,11 +7,25 @@
 
 void invokeScheduler() {
 
+    if(processCount < 1) {
 
+    } else {
+        if(softBlockedCount < 1) {
+            /* invoke privilaged ROM instruction */
+            PANIC();
+        } else {
+            WAIT();
+        }
+
+    }
     currentProcess = removeProcQ(&(readyQueue));
+
+
+    /* privlaged ROM instruction */
+    LDST();
 }
 
-
-
-
+void schedule() {
+    
+}
 
