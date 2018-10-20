@@ -5,13 +5,13 @@
 #include "../e/asl.e"
 #include "initial.c"
 
-void schedule() {
+void invokeScheduler() {
 
-    
 
-    pcb_PTR currentPcb = mkEmptyProcQ();
-    if(procCount < 1) {
-        HALT();
-    }
-    
+    currentProcess = removeProcQ(&(readyQueue));
 }
+
+
+
+
+
