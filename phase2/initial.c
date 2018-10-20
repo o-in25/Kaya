@@ -56,7 +56,28 @@ int main() {
     state->s_pc = (memaddr) NULL; /* TODO: build syscall handler */
     /* fill the t9 register */
     state->s_t9 = NULL; /* TODO: build syscall handler */
-    /******************************************** SYSCALL AREA ****************************************/
+    /******************************************** PRGMTRAP AREA ****************************************/
+    state = (state_PTR) PRGMTRAPNEWAREA;
+    state->s_status = ALLOFF;   
+    state->s_sp = RAMTOP;
+    state->s_pc = (memaddr) NULL; /* TODO: build program trap handler */
+    /* fill the t9 register */
+    state->s_t9 = NULL; /* TODO: build program trap handler */
+    /******************************************** TBLMGMT AREA ****************************************/
+    state = (state_PTR) TBLMGMTNEWAREA;
+    state->s_status = ALLOFF;   
+    state->s_sp = RAMTOP;
+    state->s_pc = (memaddr) NULL; /* TODO: build table management handler */
+    /* fill the t9 register */
+    state->s_t9 = NULL; /* TODO: build table management handler */
+    /******************************************** INTRUPT AREA ****************************************/
+    state = (state_PTR) INTRUPTNEWAREA;
+    state->s_status = ALLOFF;   
+    state->s_sp = RAMTOP;
+    state->s_pc = (memaddr) NULL; /* TODO: build interrupt handler */
+    /* fill the t9 register */
+    state->s_t9 = NULL; /* TODO: build interrupt handler */
+
 
     /* next, we address each semaphore in the ASL free list to have 
     an address of 0 */
