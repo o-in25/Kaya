@@ -16,7 +16,6 @@ void invokeScheduler() {
         } else {
             WAIT();
         }
-
     }
     currentProcess = removeProcQ(&(readyQueue));
 
@@ -26,6 +25,6 @@ void invokeScheduler() {
 }
 
 void schedule() {
-    
+
 }
 

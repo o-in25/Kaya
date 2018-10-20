@@ -99,7 +99,7 @@ int main() {
     currentProcess = allocPcb();
     currentProcess->p_state.s_sp = (RAMTOP - PAGESIZE);
     currentProcess->p_state.s_pc = (memaddr) NULL; /* TODO IMPLEMENT TEST CODE */
-    currentProcess->p_state.s_t9 = (memaddr) NULL; /* TODO IMPLEMENT TEST CODE *?
+    currentProcess->p_state.s_t9 = (memaddr) NULL; /* TODO IMPLEMENT TEST CODE */
     /* increment the process count, since we have one fired up */
     processCount++;
     /* insert the newly allocated process into the ready queue */
