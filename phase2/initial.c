@@ -24,6 +24,8 @@ int softBlockedCount;
 pcb_PTR currentProcess;
 /* the queue of ready processes */
 pcb_PTR readyQueue;
+/* semaphore list */
+int semdTable[MAXSEMALLOC];
 
 /* 
 * Function: the boot squence for the OS; it will initalize process control blocks and 
@@ -33,16 +35,39 @@ pcb_PTR readyQueue;
 */
 int main() {
  
-    state_PTR state;
-
-    /* first, the syscakk area is populated, the stack pointer is set
-    and teh t9 register is filled */
-    state = (state_PTR) SYSCALLNEWAREA;
-    state->s_status = ALLOFF;
-
     /* the device register */
     devregarea_PTR bus = (devregarea_PTR) RAMBASEADDR;
-    unsigned int ramTop = (bus->rambase) + (bus->ramsize);
+    /* set the top of the RAM to be the base plus the amount 
+    of RAM available. This logical sum will equal (obviously) the
+    size of available RAM */
+    const unsigned int RAMTOP = (bus->rambase) + (bus->ramsize);
+    
+    /* now, we need a state (pointer) that will be used to allocate
+    the areas of memory; in is encapsulated in the function such that no
+    external functions can manipulate the state unintentionally */
+    state_PTR state;
 
+    /* then, the areas of low memory are populated, the stack pointer is set
+    and the t9 register is filled in each respective location */
+    /******************************************** SYSCALL AREA ****************************************/
+    state = (state_PTR) SYSCALLNEWAREA;
+    state->s_status = ALLOFF;   
+    state->s_sp = RAMTOP;
+    state->s_pc = (memaddr) NULL; /* TODO: build syscall handler */
+    /* fill the t9 register */
+    state->s_t9 = NULL; /* TODO: build syscall handler */
+    /******************************************** SYSCALL AREA ****************************************/
+
+    /* next, we address each semaphore in the ASL free list to have 
+    an address of 0 */
+    int i;    
+    for(i = 0; i < MAXSEMALLOC; i++) {
+        /* intialize every semaphore to have a starting address of 
+        0 */
+        semdTable[i] = 0;
+    }
+
+    initPcbs();
+    initASL();
 }
 

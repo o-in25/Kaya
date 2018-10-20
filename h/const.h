@@ -10,6 +10,7 @@
 /* Maximum process blocks */
 #define MAXPROC  		20
 #define MAXINT 2147483647
+#define MAXSEMALLOC 20
 /* Maximum 32-bit signed
 /* Hardware and software constants */
 #define PAGESIZE		4096	/* page size in bytes */
