@@ -6,4 +6,4 @@
 
 int procCnt;
 int softBlkCnt;
-int semdArr
+int semd;

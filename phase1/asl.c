@@ -136,7 +136,6 @@ static semd_PTR allocSemd() {
 }
 
 
-
 /************************************************************************************************************************/
 /*************************************** ACTIVE SEMAPHORE LIST **********************************************************/
 /************************************************************************************************************************/
@@ -161,7 +160,7 @@ void initASL() {
 	semdAsl_h = NULL;
 	semdFl_h = NULL;
 	 /* insert MAXPROC nodes onto the free list */
-	for(i=0;i<MAXPROC;++i){
+	for(i = 0; i < MAXPROC; ++i){
 		freeSemd(&(semdTable[i]));
 	}
 	/* here, the semd_t edge (dummy) nodes to ensure
@@ -174,19 +173,20 @@ void initASL() {
 	return null - indicating the edge of the list */
 	/* max node */
 	semdAsl_h = &(semdTable[MAXPROC + 1]);
+	/* start with the max*/
 	/* clean the node */
 	semdAsl_h -> s_next = NULL;
 	semdAsl_h -> s_procQ = mkEmptyProcQ();
 	/* set the address to be MAXINT */
-	semdAsl_h -> s_semAdd = (int*)MAXINT;
-	/* min node */
+	semdAsl_h -> s_semAdd = (int*) MAXINT;
+	/* end with the ma=inx*/
+	/* clean the node */
 	(semdTable[MAXPROC]).s_next = semdAsl_h;
 	/* clean the node */
 	semdAsl_h = &(semdTable[MAXPROC]);
 	semdAsl_h -> s_procQ = mkEmptyProcQ();
 	/* set the node to be 0 */
 	semdAsl_h -> s_semAdd = 0;
-	
 }
 
 
@@ -321,42 +321,42 @@ pcb_PTR removeBlocked(int* semAdd) {
 * semd_t, return null
 */
 pcb_PTR outBlocked(pcb_PTR p) {
-		/* find the location of the semaphore */
-		semd_PTR locSemd = findSemd(p->p_semAdd);
-		/* seach for a winner; this has to sub-cases;
-		if the semd_d does not exist, it cannot have a
-		returning pcb; if the removed pcb_t was the head -
-		that is the LAST pcb_t, then the semaphore associacted
-		must be returned to the free list; again, s_next is called
-		by the implementation definition of findSemd */
-		if((locSemd->s_next->s_semAdd) == (p->p_semAdd)) {
-			/* winner - we found our semd_t */
-			pcb_PTR rmvdPcb = outProcQ(&(locSemd->s_next->s_procQ), p);
-			/* now check if the newly removed pcb_t is causing the
-			semd_t to be free - so it can be re allocated to the
-			free list of semd_t */
-			if(emptyProcQ(locSemd->s_next->s_procQ)) {
-				/* the semaphore is now free - time to allocate it
-				back - we like to share */
-				semd_PTR openSemd = locSemd->s_next;
-				/* rearange the order of the semd_t free list by shifting
-				around the pointers that keep the list in order - a
-				very important step */
-				locSemd->s_next = locSemd->s_next->s_next;
-				/* free up the unused semd_t */
-				freeSemd(openSemd);
-			}
-			/* now that the semd_t is free on the list, the last importamt step is
-			to disassociate that pcb_t with a semd_t. this is a simple manipulation of
-			the struct fields */
-			rmvdPcb->p_semAdd = NULL;
-			return rmvdPcb;
-			/* return this cleaned pcb_t */
+	/* find the location of the semaphore */
+	semd_PTR locSemd = findSemd(p->p_semAdd);
+	/* seach for a winner; this has to sub-cases;
+	if the semd_d does not exist, it cannot have a
+	returning pcb; if the removed pcb_t was the head -
+	that is the LAST pcb_t, then the semaphore associacted
+	must be returned to the free list; again, s_next is called
+	by the implementation definition of findSemd */
+	if((locSemd->s_next->s_semAdd) == (p->p_semAdd)) {
+		/* winner - we found our semd_t */
+		pcb_PTR rmvdPcb = outProcQ(&(locSemd->s_next->s_procQ), p);
+		/* now check if the newly removed pcb_t is causing the
+		semd_t to be free - so it can be re allocated to the
+		free list of semd_t */
+		if(emptyProcQ(locSemd->s_next->s_procQ)) {
+			/* the semaphore is now free - time to allocate it
+			back - we like to share */
+			semd_PTR openSemd = locSemd->s_next;
+			/* rearange the order of the semd_t free list by shifting
+			around the pointers that keep the list in order - a
+			very important step */
+			locSemd->s_next = locSemd->s_next->s_next;
+			/* free up the unused semd_t */
+			freeSemd(openSemd);
 		}
-		/* error condition: there is no associated sempaphore desciptior
-		with the given address */
-		return NULL;
+		/* now that the semd_t is free on the list, the last importamt step is
+		to disassociate that pcb_t with a semd_t. this is a simple manipulation of
+		the struct fields */
+		rmvdPcb->p_semAdd = NULL;
+		return rmvdPcb;
+		/* return this cleaned pcb_t */
 	}
+	/* error condition: there is no associated sempaphore desciptior
+	with the given address */
+	return NULL;
+}
 /*
 * Function: returns a pointer to the pcb_t
 * that is at the HEAD of the pcb_t process queue

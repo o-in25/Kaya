@@ -93,11 +93,9 @@ void MkHeadChild(pcb_PTR prnt, pcb_PTR p) {
 		}
 }
 
-
 /************************************************************************************************************************/
 /********************************** PCB_T ALLOCATION AND DEALLOCATION  **************************************************/
 /************************************************************************************************************************/
-
 
 /*
 * Function: pcb_t that are no longer in use
@@ -208,13 +206,13 @@ int emptyProcQ(pcb_PTR tp) {
 * Function: insert the pcb_t p into the
 * process queue tp
 */
-void insertProcQ(pcb_PTR *tp, pcb_PTR p) {
+void insertProcQ(pcb_PTR* tp, pcb_PTR p) {
 	/* in order to insert a given pcb_t into a
 	given process queue given by tp,
 	the queue must be verified for emptiness;
 	if it is not empty, this becomes the facile
 	task of rearanging the pointers */
-	if (emptyProcQ(*tp)) {
+	if(emptyProcQ(*tp)) {
 		/* the queue is empty, so assign this
 		pcb_t to be circular by making itself
 		its previous and next element */
@@ -359,7 +357,6 @@ pcb_PTR removeProcQ(pcb_PTR *tp) {
 }
 
 
-
 /*
 * Function: returns a pointer to the head
 * of a process queue signified by tp - however
@@ -370,7 +367,6 @@ pcb_PTR removeProcQ(pcb_PTR *tp) {
 pcb_PTR headProcQ(pcb_PTR tp) {
 	return (tp->p_next);
 }
-
 
 /************************************************************************************************************************/
 /**************************************** PROCESS TREE MAINTENANCE  *****************************************************/
@@ -456,7 +452,6 @@ pcb_PTR removeChild(pcb_PTR p) {
 			/* the removed child pcb_t will
 			have no parent */
 			return cleanChild(childPcb);
-
 		} else {
 			/* the parent has more than one child;
 			this will then involve rearanging the

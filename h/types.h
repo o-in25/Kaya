@@ -9,10 +9,9 @@
 
 
 typedef signed int cpu_t;
-
-
 typedef unsigned int memaddr;
 
+/* structs */
 typedef struct {
 	unsigned int d_status;
 	unsigned int d_command;
@@ -115,9 +114,13 @@ typedef struct pcb_t {
 
 /* semaphore table entry type */
 typedef struct semd_t {
+	/* the next semaphore address */
 	struct semd_t* s_next;
+	/* the previous semaphore address */
 	struct semd_t* s_prev;
+	/* the semaphore address */
 	int* s_semAdd;
+	/* the associated process queue */
 	pcb_t* s_procQ;
 }  semd_t, *semd_PTR;
 
