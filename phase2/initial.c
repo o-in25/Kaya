@@ -4,6 +4,19 @@
 #include "../e/pcb.e"
 #include "../e/asl.e"
 
-int procCnt;
-int softBlkCnt;
-int semd;
+int procCount;
+int softBlkCount;
+pcb_PTR currentProc;
+pcb_PTR readyProcQ;
+
+
+int main() {
+    initPcbs();
+    initASL();
+
+    readyProcQ = mkEmptyProcQ();
+    
+    currentProc = readyProcQ;
+
+}
+

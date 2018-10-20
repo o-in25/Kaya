@@ -20,6 +20,21 @@
 #define ROMPAGESTART	0x20000000	 /* ROM Reserved Page */
 
 
+
+/* processor state areas */
+/* SYSYCALLS */
+#define SYSCALLNEWAREA 0x200003D4
+#define SYSCALLOLDAREA 0X20000348
+/* Program trap */
+#define PRGMTRAPNEWAREA 0x200002BC
+#define PRGMTRAPOLDAREA 0x200001A4
+/* Table management */
+#define TBLMGMTNEWAREA 0x200001A4
+#define TBLMGMTOLDAREA 0x20000118
+/* Interrupt handling */
+#define INTRUPTNEWAREA 0x2000008C
+#define INTRUPTOLDAREA 0x20000000
+
 /* timer, timescale, TOD-LO and other bus regs */
 #define RAMBASEADDR	0x10000000
 #define TODLOADDR	0x1000001C
