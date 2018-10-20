@@ -34,7 +34,12 @@ int semdTable[MAXSEMALLOC];
 * which will delegate the rest of the OS, i.e. main will return 1
 */
 int main() {
- 
+    /* initalize global variables */
+    readyQueue = mkEmptyProcQ();
+    currentProcess = NULL;
+    processCount = 0;
+    softBlockedCount = 0;
+
     /* the device register */
     devregarea_PTR bus = (devregarea_PTR) RAMBASEADDR;
     /* set the top of the RAM to be the base plus the amount 
@@ -78,17 +83,30 @@ int main() {
     /* fill the t9 register */
     state->s_t9 = NULL; /* TODO: build interrupt handler */
 
-
     /* next, we address each semaphore in the ASL free list to have 
     an address of 0 */
     int i;    
     for(i = 0; i < MAXSEMALLOC; i++) {
-        /* intialize every semaphore to have a starting address of 
-        0 */
+        /* intialize every semaphore to have a starting address of 0 */
         semdTable[i] = 0;
     }
 
+    /* now, we start up the underlying data structures to support the rest of the 
+    operating system - being the process control blocks and the semaphore list */ 
     initPcbs();
     initASL();
+    /* allocated a process - just like before, we must now allocate memory accordingly */
+    currentProcess = allocPcb();
+    currentProcess->p_state.s_sp = (RAMTOP - PAGESIZE);
+    currentProcess->p_state.s_pc = (memaddr) NULL; /* TODO IMPLEMENT TEST CODE */
+    currentProcess->p_state.s_t9 = (memaddr) NULL; /* TODO IMPLEMENT TEST CODE *?
+    /* increment the process count, since we have one fired up */
+    processCount++;
+    /* insert the newly allocated process into the ready queue */
+    insertProcQ(&(readyQueue), currentProcess);
+    /* TODO CALL THE SCHEDULER */
+
+    /* ttfn */
+    return 0;
 }
 
