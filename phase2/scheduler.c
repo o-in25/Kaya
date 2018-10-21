@@ -20,6 +20,8 @@ void invokeScheduler() {
     currentProcess = removeProcQ(&(readyQueue));
 
 
+
+
     /* privlaged ROM instruction */
     LDST();
 }

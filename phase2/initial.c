@@ -56,6 +56,7 @@ int main() {
     and the t9 register is filled in each respective location */
     /******************************************** SYSCALL AREA ****************************************/
     state = (state_PTR) SYSCALLNEWAREA;
+    STST(state);
     state->s_status = ALLOFF;   
     state->s_sp = RAMTOP;
     state->s_pc = (memaddr) NULL; /* TODO: build syscall handler */
@@ -63,6 +64,7 @@ int main() {
     state->s_t9 = NULL; /* TODO: build syscall handler */
     /******************************************** PRGMTRAP AREA ****************************************/
     state = (state_PTR) PRGMTRAPNEWAREA;
+    STST(state);
     state->s_status = ALLOFF;   
     state->s_sp = RAMTOP;
     state->s_pc = (memaddr) NULL; /* TODO: build program trap handler */
@@ -70,6 +72,8 @@ int main() {
     state->s_t9 = NULL; /* TODO: build program trap handler */
     /******************************************** TBLMGMT AREA ****************************************/
     state = (state_PTR) TBLMGMTNEWAREA;
+    /* privlaged ROM instruction */
+    STST(state);
     state->s_status = ALLOFF;   
     state->s_sp = RAMTOP;
     state->s_pc = (memaddr) NULL; /* TODO: build table management handler */
@@ -77,6 +81,7 @@ int main() {
     state->s_t9 = NULL; /* TODO: build table management handler */
     /******************************************** INTRUPT AREA ****************************************/
     state = (state_PTR) INTRUPTNEWAREA;
+    STST(state);
     state->s_status = ALLOFF;   
     state->s_sp = RAMTOP;
     state->s_pc = (memaddr) NULL; /* TODO: build interrupt handler */
