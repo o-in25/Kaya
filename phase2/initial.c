@@ -95,7 +95,7 @@ int main() {
     operating system - being the process control blocks and the semaphore list */ 
     initPcbs();
     initASL();
-    /* allocated a process - just like before, we must now allocate memory accordingly */
+    /* allocated a process - just like before, we must now allocate memory according`ly */
     currentProcess = allocPcb();
     currentProcess->p_state.s_sp = (RAMTOP - PAGESIZE);
     currentProcess->p_state.s_pc = (memaddr) NULL; /* TODO IMPLEMENT TEST CODE */
