@@ -14,7 +14,10 @@
 #include "../e/asl.e"
 
 void interruptHandler() {
-    const unsigned int causeInterruptsPending;
-    
+    /* the old interrupt */
+    state_PTR oldInterupt = (state_PTR) INTRUPTOLDAREA;
+    const unsigned int causeInterruptsPending = oldInterupt->s_cause;
+    int deviceNumber;
+    int lineNumber;
 
 }
