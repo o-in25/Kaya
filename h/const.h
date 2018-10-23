@@ -109,7 +109,7 @@
 #define RESET 0
 #define ACK	1
 
-/* operations */
+/* operations */    
 #define	MIN(A,B)	((A) < (B) ? A : B)
 #define MAX(A,B)	((A) < (B) ? B : A)
 #define	ALIGNED(A)	(((unsigned)A & 0x3) == 0)
