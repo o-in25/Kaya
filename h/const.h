@@ -42,6 +42,72 @@
 #define INTERVALTMR	0x10000020
 #define TIMESCALEADDR	0x10000024
 
+/* status register fields...
+Status is a read/writable register that controls the usability of the coprocessors,
+the processor mode of operation (kernel vs. user), the address translation
+mode, and the interrupt masking bits.
+All bit fields in the Status register are read/writable */
+#define ALLOFF 0x00000000
+/*bit 0 -the “current” global interrupt enable bit. When 0, regardless
+of the settings in Status.IM all external interrupts are disabled. When 1,
+external interrupt acceptance is controlled by Status.IM. */
+#define IEc 0x00000001
+/* bit 1 - The “current” kernel-mode user-mode control bit. When Status.KUc=0
+the processor is in kernel-mode */
+#define KUc 0x00000002
+/* bits 2-3 - the “previous” settings of the Status.IEc
+ and Status.KUc */
+#define IEp 0x00000004
+#define KUp 0x00000008
+/* bits 4-5 - the “previous” settings of the Status.IEp and Status.KUp
+- denoted the “old” bit settings. */
+#define IEo 0x00000010
+#define KUo 0x00000020
+/* NOTE: These six bits; IEc, KUc, IEp, KUp, IEo, and KUo act as a 3-slot deep
+KU/IE bit stack. Whenever an exception is raised the stack is pushed and
+whenever an interrupted execution stream is restarted, the stack is popped.
+See Section 3.2 for a more detailed explanation */
+/*********************************************************/
+/* bits 8-15 - The Interrupt Mask. An 8-bit mask that enables/disables
+external interrupts. When a device raises an interrupt on the i-th line, the
+processor accepts the interrupt only if the corresponding Status.IM[i] bit is
+on.*/
+#define IM  0x0000ff00
+/* bit 22 - The Bootstrap Exception Vector. This bit determines the
+starting address for the exception vectors. */
+#define BEV 0x00400000
+/* bit 24 - The “current” VM on/off flag bit. Status.VMc=0 indicates
+that virtual memory translation is currently off.*/
+#define VMc 0x01000000
+/* bit 25 - the “previous” setting of the Status.VMc bit*/
+#define VMp 0x02000000
+/* bit 26 - the “previous” setting of the Status.VMp bit - denoted the
+“old” bit setting */
+#define VMo 0x04000000
+/* NOTE: These three bits; VMc, VMp, and VMo act as a 3-slot deep VM bit stack.
+Whenever an exception is raised the stack is pushed and whenever an interrupted 
+execution stream is restarted, the stack is popped. See Section 3.2
+for a more detailed explanation.*/
+/*********************************************************/
+/* bit 27 - the processor Local Timer enable bit. A 1-bit mask that enables/disables
+the processor’s Local Timer. See Section 5.2.2 for more information
+about this timer */
+#define TE  0x08000000
+/* Bits 28-31 - a 4-bit field that controls coprocessor usability. The bits
+are numbered 0 to 3; Setting Status.CU[i] to 1 allows the use of the i-th
+co-processor. Since µMPS2 only implements CP0 only Status.CU[0] is
+writable; the other three bits are read-only and permanently set to 0.
+Trying to make use of a coprocessor (via an appropriate instruction) without
+the corresponding coprocessor control bit set to 1 will raise a Coprocessor
+Unusable exception. In particular untrusted processes can be prevented
+from CP0 access by setting Status.CU[0]=0. CP0 is always accessible/usable
+when in kernel mode (Status.KUc=0), regardless of the value
+of Status.CU[0]. */
+#define CU  0x10000000
+/* NOTE: Important Point: Since CP1 (the floating point co-processor) is not implemented,
+floating point instruction execution attempts generate a Coprocessor
+Unusable exception. */
+
 /* syscalls */
 #define CREATEPROCESS 1
 #define TERMINATEPROCESS 2
@@ -52,10 +118,6 @@
 #define WAITFORCLOCK 7
 #define WAITFORIODEVICE 8
 
-
-
-#define ALLOFF 0
-
 /* utility constants */
 #define	TRUE 1
 #define	FALSE 0
@@ -63,19 +125,15 @@
 #define OFF 0
 #define HIDDEN static
 #define EOS	'\0'
-
 #define NULL ((void *)0xFFFFFFFF)
 
 
 /* vectors number and type */
 #define VECTSNUM 4
-
 #define TLBTRAP	0
 #define PROGTRAP 1
 #define SYSTRAP	2
-
 #define TRAPTYPES 3
-
 
 /* device interrupts */
 #define DISKINT	3
@@ -83,7 +141,6 @@
 #define NETWINT 5
 #define PRNTINT 6
 #define TERMINT	7
-
 #define DEVREGLEN 4	/* device register field length in bytes & regs per dev */
 #define DEVREGSIZE 16 	/* device register size in bytes */
 
@@ -98,7 +155,6 @@
 #define RECVCOMMAND 1
 #define TRANSTATUS 2
 #define TRANCOMMAND 3
-
 
 /* device common STATUS codes */
 #define UNINSTALLED	0

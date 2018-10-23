@@ -2,8 +2,6 @@
 #include "../h/types.h"
 
 
-
-
 static void waitForDevice() {
 
 }
@@ -75,6 +73,10 @@ static void createProcess() {
  void tableHandler() {
      /* TODO table handler */  
 
+ }
+
+ static void passUpOrDie() {
+    
  }
 
  
