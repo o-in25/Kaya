@@ -16,8 +16,26 @@
 void interruptHandler() {
     /* the old interrupt */
     state_PTR oldInterupt = (state_PTR) INTRUPTOLDAREA;
-    const unsigned int causeInterruptsPending = oldInterupt->s_cause;
+    const unsigned int cause = oldInterupt->s_cause;
     int deviceNumber;
     int lineNumber;
+
+    if((cause & LINEONE) != 0) {
+        
+    } else if((cause & LINETWO) != 0) {
+
+    } else if((cause & LINETHREE) != 0) {
+
+    } else if((cause & LINEFOUR) != 0) {
+
+    } else if((cause & LINEFIVE) != 0) {
+
+    } else if((cause & LINESIX) != 0) {
+
+    } else if((cause & LINESEVEN) != 0) {
+
+    } else {
+        
+    }
 
 }
