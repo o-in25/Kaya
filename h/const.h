@@ -108,6 +108,31 @@ of Status.CU[0]. */
 floating point instruction execution attempts generate a Coprocessor
 Unusable exception. */
 
+/* interrupts pending */
+/* an 8-bit field indicating on which interrupt lines interrupts are currently pending. 
+If an interrupt is pending on interrupt line i, then Cause.IP[i] is set to 1. */
+#define LINEONE 0x0
+/* equivalent to 0000 0010 */
+#define LINETWO 0x2
+/* equivalent to 0000 0100 */
+#define LINETHREE 0x4
+/* equivalent to 0000 1000 */
+#define LINEFOUR 0x8
+/* equivalent to 0001 0000 */
+#define LINEFIVE 0x10
+/* equivalent to 0010 0000 */
+#define LINESIX 0x20
+/* equivalent to 0100 0000 */
+#define LINESEVEN 0x40
+/* equivalent to 1000 0000 */
+#define LINEEIGHT 0x80
+/* Important Point: Many interrupt lines may be active at the same time. 
+Furthermore, many devices on the same interrupt line may be requesting service. 
+Cause.IP is always up to date, immediately responding 
+to external (and internal) device events */
+
+
+
 /* syscalls */
 #define CREATEPROCESS 1
 #define TERMINATEPROCESS 2
