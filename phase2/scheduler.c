@@ -1,11 +1,10 @@
 #include "../h/const.h"
 #include "../h/types.h"
-
+#include "../e/initial.e"
 #include "../e/pcb.e"
 #include "../e/asl.e"
-#include "initial.c"
 
-void invokeScheduler() {
+extern void invokeScheduler() {
     pcb_PTR currentProcess = removeProcQ(&(readyQueue));
     /*  */
     if(!(emptyProcQ(&(readyQueue)))) {
