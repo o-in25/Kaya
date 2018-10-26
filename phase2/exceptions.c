@@ -15,7 +15,7 @@
 * It deals with each individual pcb. here, there are three cases
 * that exists. first, the process is the current process. In which case,
 * this is the root child - so simply call outChild(). Second, the process
-* is on the ready queue. Here, if the process isn't teh current process 
+* is on the ready queue. Here, if the process isn't the current process 
 * and it's semaphore address is 0, it is on the ready queue and thus 
 * outProcQ() is called. Third, there's only so many places the current 
 * process can be - and we have already accounted for most of them. Now,
@@ -65,6 +65,27 @@ static void terminateProgeny(pcb_PTR p) {
     processCount--;
 }
 
+static void delegateSyscall(int callNumber, pcb_PTR caller) {
+     switch(callNumber) {
+            case WAITFORIODEVICE: /* SYSCALL 8 */
+                waitForClock();
+            case WAITFORCLOCK: /* SYSCALL 7 */
+                waitForClock();
+            case GETCPUTIME: /* SYSCALL 6 */
+                getCpuTime();
+            case SPECIFYEXCEPTIONSTATEVECTOR: /* SYSCALL 5 */
+                specifyExceptionsStateVector();
+            case PASSEREN: /* SYSCALL 4 */
+                passeren(caller);
+            case VERHOGEN: /* SYSCALL 3 */
+                verhogen(caller);
+            case TERMINATEPROCESS: /* SYSCALL 2 */ 
+                terminateProcess();   
+            case CREATEPROCESS: /* SYSCALL 1 */
+                createProcess(caller);
+        }
+}
+
 /************************************************************************************************************************/
 /********************************************* SYSTEM CALLS *************************************************************/
 /************************************************************************************************************************/
@@ -99,7 +120,6 @@ static void passeren(state_PTR state) {
     int* semaphore = (int*) state->s_a1;
     /* decrement the semaphore */
     (*(semaphore))--;
-
     if(*(semaphore) < 0) {
         insertBlocked(semaphore, currentProcess);
         invokeScheduler();
@@ -124,8 +144,6 @@ static void verhogen(state_PTR state) {
             insertProcQ(&(readyQueue), newProcess);
         }
     }
-    
-
 }
 
 /* Function: Syscall 2 - Terminate Process 
@@ -137,13 +155,12 @@ static void verhogen(state_PTR state) {
 */
 static void terminateProcess() {
     /* invoke the helper function */
-    terminateProgeny();
+    terminateProgeny(currentProcess);
     /* The current process is over */
     currentProcess = NULL;
     /* resechdule */
     invokeScheduler();
 }
-
 
 /* Function: Syscall 1 - Create Process 
 * When requested, this service causes a new process, said to be a progeny of the caller, 
@@ -184,31 +201,16 @@ static void createProcess(state_PTR caller) {
     int userMode = FALSE;
     state_PTR syscallOldArea;
     state_PTR programTrapOldArea;
-
+    state_PTR caller = (state_PTR) SYSCALLOLDAREA;
     if(!userMode) {
         int callNumber = 0; /* TODO: properly assign the number and handle case  */
-        switch(callNumber) {
-            case WAITFORIODEVICE: /* SYSCALL 8 */
-                waitForClock();
-            case WAITFORCLOCK: /* SYSCALL 7 */
-                waitForClock();
-            case GETCPUTIME: /* SYSCALL 6 */
-                getCpuTime();
-            case SPECIFYEXCEPTIONSTATEVECTOR: /* SYSCALL 5 */
-                specifyExceptionsStateVector();
-            case PASSEREN: /* SYSCALL 4 */
-                passeren();
-            case VERHOGEN: /* SYSCALL 3 */
-                verhogen();
-            case TERMINATEPROCESS: /* SYSCALL 2 */ 
-                terminateProcess();   
-            case CREATEPROCESS: /* SYSCALL 1 */
-                createProcess();
-        }
+        delegateSyscall(callNumber, caller);
     } else {
         passUpOrDie();
     }
  }
+
+ 
 
  void programTrapHandler() {
      /* TODO program handler */
