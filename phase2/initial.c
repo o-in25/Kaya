@@ -39,7 +39,6 @@ int main() {
     currentProcess = NULL;
     processCount = 0;
     softBlockedCount = 0;
-
     /* the device register */
     devregarea_PTR bus = (devregarea_PTR) RAMBASEADDR;
     /* set the top of the RAM to be the base plus the amount 

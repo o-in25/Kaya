@@ -485,7 +485,7 @@ pcb_PTR outChild(pcb_PTR p) {
 		return NULL;
 	/* the next case to consider - the removed element is at the
 	BACK of a list whose size is >1 at least */
-} else if((p->p_nextSib) == NULL) {
+	} else if((p->p_nextSib) == NULL) {
 		/* in this case, the pcb_t is at the
 		end of the list */
 		/* remove the parent */;
@@ -493,7 +493,7 @@ pcb_PTR outChild(pcb_PTR p) {
 		rmvdPcb = p;
 	/* the next case to consider - the removed element is at the
 	FRONT of a list whose size is >1 at least */
-} else if((p->p_prnt->p_child) == p) {
+	} else if((p->p_prnt->p_child) == p) {
 		/* since this child being removed is the head,
 		simply call the function to do so */
 		return removeChild(p);

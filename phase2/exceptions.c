@@ -128,13 +128,24 @@ static void verhogen(state_PTR state) {
 
 }
 
+/* Function: Syscall 2 - Terminate Process 
+*This services causes the executing process to cease to exist. In addition, 
+* recursively, all progeny of this process are terminated as well. This is done through 
+* the use of a helper function. Execution of this instruction does not 
+* complete until all progeny are terminated. The SYS2 service is requested by the 
+* calling process by placing the value 2 in a0 and then executing a SYSCALL instructio
+*/
 static void terminateProcess() {
-
+    /* invoke the helper function */
+    terminateProgeny();
+    /* The current process is over */
+    currentProcess = NULL;
+    /* resechdule */
+    invokeScheduler();
 }
 
 
 /* Function: Syscall 1 - Create Process 
-*
 * When requested, this service causes a new process, said to be a progeny of the caller, 
 * to be created. a1 should contain the physical address of a processor state area at the time this 
 * instruction is executed. This processor state should be used as the initial state for the newly created process. 
