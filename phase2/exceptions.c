@@ -7,6 +7,69 @@
 #include "../e/asl.e"
 
 
+
+/************************************************************************************************************************/
+/******************************************** HELPER FUNCTIONS  *********************************************************/
+/************************************************************************************************************************/
+/* Function: a helper function to kill a process' child.
+* It deals with each individual pcb. here, there are three cases
+* that exists. first, the process is the current process. In which case,
+* this is the root child - so simply call outChild(). Second, the process
+* is on the ready queue. Here, if the process isn't teh current process 
+* and it's semaphore address is 0, it is on the ready queue and thus 
+* outProcQ() is called. Third, there's only so many places the current 
+* process can be - and we have already accounted for most of them. Now,
+* the process must be on the active semaphre list. Therefore, in this case,
+* call outBlocked() to remove it from teh semaphore. But here, there are two 
+* subcases. First subcase, the device is a device semaphore. Here, softblocked
+* count is decreased by 1. Second subcase,
+* the easy case, it is not a device semaphore. Therefore, the semaphore address 
+* is incremented by 1 */
+static void terminateProgeny(pcb_PTR p) {
+    /* first, kill all of the parents children - time to get violent */
+    while(!emptyChild(p)) {
+        /* perform head recursion on all of the 
+        process's children */
+        terminateProgeny(removeChild(p));
+    }
+    int* semaphore = p->p_semAdd;
+    /* if the semaphore is not null, that means that the process on the ASL 
+    and is blocked */
+    if(semaphore != NULL) {
+        /* here, if the process is not null, then we need to do all of the work.
+        Beause these steps are mutex with the I/O interrupt handler, if the process
+        is not null, we do the following. If it IS null, the I/O interrupt handler already
+        took care of this for us */
+        outBlocked(semaphore);
+        if(semaphore >= semdTable[0]) {
+            softBlockedCount--;
+        } else {
+            (*semaphore)++;
+        }
+    } else {
+        /* here, the semaphore is null, meaning that the I/O handler already took care of 
+        decrementing the softblocked count, incrementing the semaphore and calling outblocked. 
+        now, we handle the case of if the process is the current process or if the process
+        is on the ready queue */
+        if(p == currentProcess) {
+            /* yank the child from its parent */
+            outChild(currentProcess);
+        } else {
+            /* yank it from the ready queue */
+            outProcQ(&(readyQueue), p);
+        }
+    }
+    /* free the process block and decrement the process count regardless of what 
+    case it is */
+    freePcb(p);
+    processCount--;
+}
+
+/************************************************************************************************************************/
+/********************************************* SYSTEM CALLS *************************************************************/
+/************************************************************************************************************************/
+
+
 static void waitForDevice() {
 
 }
@@ -134,7 +197,6 @@ static void createProcess(state_PTR caller) {
     } else {
         passUpOrDie();
     }
-
  }
 
  void programTrapHandler() {
