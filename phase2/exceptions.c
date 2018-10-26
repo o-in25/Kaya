@@ -69,8 +69,36 @@ static void terminateProcess() {
 
 }
 
-static void createProcess() {
 
+/* Function: Syscall 1 - Create Process 
+*
+* When requested, this service causes a new process, said to be a progeny of the caller, 
+* to be created. a1 should contain the physical address of a processor state area at the time this 
+* instruction is executed. This processor state should be used as the initial state for the newly created process. 
+* The process requesting the SYS1 service continues to exist and to execute. 
+* If the new process cannot be created due to lack of resources (for example no more free ProcBlk’s), an error 
+* code of -1 is placed/returned in the caller’s v0, otherwise, return the value 0 in the caller’s v0.
+* The SYS1 service is requested by the calling process by placing the value 1 in a0, 
+* the physical address of a processor state in a1, and then executing a SYSCALL instruction.
+*/
+static void createProcess(state_PTR caller) {
+    /* create the new process */
+    pcb_PTR p = allocPcb();
+    if(p == NULL) {
+        /* we don't have enough resources to start this process, 
+        for whatever reason that may be - most likley no more free 
+        process blocks - so add -1 in the state's vo register */
+        caller->s_v0 = -1;
+    } else {
+        /* we hace a sucessful running process, so v0 is now 1 */
+        caller->s_v0 = 0;
+        /* we have a new process, so add it to the count */
+        processCount++;
+        /* add the new process to the current process's child - how cute */
+        insertChild(currentProcess, p);
+        /* TODO: copy state */
+    }
+    LDST(caller);
 }
 
 
