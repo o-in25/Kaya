@@ -98,6 +98,7 @@ static void createProcess(state_PTR caller) {
         insertChild(currentProcess, p);
         /* TODO: copy state */
     }
+    /* load the processor state with the privalged ROM isntruction */
     LDST(caller);
 }
 
@@ -113,21 +114,21 @@ static void createProcess(state_PTR caller) {
     if(!userMode) {
         int callNumber = 0; /* TODO: properly assign the number and handle case  */
         switch(callNumber) {
-            case WAITFORIODEVICE:
+            case WAITFORIODEVICE: /* SYSCALL 8 */
                 waitForClock();
-            case WAITFORCLOCK:
+            case WAITFORCLOCK: /* SYSCALL 7 */
                 waitForClock();
-            case GETCPUTIME:
+            case GETCPUTIME: /* SYSCALL 6 */
                 getCpuTime();
-            case SPECIFYEXCEPTIONSTATEVECTOR:
+            case SPECIFYEXCEPTIONSTATEVECTOR: /* SYSCALL 5 */
                 specifyExceptionsStateVector();
-            case PASSEREN:
+            case PASSEREN: /* SYSCALL 4 */
                 passeren();
-            case VERHOGEN:
+            case VERHOGEN: /* SYSCALL 3 */
                 verhogen();
-            case TERMINATEPROCESS:
+            case TERMINATEPROCESS: /* SYSCALL 2 */ 
                 terminateProcess();   
-            case CREATEPROCESS:
+            case CREATEPROCESS: /* SYSCALL 1 */
                 createProcess();
         }
     } else {
