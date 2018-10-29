@@ -165,23 +165,31 @@ copyState(state_PTR old, state_PTR new) {
 /********************************************* SYSTEM CALLS *************************************************************/
 /************************************************************************************************************************/
 
-
-static void waitForDevice() {
+/*
+* Wait for IO Device
+*/
+static void waitForIODevice() {
 
 }
 
+/*
+* Function: Syscall 7 - Wait for clock
+*/
 static void waitForClock(state_PTR state) {
 
     state->s_v0 = NULL;
     invokeScheduler();
 }
 
+/*
+* Function: Syscall 6 - Get CPU time 
+*/
 static void getCpuTime() {
 
 }
 
 /*
-* Function: Specify Exception State Vector
+* Function: Syscall 5 - Specify Exception State Vector
 * When this service is requested, three pieces of information need
 * to be supplied to the nucleus: the type of exception the 
 * ESV will be established for. The address into which the 

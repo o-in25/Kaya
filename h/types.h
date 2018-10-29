@@ -106,21 +106,24 @@ typedef struct pcb_t {
 	/* the pcb_t previous sibiling */
 	struct pcb_t* p_prevSib;
 	/* processor state */
-    state_t	p_state;
+    state_t* p_state;
 	/* the semaphore address */
     int* p_semAdd;
 	/* old syscall */
-	state_PTR oldSys;
+	state_t* oldSys;
 	/* new sys */
-	state_PTR newSys;
+	state_t* newSys;
 	/* old program trap */
-	state_PTR oldPgm;
+	state_t* oldPgm;
 	/* new program trap */
-	state_PTR newPgm;
+	state_t* newPgm;
 	/* old tlb */
-	state_PTR oldTlb;
+	state_t* oldTlb;
 	/* new tlb */
-	state_PTR newTlb;
+	state_t* newTlb;
+	/* start time of day */
+	cpu_t* startTOD 
+	/* * */
 }  pcb_t, *pcb_PTR;
 
 
