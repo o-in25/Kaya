@@ -101,14 +101,26 @@ typedef struct pcb_t {
     struct pcb_t* p_prnt;
 	/* the pcb_t child */
 	struct pcb_t* p_child;
-	/* double linked children */
 	/* the pcb_t next sibiling */
 	struct pcb_t* p_nextSib;
 	/* the pcb_t previous sibiling */
 	struct pcb_t* p_prevSib;
+	/* processor state */
     state_t	p_state;
 	/* the semaphore address */
     int* p_semAdd;
+	/* old syscall */
+	state_PTR oldSys;
+	/* new sys */
+	state_PTR newSys;
+	/* old program trap */
+	state_PTR oldPgm;
+	/* new program trap */
+	state_PTR newPgm;
+	/* old tlb */
+	state_PTR oldTlb;
+	/* new tlb */
+	state_PTR newTlb;
 }  pcb_t, *pcb_PTR;
 
 

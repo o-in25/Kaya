@@ -12,7 +12,6 @@ extern void invokeScheduler() {
         /* TODO: load the state */
         LDST(&(currentProcess->p_state));
     } else if(currentProcess == NULL) {
-        
         /* there is nothing on the ready queue to be scheduled. we must check for special cases first, what if there are no 
         processes left in the system - that is, the process count is less than 1? If this is the case, we invoke 
         the privilaged ROM command HALT. secondly, what if there are running processes in the system, but the ready 
@@ -45,6 +44,8 @@ extern void invokeScheduler() {
             }
         } 
     } else {
-        /* TODO timer */
+        setTIMER(QUANTUM);
+        /* context switch */
+        LDST();
     }
 }

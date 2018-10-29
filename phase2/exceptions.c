@@ -64,26 +64,90 @@ static void terminateProgeny(pcb_PTR p) {
     freePcb(p);
     processCount--;
 }
+/* Function: context switch 
+* ROM instruction that will change the state of the 
+* processor */
+static void contextSwitch(state_PTR s) {
+    LDST(s);
+}
 
+/* Fucntion: Pass up or die 
+* the syscall 5 helper mechanism. Whenever an exception
+* or interrupts occur, the current processor state 
+* is loaded. The sys5 passup or die provides this functionality 
+* and a new processor state is loaded. It allows the caller to store
+* the address of two processor states */
+static void passUpOrDie(state_PTR old, int callNumber) {
+    /* has a sys5 for that trap type been called?
+    if not, terminate the process and all its progeny */
+    switch(callNumber) {
+        /* if yes, copy the state the caused the exception to 
+        the location secified in the pcb. context switch */
+        case SYSTRAP:
+            copyState(old, currentProcess->oldSys);
+            contextSwitch(currentProcess->newSys);
+            break;
+        case TLBTRAP:
+            copyState(old, currentProcess->oldTlb);
+            contextSwitch(currentProcess->newTlb);
+            break;
+        case PROGTRAP:
+            copyState(old, currentProcess->oldPgm);
+            contextSwitch(currentProcess->newPgm);
+            break;
+    }
+    terminateProcess();
+}
+
+/* Function: delegate syscall
+* Issues a switch statement to determine which 
+* syscall occurs 
+*/
 static void delegateSyscall(int callNumber, pcb_PTR caller) {
      switch(callNumber) {
             case WAITFORIODEVICE: /* SYSCALL 8 */
                 waitForClock();
+                break;
             case WAITFORCLOCK: /* SYSCALL 7 */
                 waitForClock();
+                break;
             case GETCPUTIME: /* SYSCALL 6 */
                 getCpuTime();
+                break;
             case SPECIFYEXCEPTIONSTATEVECTOR: /* SYSCALL 5 */
                 specifyExceptionsStateVector();
+                break;
             case PASSEREN: /* SYSCALL 4 */
                 passeren(caller);
+                break;
             case VERHOGEN: /* SYSCALL 3 */
                 verhogen(caller);
+                break;
             case TERMINATEPROCESS: /* SYSCALL 2 */ 
                 terminateProcess();   
+                break;
             case CREATEPROCESS: /* SYSCALL 1 */
                 createProcess(caller);
+                break;
+            default: 
+                passUpOrDie(caller, callNumber);
+                break;
         }
+}
+
+/* Function copy state 
+* copies the state of the processor from one new area
+*to another 
+*/
+copyState(state_PTR old, state_PTR new) {
+    new->s_asid = old->s_asid;
+    new->s_cause = old->s_cause;
+    new->s_pc = old->s_pc;
+    new->s_status = old->s_status;
+    int i;
+    for(i = 0; i < STATEREGNUM; i++) {
+        new->s_reg[i] = old->s_reg[i];
+    }
 }
 
 /************************************************************************************************************************/
@@ -124,7 +188,7 @@ static void passeren(state_PTR state) {
         insertBlocked(semaphore, currentProcess);
         invokeScheduler();
     }
-    LDST(state);
+    contextSwitch(state);
 }
 
 /* Function: Syscall 3 - Verhogen 
@@ -189,30 +253,49 @@ static void createProcess(state_PTR caller) {
         insertChild(currentProcess, p);
         /* TODO: copy state */
     }
-    /* load the processor state with the privalged ROM isntruction */
+    /* context switch */
     LDST(caller);
 }
 
 
+/************************************************************************************************************************/
+/*************************************** EXCEPTION HANDLERS *************************************************************/
+/************************************************************************************************************************/
  void syscallHandler() {
-    pcb_PTR process;
-    int* semaphoreAddress;
-    int* semaphoreDevice;
-    int userMode = FALSE;
-    state_PTR syscallOldArea;
-    state_PTR programTrapOldArea;
+    /* get the address of the old syscall area, since we
+    wake up in the syscall handler */
     state_PTR caller = (state_PTR) SYSCALLOLDAREA;
-    if(!userMode) {
-        int callNumber = 0; /* TODO: properly assign the number and handle case  */
-        delegateSyscall(callNumber, caller);
+    /* increment program count */
+    caller->s_pc = caller->s_pc + 4;
+    /* in order to execute syscals 1-9, we
+    must be in kernel mode */
+    int kernelMode = FALSE;    
+    /* since the value of the syscall is placed in the a0 register
+    we read the a0 register to see wht value it is. The system supports up
+    to 255 syscalls */
+    const int callNumber = caller->s_a0;
+    const unsigned int status = caller->s_status;
+    if((status & KERNELMODEON) == ALLOFF) {
+        /* in kernel mode */
+        kernelMode = TRUE;
+    }
+    if(kernelMode) {
+        /* call our helper function to assist with handling the syscalls IF we are
+        in kernel mode */
+        delegateSyscall(callNumber, callNumber);
+    } else if(!kernelMode && callNumber < 9) {
+        state_PTR programTrapOldArea = (state_PTR) PRGMTRAPOLDAREA;
+        programTrapOldArea->s_cause = RESERVED;
+        copyState(caller, programTrapOldArea);
+        programTrapHandler();
     } else {
-        passUpOrDie();
+        passUpOrDie(caller, callNumber);
     }
  }
 
- 
-
  void programTrapHandler() {
+     state_PTR oldState = (state_PTR) PRGMTRAPOLDAREA;
+     passUpOrDie(PROGTRAP, oldState);
      /* TODO program handler */
  }
 
@@ -221,8 +304,5 @@ static void createProcess(state_PTR caller) {
 
  }
 
- static void passUpOrDie() {
-    
- }
 
  
