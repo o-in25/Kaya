@@ -77,26 +77,37 @@ static void contextSwitch(state_PTR s) {
 * is loaded. The sys5 passup or die provides this functionality 
 * and a new processor state is loaded. It allows the caller to store
 * the address of two processor states */
-static void passUpOrDie(state_PTR old, int callNumber) {
+static void passUpOrDie(int callNumber, state_PTR old) {
     /* has a sys5 for that trap type been called?
     if not, terminate the process and all its progeny */
     switch(callNumber) {
         /* if yes, copy the state the caused the exception to 
         the location secified in the pcb. context switch */
         case SYSTRAP:
-            copyState(old, currentProcess->oldSys);
-            contextSwitch(currentProcess->newSys);
+            if(currentProcess->newSys != NULL) {
+                copyState(old, currentProcess->oldSys);
+                contextSwitch(currentProcess->newSys);
+            } else {
+                terminateProcess();
+            }
             break;
         case TLBTRAP:
-            copyState(old, currentProcess->oldTlb);
-            contextSwitch(currentProcess->newTlb);
+            if(currentProcess->newTlb != NULL) {
+                copyState(old, currentProcess->oldTlb);
+                contextSwitch(currentProcess->newTlb);
+            } else {
+                terminateProcess();
+            }
             break;
         case PROGTRAP:
-            copyState(old, currentProcess->oldPgm);
-            contextSwitch(currentProcess->newPgm);
+            if(currentProcess->newPgm != NULL) {
+                copyState(old, currentProcess->oldPgm);
+                contextSwitch(currentProcess->newPgm);
+            } else {
+                terminateProcess();
+            }
             break;
     }
-    terminateProcess();
 }
 
 /* Function: delegate syscall
@@ -106,10 +117,10 @@ static void passUpOrDie(state_PTR old, int callNumber) {
 static void delegateSyscall(int callNumber, pcb_PTR caller) {
      switch(callNumber) {
             case WAITFORIODEVICE: /* SYSCALL 8 */
-                waitForClock();
+                waitForClock(NULL);
                 break;
             case WAITFORCLOCK: /* SYSCALL 7 */
-                waitForClock();
+                waitForClock(NULL);
                 break;
             case GETCPUTIME: /* SYSCALL 6 */
                 getCpuTime();
@@ -159,16 +170,67 @@ static void waitForDevice() {
 
 }
 
-static void waitForClock() {
+static void waitForClock(state_PTR state) {
 
+    state->s_v0 = NULL;
+    invokeScheduler();
 }
 
 static void getCpuTime() {
 
 }
 
-static void specifyExceptionsStateVector() {
-
+/*
+* Function: Specify Exception State Vector
+* When this service is requested, three pieces of information need
+* to be supplied to the nucleus: the type of exception the 
+* ESV will be established for. The address into which the 
+* old processor state is to be stored while running the current process
+* and the new processor state into which to be taken. Specify ESV
+* will save the contents of a2 and a3 to facilitate the pass up 
+* or die function if and when an exception occurs. Each process 
+* may request the sys5 sepcify ESV exactly once at most, and 
+* is treated like a sys2 terminate process if this is not the case 
+*/
+static void specifyExceptionsStateVector(state_PTR state) {
+    const unsigned int callNumber = state->s_a1;
+    switch(callNumber) {
+        case TLBTRAP:
+            if(currentProcess->newTlb != NULL) {
+                /* the area has already been specified, so treat
+                this operation like a sys2 i.e. terminate the process */
+                terminateProcess();
+            }
+            /* store the new area in the a3 register */
+            currentProcess->newTlb = (state_PTR) state->s_a3;
+            /* store the old area in the a2 register */
+            currentProcess->oldPgm = (state_PTR) state->s_a2;
+        case PROGTRAP:
+            if(currentProcess->newPgm != NULL) {
+                /* the area has already been specified, so treat
+                this operation like a sys2 i.e. terminate the process */
+                terminateProcess();
+            }
+            /* store the new area in the a3 register */
+            currentProcess->newPgm = (state_PTR) state->s_a3;
+            /* store the old area in the a2 register */
+            currentProcess->oldPgm = (state_PTR) state->s_a2;
+        case SYSTRAP:
+          if(currentProcess->newSys != NULL) {
+                /* the area has already been specified, so treat
+                this operation like a sys2 i.e. terminate the process */
+                terminateProcess();
+            }
+            /* store the new area in the a3 register */
+            currentProcess->newSys = (state_PTR) state->s_a3;
+            /* store the old area in the a2 register */
+            currentProcess->oldSys = (state_PTR) state->s_a2;
+        default:
+            /* should never happen */
+            terminateProcess();
+    }
+    /* context switch */
+    contextSwitch(state);
 }
 
 /* Function: Syscall 4 - Passeren
@@ -185,6 +247,7 @@ static void passeren(state_PTR state) {
     /* decrement the semaphore */
     (*(semaphore))--;
     if(*(semaphore) < 0) {
+        copyState(state, &(currentProcess->p_state));
         insertBlocked(semaphore, currentProcess);
         invokeScheduler();
     }
@@ -254,7 +317,7 @@ static void createProcess(state_PTR caller) {
         /* TODO: copy state */
     }
     /* context switch */
-    LDST(caller);
+    contextSwitch(caller);
 }
 
 
@@ -275,7 +338,7 @@ static void createProcess(state_PTR caller) {
     to 255 syscalls */
     const int callNumber = caller->s_a0;
     const unsigned int status = caller->s_status;
-    if((status & KERNELMODEON) == ALLOFF) {
+    if((status & KERNELMODEON) != ALLOFF) {
         /* in kernel mode */
         kernelMode = TRUE;
     }
