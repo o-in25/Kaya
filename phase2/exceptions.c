@@ -113,19 +113,19 @@ static void passUpOrDie(int callNumber, state_PTR old) {
 * Issues a switch statement to determine which 
 * syscall occurs 
 */
-static void delegateSyscall(int callNumber, pcb_PTR caller) {
+static void delegateSyscall(int callNumber, state_PTR caller) {
      switch(callNumber) {
             case WAITFORIODEVICE: /* SYSCALL 8 */
-                waitForClock(NULL);
+                waitForClock(caller);
                 break;
             case WAITFORCLOCK: /* SYSCALL 7 */
-                waitForClock(NULL);
+                waitForClock(caller);
                 break;
             case GETCPUTIME: /* SYSCALL 6 */
-                getCpuTime();
+                getCpuTime(caller);
                 break;
             case SPECIFYEXCEPTIONSTATEVECTOR: /* SYSCALL 5 */
-                specifyExceptionsStateVector();
+                specifyExceptionsStateVector(caller);
                 break;
             case PASSEREN: /* SYSCALL 4 */
                 passeren(caller);
@@ -149,14 +149,14 @@ static void delegateSyscall(int callNumber, pcb_PTR caller) {
 * copies the state of the processor from one new area
 *to another 
 */
-static void copyState(state_PTR old, state_PTR new) {
-    new->s_asid = old->s_asid;
-    new->s_cause = old->s_cause;
-    new->s_pc = old->s_pc;
-    new->s_status = old->s_status;
-    int i;
+static void copyState(state_PTR from, state_PTR to) {
+    to->s_asid = from->s_asid;
+    to->s_cause = from->s_cause;
+    to->s_pc = from->s_pc;
+    to->s_status = from->s_status;
+    int i;  
     for(i = 0; i < STATEREGNUM; i++) {
-        new->s_reg[i] = old->s_reg[i];
+        to->s_reg[i] = from->s_reg[i];
     }
 }
 
@@ -182,8 +182,9 @@ static int findSemaphoreIndex(int lineNumber, int deviceNumber, int flag) {
 /********************************************* SYSTEM CALLS *************************************************************/
 /************************************************************************************************************************/
 
+/*********************************************** SYS 8 **************************************************/
 /*
-* Wait for IO Device
+* Function: Syscall 8 - Wait for IO Device
 */
 static void waitForIODevice(state_PTR state) {
     /* compute the index of the appropriate semaphore */
@@ -207,11 +208,12 @@ static void waitForIODevice(state_PTR state) {
         insertBlocked(semaphore, currentProcess);
         softBlockedCount++;
         invokeScheduler();
-    } else {
-        
-    }
+    } 
+    /* context switch */
+    contextSwitch(state);
 }
 
+/*********************************************** SYS 7 **************************************************/
 /*
 * Function: Syscall 7 - Wait for clock
 */
@@ -221,6 +223,7 @@ static void waitForClock(state_PTR state) {
     invokeScheduler();
 }
 
+/*********************************************** SYS 6 **************************************************/
 /*
 * Function: Syscall 6 - Get CPU time 
 * When requested, sys6 will cuse the processor local 
@@ -242,6 +245,7 @@ static void getCpuTime(state_PTR state) {
     contextSwitch(state);
 }
 
+/*********************************************** SYS 5 **************************************************/
 /*
 * Function: Syscall 5 - Specify Exception State Vector
 * When this service is requested, three pieces of information need
@@ -295,6 +299,7 @@ static void specifyExceptionsStateVector(state_PTR state) {
     contextSwitch(state);
 }
 
+/*********************************************** SYS 4 **************************************************/
 /* Function: Syscall 4 - Passeren
 * When this service is requested, it is interpreted by the nucleus as a request to 
 * perform a V operation on a semaphore.
@@ -306,16 +311,23 @@ static void passeren(state_PTR state) {
     /* place the value of the physical address of the
     semaphore to be passerened into register a1 */
     int* semaphore = (int*) state->s_a1;
-    /* decrement the semaphore */
+    /* decrement the semaphore - per the protocol of a p oeration */
     (*(semaphore))--;
     if(*(semaphore) < 0) {
-        copyState(state, &(currentProcess->p_state));
+        /* wait for the operation */
         insertBlocked(semaphore, currentProcess);
+        /* copy the current processor state to the
+        new processor state pointed to by the current process'
+        p_state field */
+        copyState(state, &(currentProcess->p_state));
+        /* reschedule */
         invokeScheduler();
     }
+    /* context switch */
     contextSwitch(state);
 }
 
+/*********************************************** SYS 3 **************************************************/
 /* Function: Syscall 3 - Verhogen 
 * When this service is requested, it is interpreted by the nucleus as 
 * a request to perform a V operation on a semaphore.
@@ -324,17 +336,24 @@ static void passeren(state_PTR state) {
 * and then executing a SYSCALL instruction.
 */
 static void verhogen(state_PTR state) {
+    /* place the value of the physical address of the
+    semaphore to be verhogened into register a1 */
     int* semaphore = (int*) state->s_a1;
+    /* increment the semaphore - per the protocol of a v oeration */
     (*(semaphore))++;
     if(*(semaphore) <= 0) {
-        pcb_PTR newProcess = NULL;
-        newProcess = removeBlocked(semaphore);
+        /* signal that the operation is finished */
+        pcb_PTR newProcess = removeBlocked(semaphore);
         if(newProcess != NULL) {
+            /* if the ASL is not empty */
             insertProcQ(&(readyQueue), newProcess);
         }
     }
+    /* context switch */
+    contextSwitch(state);
 }
 
+/*********************************************** SYS 2 **************************************************/
 /* Function: Syscall 2 - Terminate Process 
 *This services causes the executing process to cease to exist. In addition, 
 * recursively, all progeny of this process are terminated as well. This is done through 
@@ -349,8 +368,9 @@ static void terminateProcess() {
     currentProcess = NULL;
     /* resechdule */
     invokeScheduler();
+    /* no context switch, invoke the scheduler */
 }
-
+/*********************************************** SYS 1 **************************************************/
 /* Function: Syscall 1 - Create Process 
 * When requested, this service causes a new process, said to be a progeny of the caller, 
 * to be created. a1 should contain the physical address of a processor state area at the time this 
@@ -361,31 +381,42 @@ static void terminateProcess() {
 * The SYS1 service is requested by the calling process by placing the value 1 in a0, 
 * the physical address of a processor state in a1, and then executing a SYSCALL instruction.
 */
-static void createProcess(state_PTR caller) {
+static void createProcess(state_PTR state) {
     /* create the new process */
     pcb_PTR p = allocPcb();
     if(p == NULL) {
         /* we don't have enough resources to start this process, 
         for whatever reason that may be - most likley no more free 
-        process blocks - so add -1 in the state's vo register */
-        caller->s_v0 = -1;
+        process blocks - so add -1 in the state's v0 register */
+        state->s_v0 = -1;
+        /* context switch */
     } else {
         /* we hace a sucessful running process, so v0 is now 1 */
-        caller->s_v0 = 0;
+        state->s_v0 = 0;
         /* we have a new process, so add it to the count */
         processCount++;
         /* add the new process to the current process's child - how cute */
         insertChild(currentProcess, p);
-        /* TODO: copy state */
+        /* insert the process into the ready queue */
+        insertProcQ(&(readyQueue), p);
+        /* a1 register contains the physical address of a processor state 
+        area at the time this instruction is executed */
+        state_PTR temp = (state_PTR) state->s_a1;
+        /* processor state, stored as a temporary variable as temp
+        is used as the initial state for the newly created process */
+        copyState(temp, &(p->p_state));
     }
     /* context switch */
-    contextSwitch(caller);
+    contextSwitch(state);
 }
-
 
 /************************************************************************************************************************/
 /*************************************** EXCEPTION HANDLERS *************************************************************/
 /************************************************************************************************************************/
+ /*
+ * Function: The Syscall Handler
+ * 
+ */
  void syscallHandler() {
     /* get the address of the old syscall area, since we
     wake up in the syscall handler */
@@ -407,7 +438,7 @@ static void createProcess(state_PTR caller) {
     if(kernelMode) {
         /* call our helper function to assist with handling the syscalls IF we are
         in kernel mode */
-        delegateSyscall(callNumber, callNumber);
+        delegateSyscall(callNumber, caller);
     } else if(!kernelMode && callNumber < 9) {
         state_PTR programTrapOldArea = (state_PTR) PRGMTRAPOLDAREA;
         programTrapOldArea->s_cause = RESERVED;
