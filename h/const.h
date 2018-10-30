@@ -120,6 +120,7 @@ to external (and internal) device events */
 #define TRAPTYPES 3
 
 /* device interrupts */
+#define INSTALLEDDEVICESSTART 3
 #define DISKINT	3
 #define TAPEINT 4
 #define NETWINT 5

@@ -146,11 +146,11 @@ static void delegateSyscall(int callNumber, pcb_PTR caller) {
         }
 }
 
-/* Function copy state 
+/* Function: Copy state 
 * copies the state of the processor from one new area
 *to another 
 */
-copyState(state_PTR old, state_PTR new) {
+static void copyState(state_PTR old, state_PTR new) {
     new->s_asid = old->s_asid;
     new->s_cause = old->s_cause;
     new->s_pc = old->s_pc;
@@ -161,6 +161,21 @@ copyState(state_PTR old, state_PTR new) {
     }
 }
 
+static int findSemaphoreIndex(int lineNumber, int deviceNumber, int flag) {
+    if(lineNumber < DISKINT || lineNumber > TERMINT) {
+        /* kill the process */
+        terminateProcess();
+    } 
+    int offset;
+    if(flag == TRUE) {
+        offset = (lineNumber - INSTALLEDDEVICESSTART + flag); 
+    } else {
+        offset = lineNumber - offset;
+    }
+    int calculation = DEVPERINT * INSTALLEDDEVICESSTART + deviceNumber;
+
+}
+
 /************************************************************************************************************************/
 /********************************************* SYSTEM CALLS *************************************************************/
 /************************************************************************************************************************/
@@ -168,8 +183,29 @@ copyState(state_PTR old, state_PTR new) {
 /*
 * Wait for IO Device
 */
-static void waitForIODevice() {
-
+static void waitForIODevice(state_PTR state) {
+    /* compute the index of the appropriate semaphore */
+    int lineNumber = state->s_a1;
+    int deviceNumber = state->s_a2; 
+    /* is the command read or write? */
+    int terminalReadFlag = (state->s_a3 == TRUE);
+    /* calculate line and device number */
+    int calculation;
+    /* each i/o device has a globa phase 2 semaphore associated 
+    with it. Here, we compute the index */
+    int i = findSemaphoreIndex(lineNumber, deviceNumber, terminalReadFlag);
+    /* we found the semaphore */
+    int* semaphore = &(semdTable[i]);
+    /* P operation */
+    (*semaphore)--;
+    if((*semaphore) < 0) {
+        copyState(semaphore, &(currentProcess->p_state));
+        insertBlocked(semaphore, currentProcess);
+        softBlockedCount++;
+        invokeScheduler();
+    } else {
+        
+    }
 }
 
 /*
