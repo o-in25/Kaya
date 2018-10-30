@@ -122,7 +122,7 @@ typedef struct pcb_t {
 	/* new tlb */
 	state_t* newTlb;
 	/* start time of day */
-	cpu_t* time 
+	cpu_t* p_time; 
 	/* * */
 }  pcb_t, *pcb_PTR;
 

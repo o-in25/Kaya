@@ -160,19 +160,22 @@ static void copyState(state_PTR old, state_PTR new) {
     }
 }
 
+/*
+* Function: Find semaphore index
+* Finds the index of the semaphore. It is important to know that
+* Note that terminal devices are two independent sub-devices and are handled by 
+* the SYS8 service as two independent devices. Hence each terminal device 
+* has two nucleus maintained semaphores for it; one for character 
+* receipt and one for character transmission.
+*/
 static int findSemaphoreIndex(int lineNumber, int deviceNumber, int flag) {
-    if(lineNumber < DISKINT || lineNumber > TERMINT) {
-        /* kill the process */
-        terminateProcess();
-    } 
-    int offset;
+     int offset;
     if(flag == TRUE) {
-        offset = (lineNumber - INSTALLEDDEVICESSTART + flag); 
+        offset = (lineNumber - NOSEM + flag); 
     } else {
         offset = lineNumber - offset;
     }
-    int calculation = DEVPERINT * INSTALLEDDEVICESSTART + deviceNumber;
-
+    int calculation = DEVPERINT * NOSEM + deviceNumber;
 }
 
 /************************************************************************************************************************/
@@ -188,8 +191,10 @@ static void waitForIODevice(state_PTR state) {
     int deviceNumber = state->s_a2; 
     /* is the command read or write? */
     int terminalReadFlag = (state->s_a3 == TRUE);
-    /* calculate line and device number */
-    int calculation;
+    if(lineNumber < DISKINT || lineNumber > TERMINT) {
+        /* kill the process */
+        terminateProcess();
+    } 
     /* each i/o device has a globa phase 2 semaphore associated 
     with it. Here, we compute the index */
     int i = findSemaphoreIndex(lineNumber, deviceNumber, terminalReadFlag);
@@ -218,11 +223,23 @@ static void waitForClock(state_PTR state) {
 
 /*
 * Function: Syscall 6 - Get CPU time 
+* When requested, sys6 will cuse the processor local 
+* time to be placed in the caller's v0 register
 */
-static void getCpuTime() {
-    cpu_t time;
-    STCK(time);
-    
+static void getCpuTime(state_PTR state) {
+    /* when a process' turn with the cpu is over,
+    the value of teh clock is stored again and is 
+    added to the elapsed cpu */
+    cpu_t stopTOD;
+    STCK(stopTOD);
+    /* the elasped time */
+    cpu_t elapsedTime = stopTOD - startTOD;
+    /* store the time in the pcb_t */
+    currentProcess->p_time = currentProcess->p_time = elapsedTime;
+    /* store the processor time in the caller's v0 */
+    state->s_v0 = currentProcess->p_time;
+    /* context switch */
+    contextSwitch(state);
 }
 
 /*

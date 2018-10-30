@@ -15,5 +15,7 @@
     extern pcb_PTR readyQueue;
     /* semaphore list */
     extern int semdTable[MAXSEMALLOC];
+    /* clock */
+    extern cpu_t startTOD;
 
 #endif

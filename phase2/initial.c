@@ -26,6 +26,9 @@ pcb_PTR currentProcess;
 pcb_PTR readyQueue;
 /* semaphore list */
 int semdTable[MAXSEMALLOC];
+/* clock timer */
+cpu_t startTOD;
+/* * */
 
 /* 
 * Function: the boot squence for the OS; it will initalize process control blocks and 
@@ -97,9 +100,9 @@ int main() {
     initASL();
     /* allocated a process - just like before, we must now allocate memory according`ly */
     currentProcess = allocPcb();
-    currentProcess->p_state.s_sp = (RAMTOP - PAGESIZE);
-    currentProcess->p_state.s_pc = (memaddr) NULL; /* TODO IMPLEMENT TEST CODE */
-    currentProcess->p_state.s_t9 = (memaddr) NULL; /* TODO IMPLEMENT TEST CODE */
+    currentProcess->p_state->s_sp = (RAMTOP - PAGESIZE);
+    currentProcess->p_state->s_pc = (memaddr) 0x000; /* TODO IMPLEMENT TEST CODE */
+    currentProcess->p_state->s_t9 = (memaddr) NULL; /* TODO IMPLEMENT TEST CODE */
     /* increment the process count, since we have one fired up */
     processCount++;
     /* insert the newly allocated process into the ready queue */
