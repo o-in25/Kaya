@@ -6,8 +6,6 @@
 #include "../e/pcb.e"
 #include "../e/asl.e"
 
-
-
 /************************************************************************************************************************/
 /******************************************** HELPER FUNCTIONS  *********************************************************/
 /************************************************************************************************************************/
@@ -64,6 +62,7 @@ static void terminateProgeny(pcb_PTR p) {
     freePcb(p);
     processCount--;
 }
+
 /* Function: context switch 
 * ROM instruction that will change the state of the 
 * processor */
@@ -221,7 +220,9 @@ static void waitForClock(state_PTR state) {
 * Function: Syscall 6 - Get CPU time 
 */
 static void getCpuTime() {
-
+    cpu_t time;
+    STCK(time);
+    
 }
 
 /*
