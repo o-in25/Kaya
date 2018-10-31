@@ -14,6 +14,7 @@
 #include "../e/asl.e"
 #include "../e/initial.e"
 #include "../e/exceptions.e"
+#include "../e/scheduler.e"
 #include "/usr/local/include/umps2/umps/libumps.e"
 
 /************************************************************************************************************************/
@@ -98,6 +99,7 @@ static void exitInterruptHandler(cpu_t startTime) {
     if(currentProcess != NULL) {
         STCK(startTime);
         currentProcess->p_time += (endTime - startTime);
+        
         copyState(oldInterrupt, &(currentProcess->p_state));
         insertProcQ(&(readyQueue), currentProcess);
         softBlockedCount--;
