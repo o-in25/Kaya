@@ -100,7 +100,7 @@ static void exitInterruptHandler(cpu_t startTime) {
         STCK(startTime);
         currentProcess->p_time += (endTime - startTime);
         
-        copyState(oldInterrupt, currentProcess->p_state);
+        copyState(oldInterrupt, &(currentProcess->p_state));
         insertProcQ(&(readyQueue), currentProcess);
         softBlockedCount--;
     }
