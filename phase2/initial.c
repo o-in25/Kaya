@@ -121,6 +121,7 @@ int main() {
     initPcbs();
     initASL();
     LDIT(TIME);
+        debugA(1000);
     /* allocated a process - just like before, we must now allocate memory according`ly */
     currentProcess = allocPcb();
     currentProcess->p_state->s_sp = (RAMTOP - PAGESIZE);
