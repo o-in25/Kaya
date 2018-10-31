@@ -77,14 +77,14 @@ int main() {
     state->s_sp = RAMTOP;
     state->s_pc = (memaddr) syscallHandler; /* TODO: build syscall handler */
     /* fill the t9 register */
-    state->s_t9 = syscallHandler; /* TODO: build syscall handler */
+    state->s_t9 = (memaddr) syscallHandler; /* TODO: build syscall handler */
     /******************************************** PRGMTRAP AREA ****************************************/
     state = (state_PTR) PRGMTRAPNEWAREA;
     state->s_status = ALLOFF;   
     state->s_sp = RAMTOP;
     state->s_pc = (memaddr) programTrapHandler; /* TODO: build program trap handler */
     /* fill the t9 register */
-    state->s_t9 = programTrapHandler; /* TODO: build program trap handler */
+    state->s_t9 = (memaddr)  programTrapHandler; /* TODO: build program trap handler */
     /******************************************** TBLMGMT AREA ****************************************/
     state = (state_PTR) TBLMGMTNEWAREA;
     /* privlaged ROM instruction */
@@ -92,14 +92,14 @@ int main() {
     state->s_sp = RAMTOP;
     state->s_pc = (memaddr) tableHandler; /* TODO: build table management handler */
     /* fill the t9 register */
-    state->s_t9 = tableHandler; /* TODO: build table management handler */
+    state->s_t9 = (memaddr) tableHandler; /* TODO: build table management handler */
     /******************************************** INTRUPT AREA ****************************************/
     state = (state_PTR) INTRUPTNEWAREA;
     state->s_status = ALLOFF;   
     state->s_sp = RAMTOP;
     state->s_pc = (memaddr) interruptHandler; /* TODO: build interrupt handler */
     /* fill the t9 register */
-    state->s_t9 = interruptHandler; /* TODO: build interrupt handler */
+    state->s_t9 = (memaddr) interruptHandler; /* TODO: build interrupt handler */
 
     /* next, we address each semaphore in the ASL free list to have 
     an address of 0 */
