@@ -206,7 +206,7 @@ static void waitForIODevice(state_PTR state) {
     /* P operation */
     (*semaphore)--;
     if((*semaphore) < 0) {
-        copyState(semaphore, &(currentProcess->p_state));
+        copyState(semaphore, &(currentProcess.p_state));
         insertBlocked(semaphore, currentProcess);
         softBlockedCount++;
         invokeScheduler();
@@ -223,7 +223,7 @@ static void waitForClock(state_PTR state) {
     int* semaphore = &(semdTable[48]);
     (*semaphore)--;
     softBlockedCount++;
-    copyState(state, &(currentProcess->p_state));
+    copyState(state, &(currentProcess.p_state));
     insertBlocked(semaphore, currentProcess);
 
     invokeScheduler();
@@ -325,7 +325,7 @@ static void passeren(state_PTR state) {
         /* copy the current processor state to the
         new processor state pointed to by the current process'
         p_state field */
-        copyState(state, &(currentProcess->p_state));
+        copyState(state, &(currentProcess.p_state));
         /* reschedule */
         invokeScheduler();
     }
@@ -410,7 +410,7 @@ static void createProcess(state_PTR state) {
         state_PTR temp = (state_PTR) state->s_a1;
         /* processor state, stored as a temporary variable as temp
         is used as the initial state for the newly created process */
-        copyState(temp, &(p->p_state));
+        copyState(temp, &(p.p_state));
     }
     /* context switch */
     contextSwitch(state);

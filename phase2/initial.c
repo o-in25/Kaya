@@ -126,16 +126,16 @@ int main() {
     currentProcess = allocPcb();
             debugA(2);
 
-    currentProcess->p_state->s_sp = (RAMTOP - PAGESIZE);
+    currentProcess->p_state.s_sp = (RAMTOP - PAGESIZE);
             debugA(3);
 
-    currentProcess->p_state->s_pc = (memaddr) test; /* TODO IMPLEMENT TEST CODE */
+    currentProcess->p_state.s_pc = (memaddr) test; /* TODO IMPLEMENT TEST CODE */
             debugA(4);
 
-    currentProcess->p_state->s_t9 = (memaddr) test; /* TODO IMPLEMENT TEST CODE */
+    currentProcess->p_state.s_t9 = (memaddr) test; /* TODO IMPLEMENT TEST CODE */
             debugA(5);
 
-    currentProcess->p_state->s_status = (ALLOFF | INTERRUPTSON | IM | TE);
+    currentProcess->p_state.s_status = (ALLOFF | INTERRUPTSON | IM | TE);
             debugA(6);
 
     /* increment the process count, since we have one fired up */

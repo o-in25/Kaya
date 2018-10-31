@@ -106,7 +106,7 @@ typedef struct pcb_t {
 	/* the pcb_t previous sibiling */
 	struct pcb_t* p_prevSib;
 	/* processor state */
-    state_t* p_state;
+    state_t p_state;
 	/* the semaphore address */
     int* p_semAdd;
 	/* old syscall */
