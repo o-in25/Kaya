@@ -39,12 +39,18 @@ cpu_t startTOD;
 /* * */
 
 
-int debug(int* a) {
+int debugA(int* a) {
     int i; 
     i = 42;
     return i;
 }
 
+
+int debugB(int* a) {
+    int i; 
+    i = 42;
+    return i;
+}
 /* 
 * Function: the boot squence for the OS; it will initalize process control blocks and 
 * will initialize the active semaphore list. It will also populate low areas of memory
@@ -100,7 +106,7 @@ int main() {
     state->s_pc = (memaddr) interruptHandler; /* TODO: build interrupt handler */
     /* fill the t9 register */
     state->s_t9 = (memaddr) interruptHandler; /* TODO: build interrupt handler */
-    debug(200);
+    debugA(1000);
 
     /* next, we address each semaphore in the ASL free list to have 
     an address of 0 */
@@ -125,7 +131,7 @@ int main() {
     processCount++;
     /* insert the newly allocated process into the ready queue */
     insertProcQ(&(readyQueue), currentProcess);
-    debug(200);
+    debugB(200);
     invokeScheduler();
 }
 
