@@ -149,7 +149,7 @@ void interruptHandler() {
     /* given an interrupt line number and a device number, the
     starting address of the device's devreg by using...
     0x10000050 + line number - 3 * 0x80 + device number * 0x10 */
-    devAddrBase = DEVREG + lineNumber * DEVICECOUNT + (deviceNumber * DEVREGSIZE); 
+    (*devAddrBase) = DEVREG + lineNumber * DEVICECOUNT + (deviceNumber * DEVREGSIZE); 
     if(lineNumber == TERMINT) {
         /* skip for now */
         status = terminalHandler(devAddrBase);
