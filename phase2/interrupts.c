@@ -76,7 +76,6 @@ int lineNumbers[LINECOUNT - 2] = {
 
 static void terminalHandler(device_PTR devAddrBase, int* status) {
     unsigned int status = (devAddrBase->t_transm_status & TRANSREADY);
-    int index = 0;
     if(status != READY) {
         /* acknowledge that the command is a transmit command 
         by providing the acknowledge bit */
