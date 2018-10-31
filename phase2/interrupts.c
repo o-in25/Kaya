@@ -74,20 +74,20 @@ int lineNumbers[LINECOUNT - 2] = {
     }
 }
 
-static void terminalHandler(device_PTR devAddrBase) {
+static unsigned int terminalHandler(device_PTR devAddrBase) {
     unsigned int status = (devAddrBase->t_transm_status & TRANSREADY);
     if(status != READY) {
         /* acknowledge that the command is a transmit command 
         by providing the acknowledge bit */
         (*devAddrBase).t_transm_command = ACK;
         /* set the status to be a transmit status */
-        status = (*devAddrBase).t_transm_status;
+        return (*devAddrBase).t_transm_status;
     } else {
         /* acknowledge that the command is a recieve command 
         by providing the acknowledge bit */
         (*devAddrBase).t_recv_command = ACK;
         /* set the status to be a recieve status */
-        (*status) = (*devAddrBase).t_recv_status;
+        return (*devAddrBase).t_recv_status;
     }
 }
 
@@ -150,7 +150,7 @@ void interruptHandler() {
     devAddrBase = DEVREG + lineNumber * DEVICECOUNT + (deviceNumber * DEVREGSIZE); 
     if(lineNumber == TERMINT) {
         /* skip for now */
-        terminalHandler(devAddrBase);
+        status = terminalHandler(devAddrBase);
         /* was it was a transmit command? */
         if(status == devAddrBase->t_transm_status) {
             /* get the device index */
