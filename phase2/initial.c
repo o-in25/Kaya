@@ -117,7 +117,7 @@ int main() {
     processCount++;
     /* insert the newly allocated process into the ready queue */
     insertProcQ(&(readyQueue), currentProcess);
-    /* TODO CALL THE SCHEDULER */
+    invokeScheduler();
 
     /* ttfn */
     return 0;
