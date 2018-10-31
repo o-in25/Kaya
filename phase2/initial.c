@@ -110,8 +110,8 @@ int main() {
     /* allocated a process - just like before, we must now allocate memory according`ly */
     currentProcess = allocPcb();
     currentProcess->p_state->s_sp = (RAMTOP - PAGESIZE);
-    currentProcess->p_state->s_pc = (memaddr) 0x000; /* TODO IMPLEMENT TEST CODE */
-    currentProcess->p_state->s_t9 = (memaddr) NULL; /* TODO IMPLEMENT TEST CODE */
+    currentProcess->p_state->s_pc = (memaddr) test; /* TODO IMPLEMENT TEST CODE */
+    currentProcess->p_state->s_t9 = (memaddr) test; /* TODO IMPLEMENT TEST CODE */
     currentProcess->p_state->s_status = (ALLOFF | INTERRUPTSON | IM | TE);
     /* increment the process count, since we have one fired up */
     processCount++;
