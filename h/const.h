@@ -93,6 +93,10 @@ Furthermore, many devices on the same interrupt line may be requesting service.
 Cause.IP is always up to date, immediately responding 
 to external (and internal) device events */
 
+/* device register */
+#define DEVREG 0x10000050
+#define DEVREGSIZE 0x00000010
+
 /* Set the timer constant - that is 5 miliseconds */
 #define QUANTUM 5000
 

@@ -26,7 +26,7 @@
 * will be supplied prior to this function call, this will simply 
 * calculate the device number  
 */
-static void getDeviceNumber(int lineNumber) {
+static int getDeviceNumber(int lineNumber) {
     /* get the address of the device bit map. Per secion 5.2.4 of pops, the 
     physical address of the bit map is 0x1000003C. When bit i is in word j is 
     set to one then device i attached to interrupt line j + 3 */
@@ -50,7 +50,7 @@ static void getDeviceNumber(int lineNumber) {
 
 }
 
-static void getLineNumber(int cause) {
+static int getLineNumber(int cause) {
 int lineNumbers[LINECOUNT - 2] = {
         LINETHREE,
         LINEFOUR,
@@ -60,7 +60,7 @@ int lineNumbers[LINECOUNT - 2] = {
     };
     int i; 
     for(i = 2; i < LINECOUNT; i++) {
-        if(cause & lineNumbers[i] != 0) {
+        if((cause & lineNumbers[i]) == lineNumbers[i]) {
             /* found the line number */
                 return lineNumbers[i];
         }
@@ -71,16 +71,35 @@ int lineNumbers[LINECOUNT - 2] = {
 void interruptHandler() {
     /* the old interrupt */
     state_PTR oldInterupt = (state_PTR) INTRUPTOLDAREA;
+    device_PTR devAddrBase;
     const unsigned int cause = oldInterupt->s_cause;
-    int deviceNumber;
-    int lineNumber;
+
+    int deviceNumber = 0;
+    int lineNumber = 0;
+    int index = 0;
     if((cause & LINEONE) != 0) {
         /* skip for now */
     } else if((cause & LINETWO) != 0) {
         /* skip for now */
     } else {
-        lineNumber = findLineNumber(cause);
+        lineNumber = getLineNumber(cause);
     }
+    deviceNumber = getDeviceNumber(cause);
+    /* since the find device number helper function does not save
+    the modified line number, it must be done outside the function */
+    lineNumber = lineNumber - NOSEM;
+    /* given an interrupt line number and a device number, the
+    starting address of the device's devreg by using...
+    0x10000050 + line number - 3 * 0x80 + device number * 0x10 */
+    devAddrBase = DEVREG + lineNumber * DEVICECOUNT + (deviceNumber * DEVREGSIZE); 
+    if(lineNumber == TERMINT) {
+        /* skip for now */
+    } else {
+        /* not a terminal interuupt */
+    }
+
+    
+
     /* line number found, now find the corresponding device 
     number */
 
