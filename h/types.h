@@ -16,7 +16,7 @@ typedef struct {
 	unsigned int d_status;
 	unsigned int d_command;
 	unsigned int d_data0;
-	unsigned int d_dataa1;
+	unsigned int d_data1;
 } device_t, *device_PTR;
 
 #define t_recv_status	d_status

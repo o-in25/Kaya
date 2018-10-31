@@ -97,6 +97,8 @@ to external (and internal) device events */
 #define DEVREG 0x10000050
 #define DEVREGSIZE 0x00000010
 
+#define TRANSREADY 0x0000000F
+
 /* Set the timer constant - that is 5 miliseconds */
 #define QUANTUM 5000
 
