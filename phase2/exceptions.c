@@ -218,8 +218,12 @@ static void waitForIODevice(state_PTR state) {
 * Function: Syscall 7 - Wait for clock
 */
 static void waitForClock(state_PTR state) {
+    int* semaphore = &(semdTable[48]);
+    (*semaphore)--;
+    softBlockedCount++;
+    copyState(state, &(currentProcess->p_state));
+    insertBlocked(semaphore, currentProcess);
 
-    state->s_v0 = NULL;
     invokeScheduler();
 }
 
@@ -456,6 +460,8 @@ static void createProcess(state_PTR state) {
  }
 
  void tableHandler() {
+     state_PTR oldState = (state_PTR) TBLMGMTOLDAREA;
+     passUpOrDie(PROGTRAP, oldState);
      /* TODO table handler */  
 
  }
