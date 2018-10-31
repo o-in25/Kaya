@@ -17,19 +17,34 @@
 /******************************************** HELPER FUNCTIONS  *********************************************************/
 /************************************************************************************************************************/
 
+/*
+* Function: Get Device Number 
+* The interrupting devices bit map IDBM is a read-only 5 word 
+* area that indicates which devices have an interrupt pending.
+* When bit i in word j is equal to 1, the device associated with
+* that corresponding bit has an interrupt pending. Since the word
+* will be supplied prior to this function call, this will simply 
+* calculate the device number  
+*/
 static void getDeviceNumber(int lineNumber) {
     /* get the address of the device bit map. Per secion 5.2.4 of pops, the 
     physical address of the bit map is 0x1000003C. When bit i is in word j is 
     set to one then device i attached to interrupt line j + 3 */
     const unsigned int* deviceBitMap = (memaddr) DEVREGLEN + (lineNumber - NOSEM) * WORDLEN;
     /* start at the first device */
-    unsigned int* start = STARTDEVICE;
+    unsigned int candidate = STARTDEVICE;
     int i = 0;
-    for(i = 0; i < STARTDEVICE; i++) {
-        if(lineNumber == STARTDEVICE) {
+    /* search each 8 bits */
+    for(i; i < STARTDEVICE; i++) {
+        /* if the bit i in word j is set to 1, then
+        the device attached to interrupt j + 3 has a pending 
+        interrupt */
+        if((candidate & (*deviceBitMap) == candidate)) {
+            /* since this index is equal to 1, we found it */
             return i;
         } else {
-            start = start >> 1;
+            /* bitwise shift right and go to the next one */
+            candidate = candidate << 1;
         }
     }
 
