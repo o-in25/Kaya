@@ -100,6 +100,7 @@ int main() {
     state->s_pc = (memaddr) interruptHandler; /* TODO: build interrupt handler */
     /* fill the t9 register */
     state->s_t9 = (memaddr) interruptHandler; /* TODO: build interrupt handler */
+    debug(200);
 
     /* next, we address each semaphore in the ASL free list to have 
     an address of 0 */
