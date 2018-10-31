@@ -38,6 +38,13 @@ int semdTable[49];
 cpu_t startTOD;
 /* * */
 
+
+int debug(int* a) {
+    int i; 
+    i = 42;
+    return i;
+}
+
 /* 
 * Function: the boot squence for the OS; it will initalize process control blocks and 
 * will initialize the active semaphore list. It will also populate low areas of memory
@@ -45,7 +52,6 @@ cpu_t startTOD;
 * which will delegate the rest of the OS, i.e. main will return 1
 */
 int main() {
-    print("Started");
     /* initalize global variables */
     readyQueue = mkEmptyProcQ();
     currentProcess = NULL;
@@ -118,6 +124,7 @@ int main() {
     processCount++;
     /* insert the newly allocated process into the ready queue */
     insertProcQ(&(readyQueue), currentProcess);
+    debug(200);
     invokeScheduler();
 }
 
