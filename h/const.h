@@ -71,21 +71,21 @@ If an interrupt is pending on interrupt line i, then Cause.IP[i] is set to 1. */
 /* total lines */
 #define LINECOUNT 8
 #define DEVICECOUNT 8
-#define LINEONE 0x00000000
+#define LINEZERO 0x00000000
 /* equivalent to 0000 0010 */
-#define LINETWO 0x00000002
+#define LINEONE 0x00000002
 /* equivalent to 0000 0100 */
-#define LINETHREE 0x00000004
+#define LINETWO 0x00000004
 /* equivalent to 0000 1000 */
-#define LINEFOUR 0x00000008
+#define LINETHREE 0x00000008
 /* equivalent to 0001 0000 */
-#define LINEFIVE 0x00000010
+#define LINEFOUR 0x00000010
 /* equivalent to 0010 0000 */
-#define LINESIX 0x00000020
+#define LINEFIVE 0x00000020
 /* equivalent to 0100 0000 */
-#define LINESEVEN 0x00000040
+#define LINESIX 0x00000040
 /* equivalent to 1000 0000 */
-#define LINEEIGHT 0x00000080
+#define LINESEVEN 0x00000080
 /* start with the first device */
 #define STARTDEVICE 0x00000001
 /* Important Point: Many interrupt lines may be active at the same time. 

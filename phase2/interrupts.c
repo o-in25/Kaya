@@ -13,7 +13,7 @@
 #include "../e/pcb.e"
 #include "../e/asl.e"
 #include "../e/initial.e"
-
+#include "../e/exceptions.e"
 /************************************************************************************************************************/
 /******************************************** HELPER FUNCTIONS  *********************************************************/
 /************************************************************************************************************************/
@@ -32,11 +32,13 @@ static int getDeviceNumber(int lineNumber) {
     physical address of the bit map is 0x1000003C. When bit i is in word j is 
     set to one then device i attached to interrupt line j + 3 */
     const unsigned int* deviceBitMap = (memaddr) DEVREGLEN + (lineNumber - NOSEM) * WORDLEN;
+    unsigned int* map;
+ 
     /* start at the first device */
     unsigned int candidate = STARTDEVICE;
     int i = 0;
     /* search each 8 bits */
-    for(i; i < STARTDEVICE; i++) {
+    for(i; i < STARTDEVICE + 7; i++) {
         /* if the bit i in word j is set to 1, then
         the device attached to interrupt j + 3 has a pending 
         interrupt */
@@ -48,9 +50,11 @@ static int getDeviceNumber(int lineNumber) {
             candidate = candidate << 1;
         }
     }
-
 }
 
+/*
+*
+*/
 static int getLineNumber(int cause) {
 int lineNumbers[LINECOUNT - 2] = {
         LINETHREE,
@@ -87,21 +91,51 @@ static void terminalHandler(device_PTR devAddrBase, int* status) {
 }
 
 
+static void exitInterruptHandler(cpu_t startTime) {
+    state_PTR oldInterrupt = (memaddr) INTRUPTOLDAREA;
+    cpu_t endTime;
+    if(currentProcess != NULL) {
+        STCK(startTime);
+        currentProcess->p_time += (endTime - startTime);
+        copyState(oldInterrupt, &(currentProcess->p_state));
+        insertProcQ(&(readyQueue), currentProcess);
+        softBlockedCount--;
+    }
+    invokeScheduler();
+}
 
 void interruptHandler() {
     /* the old interrupt */
     state_PTR oldInterupt = (state_PTR) INTRUPTOLDAREA;
     device_PTR devAddrBase;
     const unsigned int cause = oldInterupt->s_cause;
-
+    cpu_t startTime;
+    cpu_t endTime;
     int deviceNumber = 0;
     int lineNumber = 0;
     int index = 0;
     int status = 0;
-    if((cause & LINEONE) != 0) {
+    if((cause & LINEZERO) != 0) {
+        PANIC();
+    } else if((cause & LINEONE) != 0) {
+        exitInterruptHandler(startTime);
         /* skip for now */
-    } else if((cause & LINETWO) != 0) {
-        /* skip for now */
+    } else if((cause * LINETWO) != 0){
+        /* get the last device */
+        int* semaphore = &(semdTable[48]);
+        while(headBlocked(semaphore) != NULL) {
+            STCK(endTime);
+            pcb_PTR p = removeBlocked(semaphore);
+            if(p != NULL) {
+                insertBlocked(&(readyQueue), p);
+                softBlockedCount--;
+                /* handle the charging of time */
+                STCK(endTime);
+                currentProcess->p_time += endTime - startTime;
+            }
+            /* handle the charging of time */
+            exitInterruptHandler(startTime);
+        }
     } else {
         lineNumber = getLineNumber(cause);
     }
@@ -139,6 +173,8 @@ void interruptHandler() {
             insertProcQ(&(readyQueue), p);
         }
     }
+
+    exitInterruptHandler(startTime);
 
     
 
