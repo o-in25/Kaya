@@ -45,6 +45,7 @@ cpu_t startTOD;
 * which will delegate the rest of the OS, i.e. main will return 1
 */
 int main() {
+    print("Started");
     /* initalize global variables */
     readyQueue = mkEmptyProcQ();
     currentProcess = NULL;
