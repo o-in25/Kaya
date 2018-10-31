@@ -49,6 +49,13 @@ pcb_PTR cleanPcb(pcb_PTR p) {
 	p->p_prevSib = NULL;
 	/* clean its semaphore */
 	p->p_semAdd = NULL;
+	p->p_state = NULL;
+	p->oldSys = NULL;
+	p->newSys = NULL;
+	p->oldPgm = NULL;
+	p->newPgm = NULL;
+	p->oldTlb = NULL;
+	p->newTlb = NULL;
 	/* returned the cleaned node */
 	return p;
 }
