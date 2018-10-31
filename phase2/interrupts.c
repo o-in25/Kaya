@@ -82,13 +82,13 @@ static void terminalHandler(device_PTR devAddrBase, int* status) {
         by providing the acknowledge bit */
         (*devAddrBase).t_transm_command = ACK;
         /* set the status to be a transmit status */
-        (*status) = devAddrBase->t_transm_status;
+        (*status) = (*devAddrBase).t_transm_status;
     } else {
         /* acknowledge that the command is a recieve command 
         by providing the acknowledge bit */
         (*devAddrBase).t_recv_command = ACK;
         /* set the status to be a recieve status */
-        (*status) = devAddrBase->t_recv_status;
+        (*status) = (*devAddrBase).t_recv_status;
     }
 }
 
