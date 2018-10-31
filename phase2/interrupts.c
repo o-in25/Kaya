@@ -14,7 +14,7 @@
 #include "../e/asl.e"
 #include "../e/initial.e"
 #include "../e/exceptions.e"
-#include "../e/scheduler.e"
+#include "../e/scheduler"
 #include "/usr/local/include/umps2/umps/libumps.e"
 
 /************************************************************************************************************************/
@@ -100,7 +100,7 @@ static void exitInterruptHandler(cpu_t startTime) {
         STCK(startTime);
         currentProcess->p_time += (endTime - startTime);
         
-        copyState(oldInterrupt, &(currentProcess.p_state));
+        copyState(oldInterrupt, &(currentProcess->p_state));
         insertProcQ(&(readyQueue), currentProcess);
         softBlockedCount--;
     }
@@ -172,7 +172,7 @@ void interruptHandler() {
     if((*semaphore) <=0) {
         pcb_PTR p = removeBlocked(semaphore);
         if(p != NULL) {
-            p.p_state.s_v0 = status;
+            p->p_state->s_v0 = status;
             insertProcQ(&(readyQueue), p);
         }
     }

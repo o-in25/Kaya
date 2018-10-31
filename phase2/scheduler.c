@@ -46,6 +46,6 @@ extern void invokeScheduler() {
         /* case 1: the ready queue is empty, but there are soft blocked processes waiting to return */
          setTIMER(QUANTUM);
         /* context switch */
-        LDST(&(currentProcess.p_state));
+        LDST(&(currentProcess->p_state));
     }
 }
