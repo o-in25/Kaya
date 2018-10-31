@@ -47,6 +47,6 @@ extern void invokeScheduler() {
     } else {
         setTIMER(QUANTUM);
         /* context switch */
-        LDST(*(currentProcess->p_state));
+        LDST(&(currentProcess->p_state));
     }
 }
