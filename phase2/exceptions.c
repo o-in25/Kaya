@@ -3,6 +3,7 @@
 /* e files to include */
 #include "../e/initial.e"
 #include "../e/scheduler.e"
+#include "../e/interrupts.e"
 #include "../e/pcb.e"
 #include "../e/asl.e"
 #include "/usr/local/include/umps2/umps/libumps.e"
