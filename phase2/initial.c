@@ -118,9 +118,6 @@ int main() {
     /* insert the newly allocated process into the ready queue */
     insertProcQ(&(readyQueue), currentProcess);
     invokeScheduler();
-
-    /* ttfn */
-    return 0;
 }
 
 
