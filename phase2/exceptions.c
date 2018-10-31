@@ -151,7 +151,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
 * copies the state of the processor from one new area
 *to another 
 */
-static void copyState(state_PTR from, state_PTR to) {
+void copyState(state_PTR from, state_PTR to) {
     to->s_asid = from->s_asid;
     to->s_cause = from->s_cause;
     to->s_pc = from->s_pc;
