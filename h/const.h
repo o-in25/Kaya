@@ -62,27 +62,32 @@ mode and the interrupt mask */
 /* use bitwise AND to turn off */
 #define VIRTUALMEMOFF 0xFDFFFFFF
 /**************************** ALL OFF *************************/
-#define ALLOFF 0x0
+#define ALLOFF 0x00000000
 /************************* INTERRUPTS *************************/
 
 /* interrupts pending */
 /* an 8-bit field indicating on which interrupt lines interrupts are currently pending. 
 If an interrupt is pending on interrupt line i, then Cause.IP[i] is set to 1. */
-#define LINEONE 0x0
+/* total lines */
+#define LINECOUNT 8
+#define DEVICECOUNT 8
+#define LINEONE 0x00000000
 /* equivalent to 0000 0010 */
-#define LINETWO 0x2
+#define LINETWO 0x00000002
 /* equivalent to 0000 0100 */
-#define LINETHREE 0x4
+#define LINETHREE 0x00000004
 /* equivalent to 0000 1000 */
-#define LINEFOUR 0x8
+#define LINEFOUR 0x00000008
 /* equivalent to 0001 0000 */
-#define LINEFIVE 0x10
+#define LINEFIVE 0x00000010
 /* equivalent to 0010 0000 */
-#define LINESIX 0x20
+#define LINESIX 0x00000020
 /* equivalent to 0100 0000 */
-#define LINESEVEN 0x40
+#define LINESEVEN 0x00000040
 /* equivalent to 1000 0000 */
-#define LINEEIGHT 0x80
+#define LINEEIGHT 0x00000080
+/* start with the first device */
+#define STARTDEVICE 0x00000001
 /* Important Point: Many interrupt lines may be active at the same time. 
 Furthermore, many devices on the same interrupt line may be requesting service. 
 Cause.IP is always up to date, immediately responding 
@@ -91,6 +96,8 @@ to external (and internal) device events */
 /* Set the timer constant - that is 5 miliseconds */
 #define QUANTUM 5000
 
+/* initial bit map address */
+#define INTBITMAP 0x1000003C
 
 /* syscalls */
 #define CREATEPROCESS 1
