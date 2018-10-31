@@ -15,6 +15,13 @@
 #include "../e/pcb.e"
 #include "../e/asl.e"
 
+#include "../e/initial.e"
+#include "../e/interrupts.e"
+#include "../e/exceptions.e"
+#include "../e/scheduler.e"
+
+#include "../e/p2test.e"
+
 /* globals */
 /* the current process count */
 int processCount;
@@ -25,7 +32,7 @@ pcb_PTR currentProcess;
 /* the queue of ready processes */
 pcb_PTR readyQueue;
 /* semaphore list */
-int semdTable[MAXSEMALLOC];
+int semdTable[49];
 /* clock timer */
 cpu_t startTOD;
 /* * */
@@ -60,31 +67,31 @@ int main() {
     state = (state_PTR) SYSCALLNEWAREA;
     state->s_status = ALLOFF;   
     state->s_sp = RAMTOP;
-    state->s_pc = (memaddr) NULL; /* TODO: build syscall handler */
+    state->s_pc = (memaddr) syscallHandler; /* TODO: build syscall handler */
     /* fill the t9 register */
-    state->s_t9 = NULL; /* TODO: build syscall handler */
+    state->s_t9 = syscallHandler; /* TODO: build syscall handler */
     /******************************************** PRGMTRAP AREA ****************************************/
     state = (state_PTR) PRGMTRAPNEWAREA;
     state->s_status = ALLOFF;   
     state->s_sp = RAMTOP;
-    state->s_pc = (memaddr) NULL; /* TODO: build program trap handler */
+    state->s_pc = (memaddr) programTrapHandler; /* TODO: build program trap handler */
     /* fill the t9 register */
-    state->s_t9 = NULL; /* TODO: build program trap handler */
+    state->s_t9 = programTrapHandler; /* TODO: build program trap handler */
     /******************************************** TBLMGMT AREA ****************************************/
     state = (state_PTR) TBLMGMTNEWAREA;
     /* privlaged ROM instruction */
     state->s_status = ALLOFF;   
     state->s_sp = RAMTOP;
-    state->s_pc = (memaddr) NULL; /* TODO: build table management handler */
+    state->s_pc = (memaddr) tableHandler; /* TODO: build table management handler */
     /* fill the t9 register */
-    state->s_t9 = NULL; /* TODO: build table management handler */
+    state->s_t9 = tableHandler; /* TODO: build table management handler */
     /******************************************** INTRUPT AREA ****************************************/
     state = (state_PTR) INTRUPTNEWAREA;
     state->s_status = ALLOFF;   
     state->s_sp = RAMTOP;
-    state->s_pc = (memaddr) NULL; /* TODO: build interrupt handler */
+    state->s_pc = (memaddr) interruptHandler; /* TODO: build interrupt handler */
     /* fill the t9 register */
-    state->s_t9 = NULL; /* TODO: build interrupt handler */
+    state->s_t9 = interruptHandler; /* TODO: build interrupt handler */
 
     /* next, we address each semaphore in the ASL free list to have 
     an address of 0 */
@@ -98,11 +105,13 @@ int main() {
     operating system - being the process control blocks and the semaphore list */ 
     initPcbs();
     initASL();
+    LDIT(TIME);
     /* allocated a process - just like before, we must now allocate memory according`ly */
     currentProcess = allocPcb();
     currentProcess->p_state->s_sp = (RAMTOP - PAGESIZE);
     currentProcess->p_state->s_pc = (memaddr) 0x000; /* TODO IMPLEMENT TEST CODE */
     currentProcess->p_state->s_t9 = (memaddr) NULL; /* TODO IMPLEMENT TEST CODE */
+    currentProcess->p_state->s_status = (ALLOFF | INTERRUPTSON | IM | TE);
     /* increment the process count, since we have one fired up */
     processCount++;
     /* insert the newly allocated process into the ready queue */
