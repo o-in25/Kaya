@@ -12,6 +12,7 @@
 /* e files to include */
 #include "../e/pcb.e"
 #include "../e/asl.e"
+#include "../e/initial.e"
 
 /************************************************************************************************************************/
 /******************************************** HELPER FUNCTIONS  *********************************************************/
@@ -86,6 +87,7 @@ static void terminalHandler(device_PTR devAddrBase, int* status) {
 }
 
 
+
 void interruptHandler() {
     /* the old interrupt */
     state_PTR oldInterupt = (state_PTR) INTRUPTOLDAREA;
@@ -126,6 +128,16 @@ void interruptHandler() {
         status = devAddrBase->d_status;
         devAddrBase->d_command = ACK;
         index = DEVPERINT + (lineNumber - NOSEM) + deviceNumber;
+    }
+    /* perform a V operation on the semaphore */
+    int* semaphore = &(semdTable[index]);
+    (*semaphore)--;
+    if((*semaphore) <=0) {
+        pcb_PTR p = removeBlocked(semaphore);
+        if(p != NULL) {
+            p->p_state->s_v0 = status;
+            insertProcQ(&(readyQueue), p);
+        }
     }
 
     
