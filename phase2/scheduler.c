@@ -7,10 +7,11 @@
 
 
 extern void invokeScheduler() {
-    addokbuf("Here");
+    debugA(420);
     pcb_PTR currentProcess = removeProcQ(&(readyQueue));
     /*  */
     if((emptyProcQ(&(readyQueue)))) {
+    debugA(69);
 
         if(processCount == 0) { /* case 1 */
                 /* our work here is done. there are no jobs in the ready queue
@@ -46,6 +47,8 @@ extern void invokeScheduler() {
         and we close up shop */
         /* case 1: the ready queue is empty, but there are soft blocked processes waiting to return */
          setTIMER(QUANTUM);
+             debugA(520);
+
         /* context switch */
         LDST(&(currentProcess->p_state));
     }
