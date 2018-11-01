@@ -46,8 +46,9 @@ extern void invokeScheduler() {
         jobs in the ready queue - but none of them are waiting for I/O. If this is the case, the ROM command PANIC is invoked  
         and we close up shop */
         /* case 1: the ready queue is empty, but there are soft blocked processes waiting to return */
+                      debugA(520);
+
          setTIMER(QUANTUM);
-             debugA(520);
 
         /* context switch */
         LDST(&(currentProcess->p_state));
