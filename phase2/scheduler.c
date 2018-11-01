@@ -9,6 +9,7 @@
 extern void invokeScheduler() {
     debugA(420);
     pcb_PTR currentProcess = removeProcQ(&(readyQueue));
+        debugA(69);
     /*  */
     if((emptyProcQ(&(readyQueue)))) {
     debugA(69);
