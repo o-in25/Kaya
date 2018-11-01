@@ -422,7 +422,7 @@ static void createProcess(state_PTR state) {
  /*
  * Function: The Syscall Handler
  * 
- */
+ */ 
  void syscallHandler() {
     /* get the address of the old syscall area, since we
     wake up in the syscall handler */

@@ -106,7 +106,6 @@ int main() {
     state->s_pc = (memaddr) interruptHandler; /* TODO: build interrupt handler */
     /* fill the t9 register */
     state->s_t9 = (memaddr) interruptHandler; /* TODO: build interrupt handler */
-    debugA(1000);
 
     /* next, we address each semaphore in the ASL free list to have 
     an address of 0 */
@@ -121,30 +120,15 @@ int main() {
     initPcbs();
     initASL();
     LDIT(TIME);
-        debugA(1);
     /* allocated a process - just like before, we must now allocate memory according`ly */
     currentProcess = allocPcb();
-            debugA(2);
-
     currentProcess->p_state.s_sp = (RAMTOP - PAGESIZE);
-            debugA(3);
-
     currentProcess->p_state.s_pc = (memaddr) test; /* TODO IMPLEMENT TEST CODE */
-            debugA(4);
-
     currentProcess->p_state.s_t9 = (memaddr) test; /* TODO IMPLEMENT TEST CODE */
-            debugA(5);
-
     currentProcess->p_state.s_status = (ALLOFF | INTERRUPTSON | IM | TE);
-            debugA(6);
-
     /* increment the process count, since we have one fired up */
     processCount++;
     /* insert the newly allocated process into the ready queue */
     insertProcQ(&(readyQueue), currentProcess);
-    debugB(200);
     invokeScheduler();
 }
-
-
-

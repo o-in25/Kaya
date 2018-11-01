@@ -7,6 +7,7 @@
 
 
 extern void invokeScheduler() {
+    addokbuf("Here");
     pcb_PTR currentProcess = removeProcQ(&(readyQueue));
     /*  */
     if((emptyProcQ(&(readyQueue)))) {
