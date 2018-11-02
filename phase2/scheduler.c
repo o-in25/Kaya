@@ -10,7 +10,6 @@ cpu_t startedTOD;
 
 extern void invokeScheduler() {
     pcb_PTR currentProcess = removeProcQ(&(readyQueue));
-    debugA(69);
     if(emptyProcQ(readyQueue) == NULL) {
 
         if(processCount == 0) { /* case 1 */
@@ -43,9 +42,11 @@ extern void invokeScheduler() {
         }
     }
     if(currentProcess != NULL) {
+        debugA(420);
         STCK(currentTOD);
         currentProcess->p_time += currentTOD - startTOD;
     }
+    debugA(69);
     currentProcess = removeProcQ(&(readyQueue));
     STCK(startedTOD);
     setTIMER(QUANTUM);
