@@ -332,7 +332,7 @@ pcb_PTR outProcQ(pcb_PTR* tp, pcb_PTR p) {
 * argument; return null if the tp is null - meaning
 * there is no list
 */
-pcb_PTR removeProcQ(pcb_PTR *tp) {
+pcb_PTR removeProcQ(pcb_PTR* tp) {
 	pcb_PTR rmvdPcb = NULL;
 	/* first, consider the case in which the process queue is
 	empty */
