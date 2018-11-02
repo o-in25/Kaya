@@ -9,15 +9,14 @@ cpu_t currentTOD;
 cpu_t startedTOD;
 
 extern void invokeScheduler() {
-                    debugA(6900);
-
     pcb_PTR currentProcess = removeProcQ(&(readyQueue));
-    if(emptyProcQ(readyQueue)) {
                 debugA(69);
 
         if(processCount == 0) { /* case 1 */
                 /* our work here is done. there are no jobs in the ready queue
                 and we have no processes running */
+                debugA(1111);
+
                 HALT();
         }
         if(processCount > 0) {
@@ -28,6 +27,8 @@ extern void invokeScheduler() {
             but if we are not waiting on I/O there's nothing on the ready queue, AND we have a processes lingering,
             we panic */
             if(softBlockedCount == 0) {
+                               debugA(2222);
+
                 /* all is good - waiting on I/O to finish up */
                 PANIC();
             } else if(softBlockedCount > 0) {
