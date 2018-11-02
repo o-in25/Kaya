@@ -37,6 +37,7 @@ extern void invokeScheduler() {
         currentProcess->p_time += currentTOD - startTOD;
         setTIMER(QUANTUM);
         /* context switch */
+        debugA(3434);
         LDST(&(currentProcess->p_state));
     }
 }
