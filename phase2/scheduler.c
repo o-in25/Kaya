@@ -42,12 +42,12 @@ extern void invokeScheduler() {
             }
         }
     }
-    debugA(1234567);
-    currentProcess = removeProcQ(&(readyQueue));
-    STCK(currentTOD);
-    currentProcess->p_time += currentTOD - startTOD;
-    setTIMER(QUANTUM);
-    /* context switch */
-    debugA(3434);
-    LDST(&(currentProcess->p_state));
+    if(currentProcess != NULL) {
+        STCK(currentTOD);
+        currentProcess->p_time += currentTOD - startTOD;
     }
+    currentProcess = removeProcQ(&(readyQueue));
+    STCK(startedTOD);
+    setTIMER(QUANTUM);
+    LDST(&(currentProcess->p_state));
+}
