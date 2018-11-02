@@ -55,7 +55,10 @@ pcb_PTR cleanPcb(pcb_PTR p) {
 	p->newPgm = NULL;
 	p->oldTlb = NULL;
 	p->newTlb = NULL;
-	(*p).p_state = NULL;
+	/* phase 2 */
+	p->p_time = 0;
+	p->p_semAdd = NULL;
+	p->p_state = NULL;
 	/* returned the cleaned node */
 	return p;
 }
