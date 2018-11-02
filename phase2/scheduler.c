@@ -11,6 +11,8 @@ cpu_t startedTOD;
 extern void invokeScheduler() {
     pcb_PTR currentProcess = removeProcQ(&(readyQueue));
     if((emptyProcQ(&(readyQueue)))) {
+                debugA(69);
+
         if(processCount == 0) { /* case 1 */
                 /* our work here is done. there are no jobs in the ready queue
                 and we have no processes running */
