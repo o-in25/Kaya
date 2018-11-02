@@ -47,4 +47,3 @@ extern void invokeScheduler() {
         debugA(3434);
         LDST(&(currentProcess->p_state));
     }
-}
