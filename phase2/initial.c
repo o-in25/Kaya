@@ -35,8 +35,9 @@ pcb_PTR readyQueue;
 /* semaphore list */
 int semdTable[49];
 /* clock timer */
-cpu_t startTOD;
+cpu_t startedTOD;
 /* * */
+cpu_t currentTOD;
 
 
 int debugA(int* a) {
@@ -119,6 +120,8 @@ int main() {
     operating system - being the process control blocks and the semaphore list */ 
     initPcbs();
     initASL();
+    startedTOD = 0;
+    currentTOD = TIME;
     LDIT(TIME);
     /* allocated a process - just like before, we must now allocate memory according`ly */
     currentProcess = allocPcb();

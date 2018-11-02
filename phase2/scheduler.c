@@ -5,8 +5,6 @@
 #include "../e/asl.e"
 #include "/usr/local/include/umps2/umps/libumps.e"
 
-cpu_t currentTOD;
-cpu_t startedTOD;
 
 extern void invokeScheduler() {
     if(emptyProcQ(readyQueue) == NULL) {
