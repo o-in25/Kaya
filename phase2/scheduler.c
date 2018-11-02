@@ -5,15 +5,12 @@
 #include "../e/asl.e"
 #include "/usr/local/include/umps2/umps/libumps.e"
 
+cpu_t currentTOD;
+cpu_t startedTOD;
 
 extern void invokeScheduler() {
-    debugA(420);
     pcb_PTR currentProcess = removeProcQ(&(readyQueue));
-        debugA(69);
-    /*  */
     if((emptyProcQ(&(readyQueue)))) {
-    debugA(69);
-
         if(processCount == 0) { /* case 1 */
                 /* our work here is done. there are no jobs in the ready queue
                 and we have no processes running */
@@ -26,31 +23,19 @@ extern void invokeScheduler() {
             so why is this? we are either softblocked and waiting on I/O - in which case all is good, we just wait it out.
             but if we are not waiting on I/O there's nothing on the ready queue, AND we have a processes lingering,
             we panic */
-            if(softBlockedCount > 0) {
+            if(softBlockedCount == 0) {
                 /* all is good - waiting on I/O to finish up */
-                WAIT();
-            } else if(softBlockedCount == 0) {
+                PANIC();
+            } else if(softBlockedCount > 0) {
                 /* kernel panic. we have nothing on the ready queue, we have a process lingering - but it's not
                 I/O - time to panic */
-                setSTATUS(getSTATUS() | ALLOFF | INTERRUPTSON);
-                PANIC();
+                setSTATUS(getSTATUS() | ALLOFF | INTERRUPTSON | IEc | IM);
+                WAIT();
             }
         }
-
-        /* there is nothing on the ready queue to be scheduled. we must check for special cases first, what if there are no 
-        processes left in the system - that is, the process count is less than 1? If this is the case, we invoke 
-        the privilaged ROM command HALT. secondly, what if there are running processes in the system, but the ready 
-        queue is empty? there are possible cases for this, despite seeming unintuitive. first, if there is the possibility 
-        that a process is waiting on I/O to complete. If this is the case, the softblocked out will be > 0. Since these 
-        processes are gaurenteed to cause an interrupt, we simply have to wait for them to finish. appropriately, this is done
-        with the privaleged ROM command WAIT. finally, if neither of these are the case there is an error. here, there are no 
-        jobs in the ready queue - but none of them are waiting for I/O. If this is the case, the ROM command PANIC is invoked  
-        and we close up shop */
-        /* case 1: the ready queue is empty, but there are soft blocked processes waiting to return */
-                      debugA(520);
-
-         setTIMER(QUANTUM);
-
+        currentProcess = removeProcQ(&(readyQueue));
+        currentProcess->p_time += currentTOD - startTOD;
+        setTIMER(QUANTUM);
         /* context switch */
         LDST(&(currentProcess->p_state));
     }
