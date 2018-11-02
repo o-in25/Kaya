@@ -50,5 +50,6 @@ extern void invokeScheduler() {
     currentProcess = removeProcQ(&(readyQueue));
     STCK(startedTOD);
     setTIMER(QUANTUM);
+    debugA(9003);
     LDST(&(currentProcess->p_state));
 }
