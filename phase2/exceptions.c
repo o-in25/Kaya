@@ -71,6 +71,7 @@ static void terminateProgeny(pcb_PTR p) {
 void contextSwitch(state_PTR s) {
     debugB(99);
     LDST(s);
+        debugB(1009);
 }
 
 /* Fucntion: Pass up or die 
