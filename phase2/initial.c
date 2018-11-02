@@ -131,6 +131,6 @@ int main() {
     /* insert the newly allocated process into the ready queue */
     insertProcQ(&(readyQueue), currentProcess);
     /* its in the queue */
-    createProcess = NULL;
+    currentProcess = NULL;
     invokeScheduler();
 }
