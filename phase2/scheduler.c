@@ -9,6 +9,8 @@ cpu_t currentTOD;
 cpu_t startedTOD;
 
 extern void invokeScheduler() {
+                    debugA(6900);
+
     pcb_PTR currentProcess = removeProcQ(&(readyQueue));
     if((emptyProcQ(&(readyQueue)))) {
                 debugA(69);
