@@ -44,6 +44,7 @@ extern void invokeScheduler() {
     }
     debugA(1234567);
     currentProcess = removeProcQ(&(readyQueue));
+    STCK(currentTOD);
     currentProcess->p_time += currentTOD - startTOD;
     setTIMER(QUANTUM);
     /* context switch */
