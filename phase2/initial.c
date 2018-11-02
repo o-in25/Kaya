@@ -52,6 +52,13 @@ extern int debugB(int* a) {
     i = 42;
     return i;
 }
+
+extern int debugC(int* a) {
+    int i; 
+    i = 42;
+    return i;
+}
+
 /* 
 * Function: the boot squence for the OS; it will initalize process control blocks and 
 * will initialize the active semaphore list. It will also populate low areas of memory
