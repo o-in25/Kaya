@@ -15,8 +15,6 @@ extern void invokeScheduler() {
         if(processCount == 0) { /* case 1 */
                 /* our work here is done. there are no jobs in the ready queue
                 and we have no processes running */
-                debugA(1111);
-
                 HALT();
         }
         if(processCount > 0) {
@@ -27,27 +25,24 @@ extern void invokeScheduler() {
             but if we are not waiting on I/O there's nothing on the ready queue, AND we have a processes lingering,
             we panic */
             if(softBlockedCount == 0) {
-                               debugA(2222);
-
                 /* all is good - waiting on I/O to finish up */
                 PANIC();
             } else if(softBlockedCount > 0) {
                 /* kernel panic. we have nothing on the ready queue, we have a process lingering - but it's not
                 I/O - time to panic */
-                        debugA(121212121);
-
                 setSTATUS(getSTATUS() | ALLOFF | INTERRUPTSON | IEc | IM);
                 WAIT();
             }
         }
-    }
+    } else {
+        currentProcess = removeProcQ(&(readyQueue));
+        STCK(startedTOD);
+        setTIMER(QUANTUM);  
+        contextSwitch(&(currentProcess->p_state));
+     }
     if(currentProcess != NULL) {
         debugA(420);
         STCK(currentTOD);
         currentProcess->p_time += currentTOD - startTOD;
     }
-    currentProcess = removeProcQ(&(readyQueue));
-    STCK(startedTOD);
-    setTIMER(QUANTUM);  
-    contextSwitch(&(currentProcess->p_state));
 }
