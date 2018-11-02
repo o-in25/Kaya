@@ -17,5 +17,7 @@
     extern int semdTable[MAXSEMALLOC];
     /* clock */
     extern cpu_t startTOD;
+/* * */
+    extern cpu_t currentTOD;
 
 #endif
