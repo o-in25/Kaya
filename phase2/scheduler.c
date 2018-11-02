@@ -34,15 +34,14 @@ extern void invokeScheduler() {
                 WAIT();
             }
         }
-    } else {
-        currentProcess = removeProcQ(&(readyQueue));
-        STCK(startedTOD);
-        setTIMER(QUANTUM);  
-        contextSwitch(&(currentProcess->p_state));
-     }
+    } 
     if(currentProcess != NULL) {
         debugA(420);
         STCK(currentTOD);
         currentProcess->p_time += currentTOD - startTOD;
     }
+    currentProcess = removeProcQ(&(readyQueue));
+    STCK(startedTOD);
+    setTIMER(QUANTUM);  
+    contextSwitch(&(currentProcess->p_state));
 }
