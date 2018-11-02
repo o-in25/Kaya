@@ -55,6 +55,7 @@ pcb_PTR cleanPcb(pcb_PTR p) {
 	p->newPgm = NULL;
 	p->oldTlb = NULL;
 	p->newTlb = NULL;
+	p->p_state = NULL;
 	/* returned the cleaned node */
 	return p;
 }
