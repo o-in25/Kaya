@@ -68,7 +68,7 @@ static void terminateProgeny(pcb_PTR p) {
 /* Function: context switch 
 * ROM instruction that will change the state of the 
 * processor */
-static void contextSwitch(state_PTR s) {
+void contextSwitch(state_PTR s) {
     LDST(s);
 }
 
