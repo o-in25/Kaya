@@ -46,7 +46,7 @@ int debugA(int* a) {
 }
 
 
-int debugB(int* a) {
+extern int debugB(int* a) {
     int i; 
     i = 42;
     return i;
