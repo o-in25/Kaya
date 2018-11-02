@@ -33,6 +33,8 @@ extern void invokeScheduler() {
             } else if(softBlockedCount > 0) {
                 /* kernel panic. we have nothing on the ready queue, we have a process lingering - but it's not
                 I/O - time to panic */
+                        debugA(121212121);
+
                 setSTATUS(getSTATUS() | ALLOFF | INTERRUPTSON | IEc | IM);
                 WAIT();
             }
