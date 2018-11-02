@@ -10,7 +10,8 @@ cpu_t startedTOD;
 
 extern void invokeScheduler() {
     pcb_PTR currentProcess = removeProcQ(&(readyQueue));
-                debugA(69);
+    debugA(69);
+    if(emptyProcQ(readyQueue) == NULL) {
 
         if(processCount == 0) { /* case 1 */
                 /* our work here is done. there are no jobs in the ready queue
@@ -40,10 +41,11 @@ extern void invokeScheduler() {
                 WAIT();
             }
         }
-        currentProcess = removeProcQ(&(readyQueue));
-        currentProcess->p_time += currentTOD - startTOD;
-        setTIMER(QUANTUM);
-        /* context switch */
-        debugA(3434);
-        LDST(&(currentProcess->p_state));
+    }
+    currentProcess = removeProcQ(&(readyQueue));
+    currentProcess->p_time += currentTOD - startTOD;
+    setTIMER(QUANTUM);
+    /* context switch */
+    debugA(3434);
+    LDST(&(currentProcess->p_state));
     }
