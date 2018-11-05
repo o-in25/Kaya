@@ -140,8 +140,8 @@ int main() {
     processCount++;
     /* insert the newly allocated process into the ready queue */
     insertProcQ(&(readyQueue), currentProcess);
-    currentProcess = NULL;
     /* its in the queue */
+    currentProcess = NULL;
+    /* call the scheduler */
     invokeScheduler();
-    return 0;
 }
