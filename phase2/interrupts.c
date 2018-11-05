@@ -68,7 +68,7 @@ int lineNumbers[LINECOUNT - 2] = {
         LINESEVEN
     };
     int i; 
-    for(i = 2; i < LINECOUNT; i++) {
+    for(i = 0; i < LINECOUNT; i++) {
         if((cause & lineNumbers[i]) == lineNumbers[i]) {
             /* found the line number */
                 return lineNumbers[i];
@@ -152,21 +152,21 @@ void interruptHandler() {
     starting address of the device's devreg by using...
     0x10000050 + line number - 3 * 0x80 + device number * 0x10 */
     devAddrBase = DEVREG + lineNumber * DEVICECOUNT + (deviceNumber * DEVREGSIZE); 
-    if(lineNumber == TERMINT) {
+    if(lineNumber == TERMINT - 3) {
         /* skip for now */
         status = terminalHandler(devAddrBase);
         /* was it was a transmit command? */
         if(status == devAddrBase->t_transm_status) {
             /* get the device index */
-            index = (DEVPERINT * (lineNumber - NOSEM)) + deviceNumber;
+            index = (DEVPERINT * (lineNumber)) + deviceNumber;
         } else {
-            index = (DEVPERINT * (lineNumber - (NOSEM + 1))) + deviceNumber;
+            index = (DEVPERINT * (lineNumber + 1)) + deviceNumber;
         }
     } else {
         /* not a terminal interrupt - assign the index */
         status = devAddrBase->d_status;
         devAddrBase->d_command = ACK;
-        index = DEVPERINT + (lineNumber - NOSEM) + deviceNumber;
+        index = DEVPERINT + lineNumber + deviceNumber;
     }
     /* perform a V operation on the semaphore */
     int* semaphore = &(semdTable[index]);
@@ -176,15 +176,10 @@ void interruptHandler() {
         if(p != NULL) {
             p->p_state.s_v0 = status;
             insertProcQ(&(readyQueue), p);
+            softBlockedCount--;
         }
     }
-
     exitInterruptHandler(startTime);
-
-    
-
     /* line number found, now find the corresponding device 
     number */
-
-
 }
