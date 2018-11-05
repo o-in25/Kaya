@@ -70,7 +70,7 @@ int lineNumbers[LINECOUNT - 3] = {
     for(i = 0; i < LINECOUNT-3; i++) {
         if((cause & lineNumbers[i]) == lineNumbers[i]) {
             /* found the line number */
-            return i + 3;
+            return i + 4;
         }
     }
 }
