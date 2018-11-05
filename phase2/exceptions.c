@@ -175,7 +175,7 @@ static int findSemaphoreIndex(int lineNumber, int deviceNumber, int flag) {
     if(flag == TRUE) {
         offset = (lineNumber - NOSEM + flag); 
     } else {
-        offset = lineNumber - offset;
+        offset = lineNumber - NOSEM;
     }
     int calculation = DEVPERINT * offset + deviceNumber;
     return calculation;
