@@ -118,7 +118,7 @@ static void passUpOrDie(int callNumber, state_PTR old) {
 static void delegateSyscall(int callNumber, state_PTR caller) {
     switch(callNumber) {
         case WAITFORIODEVICE: /* SYSCALL 8 */
-            waitForClock(caller);
+            waitForIODevice(caller);
             break;
         case WAITFORCLOCK: /* SYSCALL 7 */
             waitForClock(caller);
