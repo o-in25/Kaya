@@ -56,23 +56,25 @@ static int getDeviceNumber(int lineNumber) {
 }
 
 /*
-*
+* Function: Get line number
+* Gets the line number of the non-cpu and non-clock devices,
+* given the cause integer. This function gets invoked whenever the 
+* cause is for the interrupt is not a cpu interrupt, a local timer 
+* interrupt, or a interval time interrupt. If the cause is neither of
+* these, this simply determines which line it is
 */
 static int getLineNumber(int cause) {
-int lineNumbers[LINECOUNT - 3] = {
-        LINETHREE,
-        LINEFOUR,
-        LINEFIVE,
-        LINESIX,
-        LINESEVEN
-    };
-    int i; 
-    for(i = 0; i < LINECOUNT-3; i++) {
-        if((cause & lineNumbers[i]) == lineNumbers[i]) {
+    int lines[LINECOUNT - NOSEM] = { LINETHREE, LINEFOUR, LINEFIVE, LINESIX, LINESEVEN }; 
+    int lineNumber = 0;
+    int i;
+    for(i = 0; i < LINECOUNT - NOSEM; i++) {
+        if((cause & lines[i]) != 0) {
             /* found the line number */
-            return i + 4;
+            lineNumber = lines[i];
         }
     }
+    /* we found the line number */
+    return lineNumber;
 }
 
 static unsigned int terminalHandler(device_PTR devAddrBase) {
@@ -140,6 +142,7 @@ void interruptHandler() {
         }
     } else {
         lineNumber = getLineNumber(cause);
+        debugA(lineNumber);
     }
     deviceNumber = getDeviceNumber(cause);
     /* since the find device number helper function does not save
@@ -176,7 +179,6 @@ void interruptHandler() {
             softBlockedCount--;
         }
     }
+    /* exit */
     exitInterruptHandler(startTime);
-    /* line number found, now find the corresponding device 
-    number */
 }
