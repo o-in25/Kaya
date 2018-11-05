@@ -40,7 +40,7 @@ cpu_t startTOD;
 cpu_t currentTOD;
 
 
-int debugA(int* a) {
+extern int debugA(int* a) {
     int i; 
     i = 42;
     return i;
