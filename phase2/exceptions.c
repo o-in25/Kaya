@@ -69,10 +69,7 @@ static void terminateProgeny(pcb_PTR p) {
 * ROM instruction that will change the state of the 
 * processor */
 void contextSwitch(state_PTR s) {
-    debugB(99);
     LDST(s);
-    debugB(1009);
-
 }
 
 /* Fucntion: Pass up or die 
@@ -180,7 +177,7 @@ static int findSemaphoreIndex(int lineNumber, int deviceNumber, int flag) {
     } else {
         offset = lineNumber - offset;
     }
-    int calculation = DEVPERINT * NOSEM + deviceNumber;
+    int calculation = DEVPERINT * offset + deviceNumber;
     return calculation;
 }
 
