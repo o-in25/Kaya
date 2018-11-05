@@ -69,9 +69,7 @@ static void terminateProgeny(pcb_PTR p) {
 * ROM instruction that will change the state of the 
 * processor */
 void contextSwitch(state_PTR s) {
-    debugB(99);
     LDST(s);
-    debugB(1009);
 }
 
 /* Fucntion: Pass up or die 
@@ -118,35 +116,35 @@ static void passUpOrDie(int callNumber, state_PTR old) {
 * syscall occurs 
 */
 static void delegateSyscall(int callNumber, state_PTR caller) {
-     switch(callNumber) {
-            case WAITFORIODEVICE: /* SYSCALL 8 */
-                waitForClock(caller);
-                break;
-            case WAITFORCLOCK: /* SYSCALL 7 */
-                waitForClock(caller);
-                break;
-            case GETCPUTIME: /* SYSCALL 6 */
-                getCpuTime(caller);
-                break;
-            case SPECIFYEXCEPTIONSTATEVECTOR: /* SYSCALL 5 */
-                specifyExceptionsStateVector(caller);
-                break;
-            case PASSEREN: /* SYSCALL 4 */
-                passeren(caller);
-                break;
-            case VERHOGEN: /* SYSCALL 3 */
-                verhogen(caller);
-                break;
-            case TERMINATEPROCESS: /* SYSCALL 2 */ 
-                terminateProcess();   
-                break;
-            case CREATEPROCESS: /* SYSCALL 1 */
-                createProcess(caller);
-                break;
-            default: 
-                passUpOrDie(caller, callNumber);
-                break;
-        }
+    switch(callNumber) {
+        case WAITFORIODEVICE: /* SYSCALL 8 */
+            waitForClock(caller);
+            break;
+        case WAITFORCLOCK: /* SYSCALL 7 */
+            waitForClock(caller);
+            break;
+        case GETCPUTIME: /* SYSCALL 6 */
+            getCpuTime(caller);
+            break;
+        case SPECIFYEXCEPTIONSTATEVECTOR: /* SYSCALL 5 */
+            specifyExceptionsStateVector(caller);
+            break;
+        case PASSEREN: /* SYSCALL 4 */
+            passeren(caller);
+            break;
+        case VERHOGEN: /* SYSCALL 3 */
+            verhogen(caller);
+            break;
+        case TERMINATEPROCESS: /* SYSCALL 2 */ 
+            terminateProcess();   
+            break;
+        case CREATEPROCESS: /* SYSCALL 1 */
+            createProcess(caller);
+            break;
+        default: 
+            passUpOrDie(caller, callNumber);
+            break;
+    }
 }
 
 /* Function: Copy state 
@@ -180,6 +178,7 @@ static int findSemaphoreIndex(int lineNumber, int deviceNumber, int flag) {
         offset = lineNumber - offset;
     }
     int calculation = DEVPERINT * NOSEM + deviceNumber;
+    return calculation;
 }
 
 /************************************************************************************************************************/
@@ -306,6 +305,7 @@ static void specifyExceptionsStateVector(state_PTR state) {
     /* context switch */
     contextSwitch(state);
 }
+
 
 /*********************************************** SYS 4 **************************************************/
 /* Function: Syscall 4 - Passeren
@@ -466,7 +466,7 @@ static void createProcess(state_PTR state) {
 
  void tableHandler() {
      state_PTR oldState = (state_PTR) TBLMGMTOLDAREA;
-     passUpOrDie(PROGTRAP, oldState);
+     passUpOrDie(TLBTRAP, oldState);
      /* TODO table handler */  
 
  }

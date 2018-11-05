@@ -53,6 +53,7 @@ static int getDeviceNumber(int lineNumber) {
             candidate = candidate << 1;
         }
     }
+    return candidate;
 }
 
 /*
@@ -125,7 +126,7 @@ void interruptHandler() {
         /* skip for now */
     } else if((cause * LINETWO) != 0){
         /* get the last device */
-        int* semaphore = &(semdTable[48]);
+        int* semaphore = &(semdTable[MAXSEMALLOC - 1]);
         while(headBlocked(semaphore) != NULL) {
             STCK(endTime);
             pcb_PTR p = removeBlocked(semaphore);

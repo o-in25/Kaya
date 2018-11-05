@@ -89,31 +89,31 @@ int main() {
     state = (state_PTR) SYSCALLNEWAREA;
     state->s_status = ALLOFF;   
     state->s_sp = RAMTOP;
-    state->s_pc = (memaddr) syscallHandler; /* TODO: build syscall handler */
+    state->s_pc = (memaddr) syscallHandler; 
     /* fill the t9 register */
-    state->s_t9 = (memaddr) syscallHandler; /* TODO: build syscall handler */
+    state->s_t9 = (memaddr) syscallHandler; 
     /******************************************** PRGMTRAP AREA ****************************************/
     state = (state_PTR) PRGMTRAPNEWAREA;
     state->s_status = ALLOFF;   
     state->s_sp = RAMTOP;
-    state->s_pc = (memaddr) programTrapHandler; /* TODO: build program trap handler */
+    state->s_pc = (memaddr) programTrapHandler; 
     /* fill the t9 register */
-    state->s_t9 = (memaddr)  programTrapHandler; /* TODO: build program trap handler */
+    state->s_t9 = (memaddr)  programTrapHandler; 
     /******************************************** TBLMGMT AREA ****************************************/
     state = (state_PTR) TBLMGMTNEWAREA;
     /* privlaged ROM instruction */
     state->s_status = ALLOFF;   
     state->s_sp = RAMTOP;
-    state->s_pc = (memaddr) tableHandler; /* TODO: build table management handler */
+    state->s_pc = (memaddr) tableHandler; 
     /* fill the t9 register */
-    state->s_t9 = (memaddr) tableHandler; /* TODO: build table management handler */
+    state->s_t9 = (memaddr) tableHandler; 
     /******************************************** INTRUPT AREA ****************************************/
     state = (state_PTR) INTRUPTNEWAREA;
     state->s_status = ALLOFF;   
     state->s_sp = RAMTOP;
-    state->s_pc = (memaddr) interruptHandler; /* TODO: build interrupt handler */
+    state->s_pc = (memaddr) interruptHandler; 
     /* fill the t9 register */
-    state->s_t9 = (memaddr) interruptHandler; /* TODO: build interrupt handler */
+    state->s_t9 = (memaddr) interruptHandler; 
 
     /* next, we address each semaphore in the ASL free list to have 
     an address of 0 */
@@ -140,6 +140,8 @@ int main() {
     processCount++;
     /* insert the newly allocated process into the ready queue */
     insertProcQ(&(readyQueue), currentProcess);
+    currentProcess = NULL;
     /* its in the queue */
     invokeScheduler();
+    return 0;
 }
