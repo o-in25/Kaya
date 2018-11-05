@@ -207,7 +207,7 @@ static void waitForIODevice(state_PTR state) {
     /* P operation */
     (*semaphore)--;
     if((*semaphore) < 0) {
-        copyState(semaphore, &(currentProcess->p_state));
+        copyState(state, &(currentProcess->p_state));
         insertBlocked(semaphore, currentProcess);
         softBlockedCount++;
         invokeScheduler();
