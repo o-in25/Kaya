@@ -71,7 +71,7 @@ int lineNumbers[LINECOUNT - 2] = {
     for(i = 0; i < LINECOUNT; i++) {
         if((cause & lineNumbers[i]) == lineNumbers[i]) {
             /* found the line number */
-                return lineNumbers[i];
+            return lineNumbers[i];
         }
     }
 }
