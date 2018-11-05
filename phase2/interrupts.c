@@ -53,14 +53,13 @@ static int getDeviceNumber(int lineNumber) {
             candidate = candidate << 1;
         }
     }
-    return candidate;
 }
 
 /*
 *
 */
 static int getLineNumber(int cause) {
-int lineNumbers[LINECOUNT - 2] = {
+int lineNumbers[LINECOUNT - 3] = {
         LINETHREE,
         LINEFOUR,
         LINEFIVE,
@@ -68,10 +67,10 @@ int lineNumbers[LINECOUNT - 2] = {
         LINESEVEN
     };
     int i; 
-    for(i = 0; i < LINECOUNT; i++) {
+    for(i = 0; i < LINECOUNT-3; i++) {
         if((cause & lineNumbers[i]) == lineNumbers[i]) {
             /* found the line number */
-            return lineNumbers[i];
+            return i + 3;
         }
     }
 }
@@ -100,10 +99,8 @@ static void exitInterruptHandler(cpu_t startTime) {
     if(currentProcess != NULL) {
         STCK(startTime);
         currentProcess->p_time += (endTime - startTime);
-        
         copyState(oldInterrupt, &(currentProcess->p_state));
         insertProcQ(&(readyQueue), currentProcess);
-        softBlockedCount--;
     }
     invokeScheduler();
 }
@@ -166,7 +163,7 @@ void interruptHandler() {
         /* not a terminal interrupt - assign the index */
         status = devAddrBase->d_status;
         devAddrBase->d_command = ACK;
-        index = DEVPERINT + lineNumber + deviceNumber;
+        index = DEVPERINT * lineNumber + deviceNumber;
     }
     /* perform a V operation on the semaphore */
     int* semaphore = &(semdTable[index]);
