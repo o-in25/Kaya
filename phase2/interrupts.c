@@ -128,7 +128,7 @@ void interruptHandler() {
     /* the old interrupt */
     state_PTR oldInterupt = (state_PTR) INTRUPTOLDAREA;
     device_PTR devAddrBase;
-    const unsigned int cause = oldInterupt->s_cause;
+    const unsigned int cause = oldInterupt->s_cause << 2;
     cpu_t startTime;
     cpu_t endTime;
     int deviceNumber = 0;
@@ -143,7 +143,7 @@ void interruptHandler() {
         debugA(8082);
         exitInterruptHandler(startTime);
         /* skip for now */
-    } else if((cause * LINETWO) != 0){
+    } else if((cause & LINETWO) != 0){
         debugA(8083);
         int* semaphore = &(semdTable[MAXSEMALLOC - 1]);
         debugA(8084);
@@ -177,6 +177,7 @@ void interruptHandler() {
     }
     /* since the find device number helper function does not save
     the modified line number, it must be done outside the function */
+    debugA(lineNumber);
     lineNumber = lineNumber - NOSEM;
     /* DEBUG NOTES: makes it to here */
     deviceNumber = getDeviceNumber(lineNumber);
