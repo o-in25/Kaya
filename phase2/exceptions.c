@@ -85,7 +85,7 @@ static void passUpOrDie(int callNumber, state_PTR old) {
     switch(callNumber) {
         /* if yes, copy the state the caused the exception to 
         the location secified in the pcb. context switch */
-        case SYSTRAP:
+        case SYSTRAP: {
             debugA(2151);
             if(currentProcess->newSys != NULL) {
                 copyState(old, currentProcess->oldSys);
@@ -95,7 +95,8 @@ static void passUpOrDie(int callNumber, state_PTR old) {
                 terminateProcess();
             }
             break;
-        case TLBTRAP:
+        }
+        case TLBTRAP: {
             debugA(2152);
             if(currentProcess->newTlb != NULL) {
                 debugA(21510);
@@ -106,7 +107,8 @@ static void passUpOrDie(int callNumber, state_PTR old) {
                 terminateProcess();
             }
             break;
-        case PROGTRAP:
+        }
+        case PROGTRAP: {
             debugA(2152);
             if(currentProcess->newPgm != NULL) {
                 debugA(21520);
@@ -116,6 +118,7 @@ static void passUpOrDie(int callNumber, state_PTR old) {
                 terminateProcess();
             }
             break;
+        }
     }
 }
 
