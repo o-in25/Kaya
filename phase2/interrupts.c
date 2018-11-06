@@ -37,7 +37,7 @@ static unsigned int getDeviceNumber(int lineNumber) {
     debugA(999);
     debugA(lineNumber);
     devregarea_PTR devReg = (devregarea_PTR) RAMBASEADDR;
-    unsigned int deviceBitMap = devReg->interrupt_dev[lineNumber - NOSEM];
+    unsigned int deviceBitMap = devReg->interrupt_dev[lineNumber];
     debugA(991);
 
     /* start at the first device */
@@ -164,18 +164,23 @@ void interruptHandler() {
             exitInterruptHandler(startTime);
         }
         debugA(8088);
-    } else {
-        debugA(8089);
-        lineNumber = getLineNumber(cause);
-        debugA(8090);
-        debugA(lineNumber);
+    } else if((cause & LINETHREE) != 0) {
+        lineNumber = LINETHREE;
+    } else if((cause & LINEFOUR) != 0) {
+        lineNumber = LINEFOUR;
+    } else if((cause & LINEFIVE) != 0) {
+        lineNumber = LINEFIVE;
+    } else if((cause & LINESIX) != 0) {
+        lineNumber = LINESIX;
+    } else if((cause & LINESEVEN) != 0) {
+        lineNumber = LINESEVEN;
     }
-    debugA(8091);
-    /* DEBUG NOTES: makes it to here */
-    deviceNumber = getDeviceNumber(cause);
     /* since the find device number helper function does not save
     the modified line number, it must be done outside the function */
     lineNumber = lineNumber - NOSEM;
+    /* DEBUG NOTES: makes it to here */
+    deviceNumber = getDeviceNumber(lineNumber);
+
     /* given an interrupt line number and a device number, the
     starting address of the device's devreg by using...
     0x10000050 + line number - 3 * 0x80 + device number * 0x10 */
