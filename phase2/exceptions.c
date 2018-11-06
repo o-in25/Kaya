@@ -217,6 +217,7 @@ static void waitForIODevice(state_PTR state) {
         invokeScheduler();
         debugA(7080);
     }
+    debugA(5000);
     /* context switch */
     contextSwitch(state);
 }
