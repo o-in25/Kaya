@@ -75,19 +75,7 @@ static unsigned int getDeviceNumber(int lineNumber) {
 * interrupt, or a interval time interrupt. If the cause is neither of
 * these, this simply determines which line it is
 */
-static int getLineNumber(int cause) {
-    int lines[LINECOUNT - NOSEM] = { FORUTH, FIFTH, SIXTH, SEVENTH, EIGHTH }; 
-    int lineNumber = 0;
-    int i;
-    for(i = 0; i < LINECOUNT - NOSEM; i++) {
-        if((cause & lines[i]) != 0) {
-            /* found the line number */
-            lineNumber = lines[i];
-        }
-    }
-    /* we found the line number */
-    return lineNumber;
-}
+
 
 static int terminalHandler(device_PTR devAddrBase) {
     int status = (devAddrBase->t_transm_status & TRANSREADY);
