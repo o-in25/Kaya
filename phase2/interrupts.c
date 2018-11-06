@@ -156,7 +156,7 @@ void interruptHandler() {
     } else if((cause & FOURTH) != 0) {
         lineNumber = DISKINT;
     } else if((cause & FIFTH) != 0) {
-        lineNumber = LINEFOUR;
+        lineNumber = TAPEINT;
     } else if((cause & TAPEINT) != 0) {
         lineNumber = NETWINT;
     } else if((cause & SEVENTH) != 0) {
