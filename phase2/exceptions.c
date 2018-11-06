@@ -198,11 +198,13 @@ static void waitForIODevice(state_PTR state) {
     if(lineNumber < DISKINT || lineNumber > TERMINT) {
         /* kill the process */
         terminateProcess();
-    } 
+    }
+    debugA(8076);
     /* each i/o device has a globa phase 2 semaphore associated 
     with it. Here, we compute the index */
     int i = findSemaphoreIndex(lineNumber, deviceNumber, terminalReadFlag);
     /* we found the semaphore */
+    debugA(8077);
     int* semaphore = &(semdTable[i]);
     /* P operation */
     (*semaphore)--;
@@ -211,7 +213,8 @@ static void waitForIODevice(state_PTR state) {
         insertBlocked(semaphore, currentProcess);
         softBlockedCount++;
         invokeScheduler();
-    } 
+    }
+    debugA(8078);
     /* context switch */
     contextSwitch(state);
 }

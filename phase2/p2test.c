@@ -123,7 +123,7 @@ void print(char *msg) {
 	while (*s != EOS) {
 		*(base + 3) = PRINTCHR | (((devregtr) *s) << BYTELEN);
 		/* here so far */
-				debugA(10002);
+		debugA(10002);
 		status = SYSCALL(WAITIO, TERMINT, 0, 0);	
 		if ((status & TERMSTATMASK) != RECVD)
 			PANIC();

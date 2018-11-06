@@ -107,6 +107,7 @@ static void exitInterruptHandler(cpu_t startTime) {
 }
 
 void interruptHandler() {
+    debugA(8079);
     /* the old interrupt */
     state_PTR oldInterupt = (state_PTR) INTRUPTOLDAREA;
     device_PTR devAddrBase;
