@@ -34,6 +34,7 @@ static unsigned int getDeviceNumber(int lineNumber) {
     /* get the address of the device bit map. Per secion 5.2.4 of pops, the 
     physical address of the bit map is 0x1000003C. When bit i is in word j is 
     set to one then device i attached to interrupt line j + 3 */
+    debugA(999);
     devregarea_PTR devReg = (devregarea_PTR) RAMBASEADDR;
     const unsigned int* deviceBitMap = devReg->interrupt_dev[lineNumber - NOSEM];
     debugA(991);
