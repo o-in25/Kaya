@@ -174,6 +174,7 @@ void interruptHandler() {
     } else if((cause & LINESIX) != 0) {
         lineNumber = LINESIX;
     } else if((cause & LINESEVEN) != 0) {
+        debugA(69);
         lineNumber = LINESEVEN;
     }
     /* since the find device number helper function does not save
