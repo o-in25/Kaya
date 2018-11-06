@@ -182,7 +182,9 @@ void interruptHandler() {
     0x10000050 + line number - 3 * 0x80 + device number * 0x10 */
     devAddrBase = DEVREG + lineNumber * DEVPERINT * DEVREGSIZE + (deviceNumber * DEVREGSIZE);
     debugA(8092);
-    if(lineNumber == TERMINT - 3) {
+
+
+    if(lineNumber == TERMINT) {
         /* skip for now */
         status = terminalHandler(devAddrBase);
         /* was it was a transmit command? */
@@ -198,11 +200,12 @@ void interruptHandler() {
         devAddrBase->d_command = ACK;
         index = DEVPERINT * lineNumber + deviceNumber;
     }
+    
     debugA(8093);
     /* perform a V operation on the semaphore */
     int* semaphore = &(semdTable[index]);
     (*semaphore)--;
-    if((*semaphore) <=0) {
+    if((*sema   phore) <=0) {
         pcb_PTR p = removeBlocked(semaphore);
         if(p != NULL) {
             p->p_state.s_v0 = status;
