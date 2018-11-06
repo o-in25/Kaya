@@ -123,10 +123,9 @@ void print(char *msg) {
 	while (*s != EOS) {
 		*(base + 3) = PRINTCHR | (((devregtr) *s) << BYTELEN);
 		/* here so far */
+				debugA(10002);
 		status = SYSCALL(WAITIO, TERMINT, 0, 0);	
-		debugA(10002);
 		if ((status & TERMSTATMASK) != RECVD)
-			debugA(420);
 			PANIC();
 		s++;	
 	}
