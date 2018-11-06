@@ -106,6 +106,7 @@ static void passUpOrDie(int callNumber, state_PTR old) {
                 debugA(21519);
                 terminateProcess();
             }
+            debugA(21518);
             break;
         }
         case PROGTRAP: {
