@@ -23,6 +23,7 @@ extern void invokeScheduler() {
             we panic */
             if(softBlockedCount == 0) {
                 /* all is good - waiting on I/O to finish up */
+                debugA(555);
                 PANIC();
             } else if(softBlockedCount > 0) {
                 /* kernel panic. we have nothing on the ready queue, we have a process lingering - but it's not
