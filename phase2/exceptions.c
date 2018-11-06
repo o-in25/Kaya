@@ -79,6 +79,7 @@ void contextSwitch(state_PTR s) {
 * and a new processor state is loaded. It allows the caller to store
 * the address of two processor states */
 static void passUpOrDie(int callNumber, state_PTR old) {
+    debugA(2150);
     /* has a sys5 for that trap type been called?
     if not, terminate the process and all its progeny */
     switch(callNumber) {
