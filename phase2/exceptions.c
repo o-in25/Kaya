@@ -210,11 +210,13 @@ static void waitForIODevice(state_PTR state) {
     (*semaphore)--;
     if((*semaphore) < 0) {
         copyState(state, &(currentProcess->p_state));
+        debugA(7078);
         insertBlocked(semaphore, currentProcess);
+        debugA(7079);
         softBlockedCount++;
         invokeScheduler();
+        debugA(7080);
     }
-    debugA(8078);
     /* context switch */
     contextSwitch(state);
 }
