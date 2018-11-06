@@ -76,7 +76,7 @@ static unsigned int getDeviceNumber(int lineNumber) {
 * these, this simply determines which line it is
 */
 static int getLineNumber(int cause) {
-    int lines[LINECOUNT - NOSEM] = { LINETHREE, LINEFOUR, LINEFIVE, LINESIX, LINESEVEN }; 
+    int lines[LINECOUNT - NOSEM] = { FORUTH, FIFTH, SIXTH, SEVENTH, EIGHTH }; 
     int lineNumber = 0;
     int i;
     for(i = 0; i < LINECOUNT - NOSEM; i++) {
@@ -137,14 +137,14 @@ void interruptHandler() {
     int index = 0;
     int status = 0;
     debugA(8080);
-    if((cause & LINEZERO) != 0) {
+    if((cause & FIRST) != 0) {
         debugA(8081);
         PANIC();
-    } else if((cause & LINEONE) != 0) {
+    } else if((cause & SECOND) != 0) {
         debugA(8082);
         exitInterruptHandler(startTime);
         /* skip for now */
-    } else if((cause & LINETWO) != 0){
+    } else if((cause & THIRD) != 0){
         debugA(8083);
         int* semaphore = &(semdTable[MAXSEMALLOC - 1]);
         debugA(8084);
@@ -165,17 +165,17 @@ void interruptHandler() {
             exitInterruptHandler(startTime);
         }
         debugA(8088);
-    } else if((cause & LINETHREE) != 0) {
-        lineNumber = LINETHREE;
-    } else if((cause & LINEFOUR) != 0) {
+    } else if((cause & FOURTH) != 0) {
+        lineNumber = DISKINT;
+    } else if((cause & FIFTH) != 0) {
         lineNumber = LINEFOUR;
-    } else if((cause & LINEFIVE) != 0) {
-        lineNumber = LINEFIVE;
-    } else if((cause & LINESIX) != 0) {
-        lineNumber = LINESIX;
-    } else if((cause & LINESEVEN) != 0) {
+    } else if((cause & TAPEINT) != 0) {
+        lineNumber = NETWINT;
+    } else if((cause & SEVENTH) != 0) {
+        lineNumber = PRNTINT;
+    } else if((cause & EIGHTH) != 0) {
         debugA(69);
-        lineNumber = LINESEVEN;
+        lineNumber = TERMINT;
     }
     /* since the find device number helper function does not save
     the modified line number, it must be done outside the function */
