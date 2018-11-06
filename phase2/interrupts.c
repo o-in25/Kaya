@@ -60,7 +60,7 @@ static unsigned int getDeviceNumber(int lineNumber) {
             candidate = candidate << 1;
         }
     }
-    debugA(994);
+    debugA(candidate);
     return candidate;
 }
 
