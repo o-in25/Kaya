@@ -102,6 +102,7 @@ static void passUpOrDie(int callNumber, state_PTR old) {
                 copyState(old, currentProcess->oldTlb);
                 contextSwitch(currentProcess->newTlb);
             } else {
+                debugA(21519);
                 terminateProcess();
             }
             break;
