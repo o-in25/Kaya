@@ -116,7 +116,7 @@ void interruptHandler() {
     /* the old interrupt */
     state_PTR oldInterupt = (state_PTR) INTRUPTOLDAREA;
     device_PTR devAddrBase;
-    const unsigned int cause = oldInterupt->s_cause << 2;
+    const unsigned int cause = oldInterupt->s_cause;
     debugA(cause);
     cpu_t startTime;
     cpu_t endTime;
@@ -154,12 +154,16 @@ void interruptHandler() {
         }
         debugA(8088);
     } else if((cause & FOURTH) != 0) {
+        debugA(65);
         lineNumber = DISKINT;
     } else if((cause & FIFTH) != 0) {
+        debugA(66);
         lineNumber = TAPEINT;
     } else if((cause & TAPEINT) != 0) {
+        debugA(67);
         lineNumber = NETWINT;
     } else if((cause & SEVENTH) != 0) {
+                debugA(68);
         lineNumber = PRNTINT;
     } else if((cause & EIGHTH) != 0) {
         debugA(69);
