@@ -36,7 +36,7 @@ static unsigned int getDeviceNumber(int lineNumber) {
     set to one then device i attached to interrupt line j + 3 */
     debugA(999);
     devregarea_PTR devReg = (devregarea_PTR) RAMBASEADDR;
-    const unsigned int* deviceBitMap = devReg->interrupt_dev[lineNumber - NOSEM];
+    unsigned int deviceBitMap = devReg->interrupt_dev[lineNumber - NOSEM];
     debugA(991);
 
     /* start at the first device */
