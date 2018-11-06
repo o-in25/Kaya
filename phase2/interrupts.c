@@ -118,7 +118,6 @@ void interruptHandler() {
     int index = 0;
     int status = 0;
     if((cause & LINEZERO) != 0) {
-        debugA(369);
         PANIC();
     } else if((cause & LINEONE) != 0) {
         exitInterruptHandler(startTime);

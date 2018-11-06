@@ -207,7 +207,6 @@ static void waitForIODevice(state_PTR state) {
     /* P operation */
     (*semaphore)--;
     if((*semaphore) < 0) {
-            debugB(350);
         copyState(state, &(currentProcess->p_state));
         insertBlocked(semaphore, currentProcess);
         softBlockedCount++;
@@ -427,7 +426,6 @@ static void createProcess(state_PTR state) {
  * 
  */ 
  void syscallHandler() {
-     debugC(6969420);
     /* get the address of the old syscall area, since we
     wake up in the syscall handler */
     state_PTR caller = (state_PTR) SYSCALLOLDAREA;
