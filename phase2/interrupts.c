@@ -76,8 +76,8 @@ static int getLineNumber(int cause) {
     return lineNumber;
 }
 
-static unsigned int terminalHandler(device_PTR devAddrBase) {
-    unsigned int status = (devAddrBase->t_transm_status & TRANSREADY);
+static int terminalHandler(device_PTR devAddrBase) {
+    int status = (devAddrBase->t_transm_status & TRANSREADY);
     if(status != READY) {
         /* acknowledge that the command is a transmit command 
         by providing the acknowledge bit */
@@ -162,7 +162,7 @@ void interruptHandler() {
     /* given an interrupt line number and a device number, the
     starting address of the device's devreg by using...
     0x10000050 + line number - 3 * 0x80 + device number * 0x10 */
-    devAddrBase = DEVREG + lineNumber * DEVICECOUNT + (deviceNumber * DEVREGSIZE); 
+    devAddrBase = DEVREG + lineNumber * DEVPERINT * DEVREGSIZE + (deviceNumber * DEVREGSIZE); 
     if(lineNumber == TERMINT - 3) {
         /* skip for now */
         status = terminalHandler(devAddrBase);

@@ -79,14 +79,12 @@ void contextSwitch(state_PTR s) {
 * and a new processor state is loaded. It allows the caller to store
 * the address of two processor states */
 static void passUpOrDie(int callNumber, state_PTR old) {
-    debugA(2150);
     /* has a sys5 for that trap type been called?
     if not, terminate the process and all its progeny */
     switch(callNumber) {
         /* if yes, copy the state the caused the exception to 
         the location secified in the pcb. context switch */
         case SYSTRAP: {
-            debugA(2151);
             if(currentProcess->newSys != NULL) {
                 copyState(old, currentProcess->oldSys);
                 contextSwitch(currentProcess->newSys);
@@ -94,19 +92,14 @@ static void passUpOrDie(int callNumber, state_PTR old) {
             break;
         }
         case TLBTRAP: {
-            debugA(2152);
             if(currentProcess->newTlb != NULL) {
-                debugA(21510);
                 copyState(old, currentProcess->oldTlb);
                 contextSwitch(currentProcess->newTlb);
             }
-            debugA(21518);
             break;
         }
         case PROGTRAP: {
-            debugA(2152);
             if(currentProcess->newPgm != NULL) {
-                debugA(21520);
                 copyState(old, currentProcess->oldPgm);
                 contextSwitch(currentProcess->newPgm);
             }
@@ -178,7 +171,7 @@ void copyState(state_PTR from, state_PTR to) {
 * receipt and one for character transmission.
 */
 static int findSemaphoreIndex(int lineNumber, int deviceNumber, int flag) {
-     int offset;
+    int offset;
     if(flag == TRUE) {
         offset = (lineNumber - NOSEM + flag); 
     } else {
