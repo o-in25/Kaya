@@ -452,6 +452,7 @@ static void createProcess(state_PTR state) {
         /* call our helper function to assist with handling the syscalls IF we are
         in kernel mode */
         delegateSyscall(callNumber, caller);
+        debugA(9000);
     } else if(!kernelMode && callNumber < 9) {
         state_PTR programTrapOldArea = (state_PTR) PRGMTRAPOLDAREA;
         programTrapOldArea->s_cause = RESERVED;
@@ -463,12 +464,14 @@ static void createProcess(state_PTR state) {
  }
 
  void programTrapHandler() {
+     debugA(9001);
      state_PTR oldState = (state_PTR) PRGMTRAPOLDAREA;
      passUpOrDie(PROGTRAP, oldState);
      /* TODO program handler */
  }
 
  void tableHandler() {
+     debugA(9002);
      state_PTR oldState = (state_PTR) TBLMGMTOLDAREA;
      passUpOrDie(TLBTRAP, oldState);
      /* TODO table handler */  
