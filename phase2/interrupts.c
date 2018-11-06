@@ -205,7 +205,7 @@ void interruptHandler() {
     /* perform a V operation on the semaphore */
     int* semaphore = &(semdTable[index]);
     (*semaphore)--;
-    if((*sema   phore) <=0) {
+    if((*semaphore) <=0) {
         pcb_PTR p = removeBlocked(semaphore);
         if(p != NULL) {
             p->p_state.s_v0 = status;
