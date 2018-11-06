@@ -60,7 +60,6 @@ static unsigned int getDeviceNumber(int lineNumber) {
             candidate = candidate << 1;
         }
     }
-    debugA(candidate);
     return candidate;
 }
 
@@ -190,6 +189,7 @@ void interruptHandler() {
         devAddrBase->d_command = ACK;
         index = DEVPERINT * lineNumber + deviceNumber;
     }
+    debugA(8093);
     /* perform a V operation on the semaphore */
     int* semaphore = &(semdTable[index]);
     (*semaphore)--;
@@ -201,6 +201,7 @@ void interruptHandler() {
             softBlockedCount--;
         }
     }
+    debugA(8094);
     /* exit */
     exitInterruptHandler(startTime);
 }
