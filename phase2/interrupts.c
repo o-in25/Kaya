@@ -49,7 +49,7 @@ static unsigned int getDeviceNumber(int lineNumber) {
         /* if the bit i in word j is set to 1, then
         the device attached to interrupt j + 3 has a pending 
         interrupt */
-        if((candidate & (deviceBitMap) == candidate)) {
+        if(((candidate) & (deviceBitMap) == candidate)) {
             /* since this index is equal to 1, we found it */
             found = TRUE;
         } else {
