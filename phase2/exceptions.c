@@ -90,9 +90,6 @@ static void passUpOrDie(int callNumber, state_PTR old) {
             if(currentProcess->newSys != NULL) {
                 copyState(old, currentProcess->oldSys);
                 contextSwitch(currentProcess->newSys);
-            } else {
-                debugA(21510);
-                terminateProcess();
             }
             break;
         }
@@ -102,9 +99,6 @@ static void passUpOrDie(int callNumber, state_PTR old) {
                 debugA(21510);
                 copyState(old, currentProcess->oldTlb);
                 contextSwitch(currentProcess->newTlb);
-            } else {
-                debugA(21519);
-                terminateProcess();
             }
             debugA(21518);
             break;
@@ -115,10 +109,11 @@ static void passUpOrDie(int callNumber, state_PTR old) {
                 debugA(21520);
                 copyState(old, currentProcess->oldPgm);
                 contextSwitch(currentProcess->newPgm);
-            } else {
-                terminateProcess();
             }
             break;
+        }
+        default: {
+            terminateProcess();
         }
     }
 }
