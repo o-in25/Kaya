@@ -35,11 +35,9 @@ static unsigned int getDeviceNumber(int lineNumber) {
     physical address of the bit map is 0x1000003C. When bit i is in word j is 
     set to one then device i attached to interrupt line j + 3 */
     debugA(999);
-    debugA(lineNumber);
     devregarea_PTR devReg = (devregarea_PTR) RAMBASEADDR;
-    unsigned int deviceBitMap = devReg->interrupt_dev[lineNumber];
+    unsigned int* deviceBitMap = (unsigned int*) INTBITMAP + ((lineNumber - NOSEM) * DEVREGLEN);
     debugA(991);
-
     /* start at the first device */
     unsigned int candidate = STARTDEVICE;
     int deviceNumber = 0;
@@ -52,8 +50,7 @@ static unsigned int getDeviceNumber(int lineNumber) {
         /* if the bit i in word j is set to 1, then
         the device attached to interrupt j + 3 has a pending 
         interrupt */
-        if (((deviceBitMap) & (candidate)== candidate))
-        {
+        if((((*deviceBitMap) & candidate) == candidate)) {
             /* since this index is equal to 1, we found it */
             found = TRUE;
         } else {
@@ -155,19 +152,14 @@ void interruptHandler() {
         }
         debugA(8088);
     } else if((cause & FOURTH) != 0) {
-        debugA(65);
         lineNumber = DISKINT;
     } else if((cause & FIFTH) != 0) {
-        debugA(66);
         lineNumber = TAPEINT;
     } else if((cause & TAPEINT) != 0) {
-        debugA(67);
         lineNumber = NETWINT;
     } else if((cause & SEVENTH) != 0) {
-                debugA(68);
         lineNumber = PRNTINT;
     } else if((cause & EIGHTH) != 0) {
-        debugA(69);
         lineNumber = TERMINT;
     }
     /* since the find device number helper function does not save
