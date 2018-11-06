@@ -91,14 +91,23 @@ static int terminalHandler(device_PTR devAddrBase) {
 }
 
 static void exitInterruptHandler(cpu_t startTime) {
+    debugA(444);
     state_PTR oldInterrupt = (memaddr) INTRUPTOLDAREA;
+    debugA(445);
     cpu_t endTime;
+    debugA(446);
     if(currentProcess != NULL) {
+        debugA(447);
         STCK(startTime);
+        debugA(448);
         currentProcess->p_time += (endTime - startTime);
+        debugA(449);
         copyState(oldInterrupt, &(currentProcess->p_state));
+        debugA(450);
         insertProcQ(&(readyQueue), currentProcess);
+        debugA(451);
     }
+    debugA(452);
     invokeScheduler();
 }
 
