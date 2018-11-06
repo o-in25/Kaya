@@ -39,10 +39,11 @@ static unsigned int getDeviceNumber(int lineNumber) {
 
     /* start at the first device */
     unsigned int candidate = STARTDEVICE;
-    debugA(992);
-    int i;
+    int deviceNumber = 0;
+    /* for searching for the device number */
+    int found = FALSE;
     /* search each 8 bits */
-    for(i = 0; i < STARTDEVICE + 7; i++) {
+    while(!found) {
         /* if the bit i in word j is set to 1, then
         the device attached to interrupt j + 3 has a pending 
         interrupt */
@@ -50,6 +51,8 @@ static unsigned int getDeviceNumber(int lineNumber) {
             /* since this index is equal to 1, we found it */
             return i;
         } else {
+            /* it's not this device, so increment and try again */
+            deviceNumber++;
             /* bitwise shift right and go to the next one */
             candidate = candidate << 1;
         }
@@ -135,7 +138,6 @@ void interruptHandler() {
         exitInterruptHandler(startTime);
         /* skip for now */
     } else if((cause * LINETWO) != 0){
-        /* get the last device */
         debugA(8083);
         int* semaphore = &(semdTable[MAXSEMALLOC - 1]);
         debugA(8084);
@@ -163,6 +165,7 @@ void interruptHandler() {
         debugA(lineNumber);
     }
     debugA(8091);
+    /* DEBUG NOTES: makes it to here */
     deviceNumber = getDeviceNumber(cause);
     /* since the find device number helper function does not save
     the modified line number, it must be done outside the function */
