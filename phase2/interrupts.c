@@ -34,7 +34,7 @@ static unsigned int getDeviceNumber(int lineNumber) {
     /* get the address of the device bit map. Per secion 5.2.4 of pops, the 
     physical address of the bit map is 0x1000003C. When bit i is in word j is 
     set to one then device i attached to interrupt line j + 3 */
-    const unsigned int* deviceBitMap = (int*) (memaddr) DEVREGLEN + (lineNumber - NOSEM) * WORDLEN;
+    const unsigned int* deviceBitMap = (unsigned int*) DEVREGLEN + (lineNumber - NOSEM) * WORDLEN;
     debugA(991);
 
     /* start at the first device */
@@ -49,7 +49,7 @@ static unsigned int getDeviceNumber(int lineNumber) {
         /* if the bit i in word j is set to 1, then
         the device attached to interrupt j + 3 has a pending 
         interrupt */
-        if((candidate & (*deviceBitMap) == candidate)) {
+        if((candidate & (deviceBitMap) == candidate)) {
             /* since this index is equal to 1, we found it */
             found = TRUE;
         } else {
