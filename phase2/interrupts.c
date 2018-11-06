@@ -93,7 +93,6 @@ static int terminalHandler(device_PTR devAddrBase) {
     }
 }
 
-
 static void exitInterruptHandler(cpu_t startTime) {
     state_PTR oldInterrupt = (memaddr) INTRUPTOLDAREA;
     cpu_t endTime;
@@ -107,13 +106,10 @@ static void exitInterruptHandler(cpu_t startTime) {
 }
 
 
-
-
-
-
-
-
-
+/*
+* Function: The interrupt handler 
+* 
+*/
 void interruptHandler() {
     debugA(8079);
     /* the old interrupt */
@@ -131,30 +127,38 @@ void interruptHandler() {
         debugA(8081);
         PANIC();
     } else if((cause & LINEONE) != 0) {
+        debugA(8082);
         exitInterruptHandler(startTime);
         /* skip for now */
     } else if((cause * LINETWO) != 0){
         /* get the last device */
+        debugA(8083);
         int* semaphore = &(semdTable[MAXSEMALLOC - 1]);
+        debugA(8084);
         while(headBlocked(semaphore) != NULL) {
             STCK(endTime);
+            debugA(8085);
             pcb_PTR p = removeBlocked(semaphore);
             if(p != NULL) {
-                debugA(8082);
+                debugA(8086);
                 insertBlocked(&(readyQueue), p);
                 softBlockedCount--;
                 /* handle the charging of time */
                 STCK(endTime);
                 currentProcess->p_time += endTime - startTime;
             }
-            debugA(8083);
+            debugA(8087);
             /* handle the charging of time */
             exitInterruptHandler(startTime);
         }
+        debugA(8088);
     } else {
+        debugA(8089);
         lineNumber = getLineNumber(cause);
+        debugA(8090);
         debugA(lineNumber);
     }
+    debugA(8091);
     deviceNumber = getDeviceNumber(cause);
     /* since the find device number helper function does not save
     the modified line number, it must be done outside the function */
@@ -162,7 +166,8 @@ void interruptHandler() {
     /* given an interrupt line number and a device number, the
     starting address of the device's devreg by using...
     0x10000050 + line number - 3 * 0x80 + device number * 0x10 */
-    devAddrBase = DEVREG + lineNumber * DEVPERINT * DEVREGSIZE + (deviceNumber * DEVREGSIZE); 
+    devAddrBase = DEVREG + lineNumber * DEVPERINT * DEVREGSIZE + (deviceNumber * DEVREGSIZE);
+    debugA(8092);
     if(lineNumber == TERMINT - 3) {
         /* skip for now */
         status = terminalHandler(devAddrBase);
