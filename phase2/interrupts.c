@@ -117,7 +117,9 @@ void interruptHandler() {
     int lineNumber = 0;
     int index = 0;
     int status = 0;
+    debugA(8080);
     if((cause & LINEZERO) != 0) {
+        debugA(8081);
         PANIC();
     } else if((cause & LINEONE) != 0) {
         exitInterruptHandler(startTime);
@@ -129,12 +131,14 @@ void interruptHandler() {
             STCK(endTime);
             pcb_PTR p = removeBlocked(semaphore);
             if(p != NULL) {
+                debugA(8082);
                 insertBlocked(&(readyQueue), p);
                 softBlockedCount--;
                 /* handle the charging of time */
                 STCK(endTime);
                 currentProcess->p_time += endTime - startTime;
             }
+            debugA(8083);
             /* handle the charging of time */
             exitInterruptHandler(startTime);
         }
