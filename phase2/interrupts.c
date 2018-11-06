@@ -49,7 +49,7 @@ static unsigned int getDeviceNumber(int lineNumber) {
         interrupt */
         if((candidate & (*deviceBitMap) == candidate)) {
             /* since this index is equal to 1, we found it */
-            return i;
+            found = TRUE;
         } else {
             /* it's not this device, so increment and try again */
             deviceNumber++;
