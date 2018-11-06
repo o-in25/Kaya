@@ -7,7 +7,7 @@
 
 
 extern void invokeScheduler() {
-    if(emptyProcQ(readyQueue) == NULL) {
+    if(emptyProcQ(readyQueue)) {
         if(processCount == 0) { /* case 1 */
                 /* our work here is done. there are no jobs in the ready queue
                 and we have no processes running */
@@ -31,11 +31,11 @@ extern void invokeScheduler() {
             }
         }
     }
-    currentProcess = removeProcQ(&(readyQueue));
     if(currentProcess != NULL) {
         STCK(currentTOD);
         currentProcess->p_time += currentTOD - startTOD;
     }
+    currentProcess = removeProcQ(&(readyQueue));
     STCK(startTOD);
     setTIMER(QUANTUM);
     debugA(6000);

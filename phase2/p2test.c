@@ -124,7 +124,8 @@ void print(char *msg) {
 		*(base + 3) = PRINTCHR | (((devregtr) *s) << BYTELEN);
 		/* here so far */
 		debugA(10002);
-		status = SYSCALL(WAITIO, TERMINT, 0, 0);	
+		status = SYSCALL(WAITIO, TERMINT, 0, 0);
+			
 		if ((status & TERMSTATMASK) != RECVD)
 			PANIC();
 		s++;	
