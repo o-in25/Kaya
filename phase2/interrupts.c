@@ -128,7 +128,7 @@ void interruptHandler() {
     /* the old interrupt */
     state_PTR oldInterupt = (state_PTR) INTRUPTOLDAREA;
     device_PTR devAddrBase;
-    const unsigned int cause = oldInterupt->s_cause << 2;
+    const unsigned int cause = oldInterupt->s_cause;
     debugA(cause);
     cpu_t startTime;
     cpu_t endTime;
