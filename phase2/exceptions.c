@@ -173,9 +173,9 @@ void copyState(state_PTR from, state_PTR to) {
 static int findSemaphoreIndex(int lineNumber, int deviceNumber, int flag) {
     int offset;
     if(flag == TRUE) {
-        offset = (lineNumber - NOSEM + flag); 
+        offset = (lineNumber - NOSEM + flag) + deviceNumber; 
     } else {
-        offset = lineNumber - NOSEM;
+        offset = (lineNumber - NOSEM) + deviceNumber;
     }
     int calculation = DEVPERINT * offset + deviceNumber;
     return calculation;
@@ -221,12 +221,11 @@ static void waitForIODevice(state_PTR state) {
 * Function: Syscall 7 - Wait for clock
 */
 static void waitForClock(state_PTR state) {
-    int* semaphore = &(semdTable[48]);
+    int* semaphore = (int*) &(semdTable[MAXSEMALLOC - 1]);
     (*semaphore)--;
     softBlockedCount++;
-    copyState(state, &(currentProcess->p_state));
     insertBlocked(semaphore, currentProcess);
-
+    copyState(state, &(currentProcess->p_state));
     invokeScheduler();
 }
 
@@ -245,9 +244,10 @@ static void getCpuTime(state_PTR state) {
     /* the elasped time */
     cpu_t elapsedTime = stopTOD - startTOD;
     /* store the time in the pcb_t */
-    currentProcess->p_time = currentProcess->p_time = elapsedTime;
+    currentProcess->p_time = (currentProcess->p_time) + elapsedTime;
     /* store the processor time in the caller's v0 */
     state->s_v0 = currentProcess->p_time;
+    STCK(startTOD);
     /* context switch */
     contextSwitch(state);
 }
