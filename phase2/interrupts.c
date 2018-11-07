@@ -101,7 +101,7 @@ int map(int cause) {
     int i;
     for(i = 0; i < (DEVPERINT - NOSEM); i++) {
         if ((cause & lineNumbers[i] != 0)) {
-            result = devices[i];
+            return devices[i];
         }
     }
 }
