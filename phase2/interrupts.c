@@ -169,7 +169,9 @@ void interruptHandler() {
     debugA(40011);
     /* DEBUG NOTES: makes it to here */
     deviceNumber = getDeviceNumber(lineNumber);
-    lineNumber -= NOSEM;
+    debugA(6969696);
+    debugA(lineNumber)
+    lineNumber = lineNumber - NOSEM;
     debugA(40012);
     /* have both line and device numbers, calculate the device register */
     devReg = (device_PTR) (INTDEVREG + (lineNumber * DEVREGSIZE * DEVPERINT) + (deviceNumber * DEVREGSIZE));
@@ -215,9 +217,6 @@ void interruptHandler() {
         index = DEVPERINT * (lineNumber - NOSEM) + deviceNumber;
         debugA(40020);
         /* DEBUG NOTES: ended up here */
-        if(devReg == NULL) {
-            debugA(90210);
-        }
         devReg->d_command = ACK;
         debugA(40022);
         int* semaphore = &(semdTable[index]);
