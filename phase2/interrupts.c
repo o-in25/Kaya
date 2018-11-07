@@ -180,6 +180,7 @@ void interruptHandler() {
     /* handle the terminal, if the terminal is causing the interrupt. else, acknowledge the 
     reception of the terminal interrupt in the overwritten command recieved field */
     debugA(40013);
+    debugA(lineNumber);
     if(lineNumber == TERMINT) {
         int receive = TRUE;
         debugA(40014);
