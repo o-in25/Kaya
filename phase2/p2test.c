@@ -25,6 +25,11 @@ extern int debugA(int* i) {
 	i = 42;
 }
 
+extern int debugB(int *i) {
+	i = 0;
+	i = 42;
+}
+
 /* hardware constants */
 #define PRINTCHR	2
 #define BYTELEN	8
