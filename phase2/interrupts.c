@@ -44,18 +44,24 @@ static unsigned int getDeviceNumber(int lineNumber) {
     debugB(lineNumber);
     /* search each 8 bits */
     while(!found) {
-        /* if the bit i in word j is set to 1, then
+        if(deviceNumber > 8) {
+            deviceNumber = 0;
+            break;
+        } else {
+            /* if the bit i in word j is set to 1, then
         the device attached to interrupt j + 3 has a pending 
         interrupt */
-        debugA(deviceNumber);
-        if((deviceBitMap & candidate) != 0) {
-            /* since this index is equal to 1, we found it */
-            found = TRUE;
-        } else {
-            /* it's not this device, so increment and try again */
-            deviceNumber++;
-            /* bitwise shift right and go to the next one */
-            candidate = candidate << 1;
+            debugA(deviceNumber);
+            if ((deviceBitMap & candidate) != 0) {
+                /* since this index is equal to 1, we found it */
+                found = TRUE;
+            }
+            else {
+                /* it's not this device, so increment and try again */
+                deviceNumber++;
+                /* bitwise shift right and go to the next one */
+                candidate = candidate << 1;
+            }
         }
     }
     return deviceNumber;
