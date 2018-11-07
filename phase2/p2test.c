@@ -121,7 +121,7 @@ void print(char *msg) {
 
 	SYSCALL(PASSERN, (int)&term_mut, 0, 0);				/* P(term_mut) */
 	while (*s != EOS) {
-		debugB(6969696969);
+		debugB(420);
 		*(base + 3) = PRINTCHR | (((devregtr) *s) << BYTELEN);
 		/* here so far */
 		debugA(10002);
