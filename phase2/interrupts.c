@@ -215,6 +215,9 @@ void interruptHandler() {
         index = DEVPERINT * (lineNumber - NOSEM) + deviceNumber;
         debugA(40020);
         /* DEBUG NOTES: ended up here */
+        if(devReg == NULL) {
+            debugA(90210);
+        }
         devReg->d_command = ACK;
         debugA(40022);
         int* semaphore = &(semdTable[index]);
