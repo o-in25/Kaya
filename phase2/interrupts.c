@@ -184,10 +184,10 @@ void interruptHandler() {
         int receive = TRUE;
         debugA(40014);
         if((devReg->t_transm_status & 0x0F) != READY) {
-            index = DEVPERINT * (lineNumber) + deviceNumber;
+            index = DEVPERINT * ((lineNumber - NOSEM) + deviceNumber;
             receive = FALSE;
         } else {
-            index = DEVPERINT * (lineNumber + 1) + deviceNumber;
+            index = DEVPERINT * ((lineNumber - NOSEM) + 1) + deviceNumber;
         }
         int* semaphore = &(semdTable[index]);
         debugA(40015);
