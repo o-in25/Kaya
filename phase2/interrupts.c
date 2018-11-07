@@ -161,6 +161,7 @@ void interruptHandler() {
         }
         debugA(40010);
     } else {
+        debugA(300012);
         lineNumber = map(cause);
     }
     /* since the find device number helper function does not save
