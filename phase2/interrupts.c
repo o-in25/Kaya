@@ -102,7 +102,8 @@ int map(int cause) {
     int i;
     int finding = 0;
     for(i = 0; i < (DEVPERINT - NOSEM); i++) {
-        if ((cause & lineNumbers[i] != 0)) {
+        int temp = devc
+        if ((cause & lineNumbers[i]) != 0) {
             finding = devices[i];
         }
     }
@@ -182,6 +183,8 @@ void interruptHandler() {
         if((devReg->t_transm_status & 0x0F) != READY) {
             index = DEVPERINT * (lineNumber) + deviceNumber;
             receive = FALSE;
+        } else {
+            index = DEVPERINT * (lineNumber + 1) + deviceNumber;
         }
         int* semaphore = &(semdTable[index]);
         debugA(40015);
