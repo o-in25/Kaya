@@ -190,7 +190,7 @@ void interruptHandler() {
             index = DEVPERINT * ((lineNumber - NOSEM) + 1) + deviceNumber;
         }
         int* semaphore = &(semdTable[index]);
-        debugA(40015);
+        debugB(40015);
         debugB(index);
         (*semaphore)++;
         if((*semaphore) <= 0) {
