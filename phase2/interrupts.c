@@ -100,14 +100,14 @@ int map(int cause) {
     int lineNumbers[(DEVPERINT - NOSEM)] = {FOURTH, FIFTH, SIXTH, SEVENTH, EIGHTH};
     int devices[(DEVPERINT - NOSEM)] = {DISKINT, TAPEINT, NETWINT, PRNTINT, TERMINT};
     int i;
-    int finding;
+    int finding = 0;
     for(i = 0; i < (DEVPERINT - NOSEM); i++) {
         if ((cause & lineNumbers[i] != 0)) {
             finding = devices[i];
         }
     }
     debugA(987999);
-    debugA(devices[3]);
+    debugA(finding);
 }
 
 
