@@ -234,7 +234,7 @@ void test() {
 	
 	/* create process p2 */
 	SYSCALL(CREATETHREAD, (int)&p2state,0 , 0);				/* start p2     */
-	debugA(99);
+	debugB(99);
 	print("p2 was started\n");
 	debugB(100);
 	SYSCALL(VERHOGEN, (int)&startp2, 0, 0);					/* V(startp2)   */
