@@ -132,16 +132,15 @@ void print(char *msg) {
 
 	SYSCALL(PASSERN, (int)&term_mut, 0, 0);				/* P(term_mut) */
 	while (*s != EOS) {
-		debugA(98);
 		*(base + 3) = PRINTCHR | (((devregtr) *s) << BYTELEN);
 		/* here so far */
 		status = SYSCALL(WAITIO, TERMINT, 0, 0);
 		if ((status & TERMSTATMASK) != RECVD) {
 			PANIC();
 		}
-		s++;	
+		s++;
 	}
-	SYSCALL(VERHOGEN, (int)&term_mut, 0, 0);				/* V(term_mut) */
+	SYSCALL(VERHOGEN, (int)&term_mut, 0, 0); /* V(term_mut) */
 }
 
 
@@ -236,7 +235,6 @@ void test() {
 	SYSCALL(CREATETHREAD, (int)&p2state,0 , 0);				/* start p2     */
 	debugB(99);
 	print("p2 was started\n");
-	debugB(100);
 	SYSCALL(VERHOGEN, (int)&startp2, 0, 0);					/* V(startp2)   */
 	SYSCALL(PASSERN, (int)&endp2, 0, 0);					/* P(endp2)     */
 	/* make sure we really blocked */
