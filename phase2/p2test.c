@@ -19,6 +19,12 @@
 
 typedef unsigned int devregtr;
 
+
+extern int debugA(int* i) {
+	i = 0;
+	i = 42;
+}
+
 /* hardware constants */
 #define PRINTCHR	2
 #define BYTELEN	8
@@ -225,10 +231,11 @@ void test() {
 
 	print("p2 was started\n");
 
+	debugA(100);
 	SYSCALL(VERHOGEN, (int)&startp2, 0, 0);					/* V(startp2)   */
-
+	debugA(102);
 	SYSCALL(PASSERN, (int)&endp2, 0, 0);					/* P(endp2)     */
-
+	debugA(103);
 	/* make sure we really blocked */
 	if (p1p2synch == 0)
 		print("error: p1/p2 synchronization bad\n");
