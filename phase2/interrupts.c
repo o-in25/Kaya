@@ -121,7 +121,7 @@ void interruptHandler() {
     /* the old interrupt */
     state_PTR oldInterupt = (state_PTR) INTRUPTOLDAREA;
     device_PTR devReg;
-    const unsigned int cause = oldInterupt->s_cause;
+    unsigned int cause = oldInterupt->s_cause;
     cause += (cause & IM) >> 8;
     debugA(cause);
     cpu_t startTime;
@@ -191,6 +191,7 @@ void interruptHandler() {
         }
         int* semaphore = &(semdTable[index]);
         debugA(40015);
+        debugB(index);
         (*semaphore)++;
         if((*semaphore) <= 0) {
             pcb_PTR p = removeBlocked(semaphore);

@@ -204,6 +204,7 @@ static void waitForIODevice(state_PTR state) {
     with it. Here, we compute the index */
     int i = findSemaphoreIndex(lineNumber, deviceNumber, terminalReadFlag);
     /* we found the semaphore */
+    debugB(i);
     debugA(8077);
     int* semaphore = &(semdTable[i]);
     /* P operation */
