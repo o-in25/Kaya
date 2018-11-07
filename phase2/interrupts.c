@@ -183,6 +183,8 @@ void interruptHandler() {
     if(lineNumber == TERMINT) {
         int receive = TRUE;
         debugA(40014);
+        debugB(69);
+        debugB(deviceNumber);
         if((devReg->t_transm_status & 0x0F) != READY) {
             index = DEVPERINT * (lineNumber - NOSEM) + deviceNumber;
             receive = FALSE;
