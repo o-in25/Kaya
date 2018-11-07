@@ -37,10 +37,11 @@ static unsigned int getDeviceNumber(int lineNumber) {
     devregarea_PTR temp = (devregarea_PTR) RAMBASEADDR;
     unsigned int deviceBitMap = temp->interrupt_dev[(lineNumber - NOSEM)];
     /* start at the first device */
-    int candidate = FIRST;
+    unsigned int candidate = FIRST;
     int deviceNumber = 0;
     /* for searching for the device number */
     int found = FALSE;
+    debugA(lineNumber);
     /* search each 8 bits */
     while(!found) {
         /* if the bit i in word j is set to 1, then
