@@ -172,7 +172,7 @@ void interruptHandler() {
     lineNumber -= NOSEM;
     debugA(40012);
     /* have both line and device numbers, calculate the device register */
-    devReg = (device_PTR) (INTDEVREG + lineNumber * DEVREGSIZE * DEVPERINT) + (deviceNumber * DEVREGSIZE);
+    devReg = (device_PTR) (INTDEVREG + (lineNumber * DEVREGSIZE * DEVPERINT) + (deviceNumber * DEVREGSIZE));
     /* handle the terminal, if the terminal is causing the interrupt. else, acknowledge the 
     reception of the terminal interrupt in the overwritten command recieved field */
     debugA(40013);
@@ -214,6 +214,7 @@ void interruptHandler() {
         debugA(40021);
         index = DEVPERINT * (lineNumber - NOSEM) + deviceNumber;
         debugA(40020);
+        /* DEBUG NOTES: ended up here */
         devReg->d_command = ACK;
         debugA(40022);
         int* semaphore = &(semdTable[index]);
