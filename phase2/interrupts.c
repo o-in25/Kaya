@@ -82,7 +82,7 @@ static void exitInterruptHandler(cpu_t startTime) {
 }
 
 
-int map(int cause) {
+int map(unsigned int cause) {
     /* declare the array of possible line numbers */
     int lineNumbers[(DEVPERINT - NOSEM)] = {FOURTH, FIFTH, SIXTH, SEVENTH, EIGHTH};
     int devices[(DEVPERINT - NOSEM)] = {DISKINT, TAPEINT, NETWINT, PRNTINT, TERMINT};
@@ -107,8 +107,7 @@ void interruptHandler() {
     state_PTR oldInterupt = (state_PTR) INTRUPTOLDAREA;
     device_PTR devReg;
     unsigned int cause = oldInterupt->s_cause;
-    debugA(69);
-    debugA(cause);
+    mcFuck(cause);
     cause += (cause & IM) >> 8;
     cpu_t startTime;
     cpu_t endTime;
