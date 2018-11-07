@@ -96,8 +96,8 @@ static void exitInterruptHandler(cpu_t startTime) {
 
 int map(int cause) {
     /* declare the array of possible line numbers */
-    int[DEVPERINT - NOSEM] lineNumbers = {FOURTH, FIFTH, SIXTH, SEVENTH};
-    int[DEVPERINT - NOSEM] devices = {DISKINT, TAPEINT, NETWINT, PRNTINT, TERMINT};
+    int lineNumbers[(DEVPERINT - NOSEM)] = {FOURTH, FIFTH, SIXTH, SEVENTH};
+    int devices[(DEVPERINT - NOSEM)] = {DISKINT, TAPEINT, NETWINT, PRNTINT, TERMINT};
     int i;
     for(i = 0; i < (DEVPERINT - NOSEM); i++) {
         if ((cause & line[i] != 0)) {
