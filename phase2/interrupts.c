@@ -35,7 +35,7 @@ static unsigned int getDeviceNumber(int lineNumber) {
     physical address of the bit map is 0x1000003C. When bit i is in word j is 
     set to one then device i attached to interrupt line j + 3 */
     debugA(999);
-    devregarea_PTR devReg = (devregarea_PTR) RAMBASEADDR;
+    debugA(lineNumber);
     unsigned int* deviceBitMap = (unsigned int*) INTBITMAP + ((lineNumber - NOSEM) * DEVREGLEN);
     debugA(991);
     /* start at the first device */
