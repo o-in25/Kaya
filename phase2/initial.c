@@ -40,24 +40,7 @@ cpu_t startTOD;
 cpu_t currentTOD;
 
 
-extern int debugA(int* a) {
-    int i; 
-    i = 42;
-    return i;
-}
 
-
-extern int debugB(int* a) {
-    int i; 
-    i = 42;
-    return i;
-}
-
-extern int debugC(int* a) {
-    int i; 
-    i = 42;
-    return i;
-}
 
 /* 
 * Function: the boot squence for the OS; it will initalize process control blocks and 

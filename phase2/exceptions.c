@@ -199,26 +199,19 @@ static void waitForIODevice(state_PTR state) {
         /* kill the process */
         terminateProcess();
     }
-    debugA(8076);
     /* each i/o device has a globa phase 2 semaphore associated 
     with it. Here, we compute the index */
     int i = findSemaphoreIndex(lineNumber, deviceNumber, terminalReadFlag);
     /* we found the semaphore */
-    debugB(i);
-    debugA(8077);
     int* semaphore = &(semdTable[i]);
     /* P operation */
     (*semaphore)--;
     if((*semaphore) < 0) {
         copyState(state, &(currentProcess->p_state));
-        debugA(7078);
         insertBlocked(semaphore, currentProcess);
-        debugA(7079);
         softBlockedCount++;
         invokeScheduler();
-        debugA(7080);
     }
-    debugA(5000);
     /* context switch */
     contextSwitch(state);
 }
@@ -454,7 +447,6 @@ static void createProcess(state_PTR state) {
         /* call our helper function to assist with handling the syscalls IF we are
         in kernel mode */
         delegateSyscall(callNumber, caller);
-        debugA(9000);
     } else if(!kernelMode && callNumber < 9) {
         state_PTR programTrapOldArea = (state_PTR) PRGMTRAPOLDAREA;
         programTrapOldArea->s_cause = RESERVED;
@@ -466,14 +458,12 @@ static void createProcess(state_PTR state) {
  }
 
  void programTrapHandler() {
-     debugA(9001);
      state_PTR oldState = (state_PTR) PRGMTRAPOLDAREA;
      passUpOrDie(PROGTRAP, oldState);
      /* TODO program handler */
  }
 
  void tableHandler() {
-     debugA(9002);
      state_PTR oldState = (state_PTR) TBLMGMTOLDAREA;
      passUpOrDie(TLBTRAP, oldState);
      /* TODO table handler */  

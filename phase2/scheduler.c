@@ -38,7 +38,6 @@ extern void invokeScheduler() {
     currentProcess = removeProcQ(&(readyQueue));
     STCK(startTOD);
     setTIMER(QUANTUM);
-    debugA(6000);
     /* DEBUG NOTES: got to here before printing p */
     contextSwitch(&(currentProcess->p_state));
 }
