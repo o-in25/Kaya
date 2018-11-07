@@ -93,11 +93,6 @@ static void exitInterruptHandler(cpu_t startTime) {
     invokeScheduler();
 }
 
-static void terminalHandler(int deviceNumber) {
-    int index = (TERMINT - DISKINT) * DEVPERINT + deviceNumber;
-    devregarea_PTR devReg = (devregarea_PTR) DEVREGAREA;
-    device_PTR device = (device_PTR) (devReg->dev )
-}
 
 unsigned int map(unsigned int cause) {
     /* declare the array of possible line numbers */
