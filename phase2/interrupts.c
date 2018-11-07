@@ -112,7 +112,7 @@ int map(int cause) {
 * 
 */
 void interruptHandler() {
-    debugA(8079);
+    debugA(40000);
     /* the old interrupt */
     state_PTR oldInterupt = (state_PTR) INTRUPTOLDAREA;
     device_PTR devReg;
@@ -125,85 +125,100 @@ void interruptHandler() {
     int lineNumber = 0;
     int index = 0;
     int status = 0;
-    debugA(8080);
-    if((cause & FIRST) != 0) {
-        debugA(8081);
+    debugA(40001);
+    if ((cause & FIRST) != 0) {
+        debugA(40002);
         PANIC();
     } else if((cause & SECOND) != 0) {
-        debugA(8082);
+        debugA(40003);
         exitInterruptHandler(startTime);
         /* skip for now */
     } else if((cause & THIRD) != 0){
-        debugA(8083);
-        int* semaphore = &(semdTable[MAXSEMALLOC - 1]);
-        debugA(8084);
-        while(headBlocked(semaphore) != NULL) {
+        debugA(40004);
+        int *semaphore = &(semdTable[MAXSEMALLOC - 1]);
+        debugA(40005);
+        while (headBlocked(semaphore) != NULL)
+        {
             STCK(endTime);
-            debugA(8085);
+            debugA(40006);
             pcb_PTR p = removeBlocked(semaphore);
             if(p != NULL) {
-                debugA(8086);
+                debugA(40007);
                 insertBlocked(&(readyQueue), p);
                 softBlockedCount--;
                 /* handle the charging of time */
                 STCK(endTime);
                 currentProcess->p_time += endTime - startTime;
             }
-            debugA(8087);
+            debugA(40009);
             /* handle the charging of time */
             exitInterruptHandler(startTime);
         }
-        debugA(8088);
+        debugA(40010);
     } else {
         lineNumber = map(cause);
     }
     /* since the find device number helper function does not save
     the modified line number, it must be done outside the function */
     debugA(lineNumber);
+    debugA(40011);
     /* DEBUG NOTES: makes it to here */
     deviceNumber = getDeviceNumber(lineNumber);
     lineNumber -= NOSEM;
+    debugA(40012);
     /* have both line and device numbers, calculate the device register */
     devReg = (device_PTR) (INTDEVREG + lineNumber * DEVREGSIZE * DEVPERINT) + (deviceNumber * DEVREGSIZE);
     /* handle the terminal, if the terminal is causing the interrupt. else, acknowledge the 
     reception of the terminal interrupt in the overwritten command recieved field */
+    debugA(40013);
     if(lineNumber == TERMINT) {
         int receive = TRUE;
+        debugA(40014);
         if((devReg->t_transm_status & 0x0F) != READY) {
             index = DEVPERINT * (lineNumber) + deviceNumber;
             receive = FALSE;
         }
         int* semaphore = &(semdTable[index]);
+        debugA(40015);
         (*semaphore)++;
         if((*semaphore) <= 0) {
             pcb_PTR p = removeBlocked(semaphore);
+            debugA(40016);
             if(p != NULL) {
                 if(receive) {
+                    debugA(40017);
                     /* acknowledge the transmission */
                     devReg->t_recv_command = ACK;
                     p->p_state.s_v0 = devReg->t_recv_status;
                 } else {
+                    debugA(40018);
                     devReg->t_transm_status = ACK;
                     /* acknowledge the transmission */
                     p->p_state.s_v0 = devReg->t_transm_status;
                 }
+                debugA(40019);
                 softBlockedCount--;
                 insertProcQ(&(readyQueue), p);
             }
         }
+        debugA(40020);
         exitInterruptHandler(startTime);
     } else {
+        debugA(40021);
         index = DEVPERINT * (lineNumber - NOSEM) + deviceNumber;
         devReg->d_command = ACK;
         int* semaphore = &(semdTable[index]);
         (*semaphore)++;
+        debugA(40022);
         if((*semaphore) <= 0) {
             pcb_PTR p = removeBlocked(semaphore);
             if(p != NULL) {
+                debugA(40023);
                 p->p_state.s_v0 = devReg->d_status;
                 softBlockedCount--;
                 insertProcQ(&(readyQueue), p);
             }
+            debugA(40024);
         }
         exitInterruptHandler(startTime);
     }
