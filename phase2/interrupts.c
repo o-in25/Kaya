@@ -148,7 +148,7 @@ void interruptHandler() {
             pcb_PTR p = removeBlocked(semaphore);
             if(p != NULL) {
                 debugA(40007);
-                insertBlocked(&(readyQueue), p);
+                insertProcQ(&(readyQueue), p);
                 softBlockedCount--;
                 /* handle the charging of time */
                 STCK(endTime);
@@ -170,7 +170,7 @@ void interruptHandler() {
     /* DEBUG NOTES: makes it to here */
     deviceNumber = getDeviceNumber(lineNumber);
     debugA(6969696);
-    debugA(lineNumber)
+    debugA(lineNumber);
     lineNumber = lineNumber - NOSEM;
     debugA(40012);
     /* have both line and device numbers, calculate the device register */
