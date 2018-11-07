@@ -214,18 +214,20 @@ void interruptHandler() {
         debugA(40021);
         index = DEVPERINT * (lineNumber - NOSEM) + deviceNumber;
         devReg->d_command = ACK;
-        int* semaphore = &(semdTable[index]);
-        (*semaphore)++;
         debugA(40022);
-        if((*semaphore) <= 0) {
+        int* semaphore = &(semdTable[index]);
+        debugA(40023);
+        (*semaphore)++;
+        debugA(40023);
+        if ((*semaphore) <= 0) {
             pcb_PTR p = removeBlocked(semaphore);
             if(p != NULL) {
-                debugA(40023);
+                debugA(40024);
                 p->p_state.s_v0 = devReg->d_status;
                 softBlockedCount--;
                 insertProcQ(&(readyQueue), p);
             }
-            debugA(40024);
+            debugA(40025);
         }
         exitInterruptHandler(startTime);
     }
