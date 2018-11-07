@@ -30,7 +30,7 @@
 * will be supplied prior to this function call, this will simply 
 * calculate the device number  
 */
-static unsigned int getDeviceNumber(int lineNumber) {
+static int getDeviceNumber(int lineNumber) {
     /* get the address of the device bit map. Per secion 5.2.4 of pops, the 
     physical address of the bit map is 0x1000003C. When bit i is in word j is 
     set to one then device i attached to interrupt line j + 3 */
@@ -42,7 +42,7 @@ static unsigned int getDeviceNumber(int lineNumber) {
     /* for searching for the device number */
     int found = FALSE;
     /* search each 8 bits */
-    debugA(lineNumber);
+    mcFuck(lineNumber);
     while(!found) {
         /* if the bit i in word j is set to 1, then
         the device attached to interrupt j + 3 has a pending 
