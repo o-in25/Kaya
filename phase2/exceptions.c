@@ -433,7 +433,7 @@ static void createProcess(state_PTR state) {
     caller->s_pc = caller->s_pc + 4;
     /* in order to execute syscals 1-9, we
     must be in kernel mode */
-    int userMode = TRUE;    
+    int userMode = FALSE;    
     /* since the value of the syscall is placed in the a0 register
     we read the a0 register to see wht value it is. The system supports up
     to 255 syscalls */
@@ -441,7 +441,7 @@ static void createProcess(state_PTR state) {
     unsigned int status = caller->s_status;
     if((status & KUp) != ALLOFF) {
         /* in kernel mode */
-        userMode = FALSE;
+        userMode = TRUE;
     }
     if(!userMode && callNumber < 9) {
         /* call our helper function to assist with handling the syscalls IF we are
