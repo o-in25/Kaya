@@ -132,10 +132,10 @@ void print(char *msg) {
 
 	SYSCALL(PASSERN, (int)&term_mut, 0, 0);				/* P(term_mut) */
 	while (*s != EOS) {
+		debugA(98);
 		*(base + 3) = PRINTCHR | (((devregtr) *s) << BYTELEN);
 		/* here so far */
 		status = SYSCALL(WAITIO, TERMINT, 0, 0);
-		debugA(98);
 		if ((status & TERMSTATMASK) != RECVD) {
 			PANIC();
 		}
