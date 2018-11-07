@@ -161,6 +161,7 @@ void interruptHandler() {
     }
     /* since the find device number helper function does not save
     the modified line number, it must be done outside the function */
+    debugA(40098);
     debugA(lineNumber);
     debugA(40011);
     /* DEBUG NOTES: makes it to here */
