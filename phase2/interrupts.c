@@ -126,7 +126,6 @@ void interruptHandler() {
         while (headBlocked(semaphore) != NULL) {
             STCK(endTime);
             pcb_PTR p = removeBlocked(semaphore);
-            (*semaphore)--;
             if(p != NULL) {
                 insertProcQ(&(readyQueue), p);
                 softBlockedCount--;

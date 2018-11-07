@@ -433,28 +433,32 @@ static void createProcess(state_PTR state) {
     caller->s_pc = caller->s_pc + 4;
     /* in order to execute syscals 1-9, we
     must be in kernel mode */
-    int kernelMode = FALSE;    
+    int userMode = TRUE;    
     /* since the value of the syscall is placed in the a0 register
     we read the a0 register to see wht value it is. The system supports up
     to 255 syscalls */
     unsigned int callNumber = caller->s_a0;
     unsigned int status = caller->s_status;
-    if((status & KERNELMODEON) != ALLOFF) {
+    if((status & KUp) != ALLOFF) {
         /* in kernel mode */
-        kernelMode = TRUE;
+        userMode = FALSE;
     }
-    if(kernelMode) {
+    if(!userMode && callNumber < 9) {
         /* call our helper function to assist with handling the syscalls IF we are
         in kernel mode */
         delegateSyscall(callNumber, caller);
-    } else if(!kernelMode && callNumber < 9) {
-        state_PTR programTrapOldArea = (state_PTR) PRGMTRAPOLDAREA;
-        programTrapOldArea->s_cause = RESERVED;
-        copyState(caller, programTrapOldArea);
-        programTrapHandler();
     } else {
-        passUpOrDie(caller, callNumber);
-    }
+        if (userMode) {
+            state_PTR programTrapOldArea = (state_PTR)PRGMTRAPOLDAREA;
+            /* copy the state */
+            copyState(status, programTrapOldArea);
+            programTrapOldArea->s_cause = RESERVED;
+            /* call a program trap */
+            programTrapHandler();
+        } else {
+            passUpOrDie(caller, callNumber);
+        }
+    } 
  }
 
  void programTrapHandler() {
