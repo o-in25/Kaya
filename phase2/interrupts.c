@@ -41,9 +41,9 @@ static unsigned int getDeviceNumber(int lineNumber) {
     int deviceNumber = 0;
     /* for searching for the device number */
     int found = FALSE;
-    debugA((int) deviceBitMap);
     /* search each 8 bits */
     while(!found) {
+        debugA(lineNumber);
         /* if the bit i in word j is set to 1, then
         the device attached to interrupt j + 3 has a pending 
         interrupt */
