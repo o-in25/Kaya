@@ -107,7 +107,7 @@ int map(int cause) {
         }
     }
     debugA(987999);
-    debugA(finding);
+    debugA(devices[3]);
 }
 
 
