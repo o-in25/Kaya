@@ -175,7 +175,7 @@ void interruptHandler() {
     debugA(lineNumber);
     debugA(40012);
     /* have both line and device numbers, calculate the device register */
-    devReg = (device_PTR) (INTDEVREG + ((lineNumber) - NOSEM * DEVREGSIZE * DEVPERINT) + (deviceNumber * DEVREGSIZE));
+    devReg = (device_PTR) (INTDEVREG + ((lineNumber - NOSEM) * DEVREGSIZE * DEVPERINT) + (deviceNumber * DEVREGSIZE));
     /* handle the terminal, if the terminal is causing the interrupt. else, acknowledge the 
     reception of the terminal interrupt in the overwritten command recieved field */
     debugA(40013);
