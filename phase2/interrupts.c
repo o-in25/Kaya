@@ -123,10 +123,10 @@ void interruptHandler() {
         /* skip for now */
     } else if((cause & THIRD) != 0){
         int *semaphore = &(semdTable[MAXSEMALLOC - 1]);
-        while (headBlocked(semaphore) != NULL)
-        {
+        while (headBlocked(semaphore) != NULL) {
             STCK(endTime);
             pcb_PTR p = removeBlocked(semaphore);
+            (*semaphore)--;
             if(p != NULL) {
                 insertProcQ(&(readyQueue), p);
                 softBlockedCount--;
