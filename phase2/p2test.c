@@ -127,9 +127,10 @@ void print(char *msg) {
 		debugA(10002);
 		status = SYSCALL(WAITIO, TERMINT, 0, 0);
 		debugB(123);
-		if ((status & TERMSTATMASK) != RECVD))
+		if ((status & TERMSTATMASK) != RECVD)) {
 			debugB(123409);
 			PANIC();
+		}
 		s++;	
 	}
 	SYSCALL(VERHOGEN, (int)&term_mut, 0, 0);				/* V(term_mut) */
