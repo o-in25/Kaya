@@ -41,7 +41,7 @@ static unsigned int getDeviceNumber(int lineNumber) {
     int deviceNumber = 0;
     /* for searching for the device number */
     int found = FALSE;
-    debugA(lineNumber);
+    debugB(lineNumber);
     /* search each 8 bits */
     while(!found) {
         /* if the bit i in word j is set to 1, then

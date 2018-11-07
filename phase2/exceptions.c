@@ -437,8 +437,8 @@ static void createProcess(state_PTR state) {
     /* since the value of the syscall is placed in the a0 register
     we read the a0 register to see wht value it is. The system supports up
     to 255 syscalls */
-    const int callNumber = caller->s_a0;
-    const unsigned int status = caller->s_status;
+    unsigned int callNumber = caller->s_a0;
+    unsigned int status = caller->s_status;
     if((status & KERNELMODEON) != ALLOFF) {
         /* in kernel mode */
         kernelMode = TRUE;
