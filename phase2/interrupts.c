@@ -72,24 +72,6 @@ static unsigned int getDeviceNumber(int lineNumber) {
 * these, this simply determines which line it is
 */
 
-
-static int terminalHandler(device_PTR devAddrBase) {
-    int status = (devAddrBase->t_transm_status & TRANSREADY);
-    if(status != READY) {
-        /* acknowledge that the command is a transmit command 
-        by providing the acknowledge bit */
-        (*devAddrBase).t_transm_command = ACK;
-        /* set the status to be a transmit status */
-        return (*devAddrBase).t_transm_status;
-    } else {
-        /* acknowledge that the command is a recieve command 
-        by providing the acknowledge bit */
-        (*devAddrBase).t_recv_command = ACK;
-        /* set the status to be a recieve status */
-        return (*devAddrBase).t_recv_status;
-    }
-}
-
 static void exitInterruptHandler(cpu_t startTime) {
     debugA(444);
     state_PTR oldInterrupt = (memaddr) INTRUPTOLDAREA;
@@ -111,6 +93,24 @@ static void exitInterruptHandler(cpu_t startTime) {
     invokeScheduler();
 }
 
+static void terminalHandler(int deviceNumber) {
+    int index = (TERMINT - DISKINT) * DEVPERINT + deviceNumber;
+    devregarea_PTR devReg = (devregarea_PTR) DEVREGAREA;
+    device_PTR device = (device_PTR) (devReg->dev )
+}
+
+unsigned int map(unsigned int cause) {
+    /* declare the array of possible line numbers */
+    unsigned int[DEVPERINT - NOSEM] lineNumbers = {FOURTH, FIFTH, SIXTH, SEVENTH};
+    unsigned int[DEVPERINT - NOSEM] devices = {DISKINT, TAPEINT, NETWINT, PRNTINT, TERMINT};
+    int i;
+    for (i = 0; i < (DEVPERINT - NOSEM); i++) {
+        if ((cause & line[i] != 0)) {
+            result = devices[i];
+        }
+    }
+}
+
 
 /*
 * Function: The interrupt handler 
@@ -120,7 +120,7 @@ void interruptHandler() {
     debugA(8079);
     /* the old interrupt */
     state_PTR oldInterupt = (state_PTR) INTRUPTOLDAREA;
-    device_PTR devAddrBase;
+    device_PTR devReg;
     const unsigned int cause = oldInterupt->s_cause;
     cause += (cause & IM) >> 8;
     debugA(cause);
@@ -159,61 +159,57 @@ void interruptHandler() {
             exitInterruptHandler(startTime);
         }
         debugA(8088);
-    } else if((cause & FOURTH) != 0) {
-        lineNumber = DISKINT;
-    } else if((cause & FIFTH) != 0) {
-        lineNumber = TAPEINT;
-    } else if((cause & TAPEINT) != 0) {
-        lineNumber = NETWINT;
-    } else if((cause & SEVENTH) != 0) {
-        lineNumber = PRNTINT;
-    } else if((cause & EIGHTH) != 0) {
-        lineNumber = TERMINT;
+    } else {
+        lineNumber = map(cause);
     }
     /* since the find device number helper function does not save
     the modified line number, it must be done outside the function */
     debugA(lineNumber);
-    lineNumber = lineNumber - NOSEM;
     /* DEBUG NOTES: makes it to here */
     deviceNumber = getDeviceNumber(lineNumber);
-
-    /* given an interrupt line number and a device number, the
-    starting address of the device's devreg by using...
-    0x10000050 + line number - 3 * 0x80 + device number * 0x10 */
-    devAddrBase = DEVREG + lineNumber * DEVPERINT * DEVREGSIZE + (deviceNumber * DEVREGSIZE);
-    debugA(8092);
-
-
+    lineNumber -= NOSEM;
+    /* have both line and device numbers, calculate the device register */
+    devReg = (device_PTR) (INTDEVREG + lineNumber * DEVREGSIZE * DEVPERINT) + (deviceNumber * DEVREGSIZE);
+    /* handle the terminal, if the terminal is causing the interrupt. else, acknowledge the 
+    reception of the terminal interrupt in the overwritten command recieved field */
     if(lineNumber == TERMINT) {
-        /* skip for now */
-        status = terminalHandler(devAddrBase);
-        /* was it was a transmit command? */
-        if(status == devAddrBase->t_transm_status) {
-            /* get the device index */
-            index = (DEVPERINT * (lineNumber)) + deviceNumber;
-        } else {
-            index = (DEVPERINT * (lineNumber + 1)) + deviceNumber;
+        int receive = TRUE;
+        if((devReg->t_transm_status & 0x0F) != READY) {
+            index = DEVPERINT * (lineNumber) + deviceNumber;
+            recieve = FALSE;
         }
+        int* semaphore = &(semdTable[index]);
+        (*semaphore)++;
+        if((*semaphore) <= 0) {
+            pcb_PTR p = removeBlocked(semaphore);
+            if(p != NULL) {
+                if(receieve) {
+                    /* acknowledge the transmission */
+                    devReg->t_recv_command = ACK;
+                    p->p_state.s_v0 = devReg->t_recv_status;
+                } else {
+                    devReg->t_transm_status = ACK;
+                    /* acknowledge the transmission */
+                    p->p_state.s_v0 = devReg->t_transm_status;
+                }
+                softBlockedCount--;
+                insertProcQ(&(readyQueue), p);
+            }
+        }
+        exitInterruptHandler(startTime);
     } else {
-        /* not a terminal interrupt - assign the index */
-        status = devAddrBase->d_status;
-        devAddrBase->d_command = ACK;
-        index = DEVPERINT * lineNumber + deviceNumber;
-    }
-    
-    debugA(8093);
-    /* perform a V operation on the semaphore */
-    int* semaphore = &(semdTable[index]);
-    (*semaphore)--;
-    if((*semaphore) <=0) {
-        pcb_PTR p = removeBlocked(semaphore);
-        if(p != NULL) {
-            p->p_state.s_v0 = status;
-            insertProcQ(&(readyQueue), p);
-            softBlockedCount--;
+        index = DEVPERINT * (lineNumber - NOSEM) + deviceNumber;
+        devReg->d_command = ACK;
+        int* semaphore = &(semdTable[index]);
+        (*semaphore)++;
+        if((*semaphore) <= 0) {
+            pcb_PTR p = removeBlocked(semaphore);
+            if(p != NULL) {
+                p->p_state.s_v0 = devReg->d_status;
+                softBlockedCount--;
+                insertProcQ(&(readyQueue), p);
+            }
         }
+        exitInterruptHandler(startTime);
     }
-    debugA(8094);
-    /* exit */
-    exitInterruptHandler(startTime);
 }
