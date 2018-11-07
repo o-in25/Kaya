@@ -171,14 +171,14 @@ void interruptHandler() {
         int receive = TRUE;
         if((devReg->t_transm_status & 0x0F) != READY) {
             index = DEVPERINT * (lineNumber) + deviceNumber;
-            recieve = FALSE;
+            receive = FALSE;
         }
         int* semaphore = &(semdTable[index]);
         (*semaphore)++;
         if((*semaphore) <= 0) {
             pcb_PTR p = removeBlocked(semaphore);
             if(p != NULL) {
-                if(receieve) {
+                if(receive) {
                     /* acknowledge the transmission */
                     devReg->t_recv_command = ACK;
                     p->p_state.s_v0 = devReg->t_recv_status;
