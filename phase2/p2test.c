@@ -243,6 +243,7 @@ void test() {
 
 	SYSCALL(CREATETHREAD, (int)&p3state, 0, 0);				/* start p3     */
 
+
 	print("p3 is started\n");
 
 	SYSCALL(PASSERN, (int)&endp3, 0, 0);					/* P(endp3)     */
