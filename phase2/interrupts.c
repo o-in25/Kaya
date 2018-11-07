@@ -203,13 +203,13 @@ void interruptHandler() {
                 if(receive) {
                     debugA(40017);
                     /* acknowledge the transmission */
-                    devReg->t_recv_command = ACK;
                     p->p_state.s_v0 = devReg->t_recv_status;
+                    devReg->t_recv_command = ACK;
                 } else {
                     debugA(40018);
+                    p->p_state.s_v0 = devReg->t_transm_status;
                     devReg->t_transm_command = ACK;
                     /* acknowledge the transmission */
-                    p->p_state.s_v0 = devReg->t_transm_status;
                 }
                 debugA(40019);
                 softBlockedCount--;
