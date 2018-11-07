@@ -207,7 +207,7 @@ void interruptHandler() {
                     p->p_state.s_v0 = devReg->t_recv_status;
                 } else {
                     debugA(40018);
-                    devReg->t_transm_status = ACK;
+                    devReg->t_transm_command = ACK;
                     /* acknowledge the transmission */
                     p->p_state.s_v0 = devReg->t_transm_status;
                 }
