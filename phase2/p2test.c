@@ -125,7 +125,7 @@ void print(char *msg) {
 		/* here so far */
 		debugA(10002);
 		status = SYSCALL(WAITIO, TERMINT, 0, 0);
-
+		debugB(123);
 		if ((status & TERMSTATMASK) != RECVD)
 			debugB(123409);
 			PANIC();
