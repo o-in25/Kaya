@@ -184,7 +184,7 @@ void interruptHandler() {
         int receive = TRUE;
         debugA(40014);
         if((devReg->t_transm_status & 0x0F) != READY) {
-            index = DEVPERINT * ((lineNumber - NOSEM) + deviceNumber;
+            index = DEVPERINT * (lineNumber - NOSEM) + deviceNumber;
             receive = FALSE;
         } else {
             index = DEVPERINT * ((lineNumber - NOSEM) + 1) + deviceNumber;
