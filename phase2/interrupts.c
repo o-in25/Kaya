@@ -102,8 +102,7 @@ int map(int cause) {
     int i;
     int finding = 0;
     for(i = 0; i < (DEVPERINT - NOSEM); i++) {
-        int temp = devc
-        if ((cause & lineNumbers[i]) != 0) {
+        if((cause & lineNumbers[i]) != 0) {
             finding = devices[i];
         }
     }
