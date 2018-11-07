@@ -93,7 +93,7 @@ int map(int cause) {
             finding = devices[i];
         }
     }
-
+    debugB(finding);
     return finding;
 }
 
