@@ -228,7 +228,7 @@ void test() {
 	
 	/* create process p2 */
 	SYSCALL(CREATETHREAD, (int)&p2state,0 , 0);				/* start p2     */
-
+	debugA(99);
 	print("p2 was started\n");
 
 	debugA(100);
