@@ -39,7 +39,7 @@ static unsigned int getDeviceNumber(int lineNumber) {
     unsigned int* deviceBitMap = (unsigned int*) INTBITMAP + ((lineNumber - NOSEM) * DEVREGLEN);
     debugA(991);
     /* start at the first device */
-    unsigned int candidate = STARTDEVICE;
+    unsigned int candidate = FIRST;
     int deviceNumber = 0;
     /* for searching for the device number */
     int found = FALSE;
@@ -50,7 +50,7 @@ static unsigned int getDeviceNumber(int lineNumber) {
         /* if the bit i in word j is set to 1, then
         the device attached to interrupt j + 3 has a pending 
         interrupt */
-        if((((*deviceBitMap) & candidate) == candidate)) {
+        if(((*deviceBitMap) & candidate) != 0) {
             /* since this index is equal to 1, we found it */
             found = TRUE;
         } else {
@@ -61,7 +61,7 @@ static unsigned int getDeviceNumber(int lineNumber) {
         }
     }
     debugA(995);
-    return candidate;
+    return deviceNumber;
 }
 
 /*
