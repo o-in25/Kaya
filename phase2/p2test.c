@@ -236,7 +236,6 @@ void test() {
 	SYSCALL(CREATETHREAD, (int)&p2state,0 , 0);				/* start p2     */
 	debugA(99);
 	print("p2 was started\n");
-
 	debugA(100);
 	SYSCALL(VERHOGEN, (int)&startp2, 0, 0);					/* V(startp2)   */
 	debugA(102);
