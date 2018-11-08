@@ -76,12 +76,12 @@ static void exitInterruptHandler(cpu_t startTime) {
 
 int map(unsigned int cause) {
     /* declare the array of possible line numbers */
-    int lineNumbers[(DEVPERINT - NOSEM)] = {FOURTH, FIFTH, SIXTH, SEVENTH, EIGHTH};
-    int devices[(DEVPERINT - NOSEM)] = {DISKINT, TAPEINT, NETWINT, PRNTINT, TERMINT};
+    unsigned int lineNumbers[(DEVPERINT - NOSEM)] = {FOURTH, FIFTH, SIXTH, SEVENTH, EIGHTH};
+    unsigned int devices[(DEVPERINT - NOSEM)] = {DISKINT, TAPEINT, NETWINT, PRNTINT, TERMINT};
     int i;
     int finding = 0;
     for(i = 0; i < (DEVPERINT - NOSEM); i++) {
-        if((cause & lineNumbers[i]) != 0) {
+        if(((cause) & (lineNumbers[i]) != 0) {
             finding = devices[i];
         }
     }
@@ -129,6 +129,8 @@ void interruptHandler() {
     } else if((cause & SECOND) != 0) {
         exitInterruptHandler(startTime);
         /* skip for now */
+    } else if((cause & THIRD) != 0) {
+       intervalTimerHandler(startTime, endTime);
     } else {
         lineNumber = map(cause);
     }
