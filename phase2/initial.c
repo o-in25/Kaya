@@ -107,7 +107,6 @@ int main() {
     operating system - being the process control blocks and the semaphore list */ 
     initPcbs();
     initASL();
-    LDIT(INTERVAL);
     /* allocated a process - just like before, we must now allocate memory according`ly */
     currentProcess = allocPcb();
     currentProcess->p_state.s_sp = (RAMTOP - PAGESIZE);
@@ -121,5 +120,6 @@ int main() {
     /* its in the queue */
     currentProcess = NULL;
     /* call the scheduler */
+    LDIT(INTERVAL);
     invokeScheduler();
 }

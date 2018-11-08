@@ -10,10 +10,6 @@ cpu_t startTOD;
 /* * */
 cpu_t currentTOD;
 extern void invokeScheduler() {
-    if (currentProcess != NULL) {
-        STCK(currentTOD);
-        currentProcess->p_time += (currentTOD - startTOD);
-    }
     if(emptyProcQ(readyQueue)) {
         if(processCount == 0) { /* case 1 */
                 /* our work here is done. there are no jobs in the ready queue
@@ -37,6 +33,10 @@ extern void invokeScheduler() {
                 WAIT();
             }
         }
+    }
+    if(currentProcess != NULL) {
+        STCK(currentTOD);
+        currentProcess->p_time += (currentTOD - startTOD);
     }
     currentProcess = removeProcQ(&(readyQueue));
     STCK(startTOD);
