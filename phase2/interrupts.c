@@ -146,6 +146,8 @@ void interruptHandler() {
         lineNumber = PRNTINT;
     } else if((cause & EIGHTH) != 0) {
         lineNumber = TERMINT;
+    } else {
+        PANIC();
     }
     /* since the find device number helper function does not save
     the modified line number, it must be done outside the function */
