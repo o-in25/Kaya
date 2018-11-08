@@ -101,6 +101,7 @@ void contextSwitch(state_PTR s) {
 static void passUpOrDie(int callNumber, state_PTR old) {
     /* has a sys5 for that trap type been called?
     if not, terminate the process and all its progeny */
+    debugA (callNumber);
     switch(callNumber) {
         /* if yes, copy the state the caused the exception to 
         the location secified in the pcb. context switch */
