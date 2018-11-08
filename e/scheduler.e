@@ -3,4 +3,6 @@
 #ifndef SCHED
 #define SCHED
     extern void invokeScheduler();
+    extern stopTOD;
+    extern startTOD;
 #endif
