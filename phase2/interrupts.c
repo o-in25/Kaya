@@ -42,7 +42,6 @@ static int getDeviceNumber(int lineNumber) {
     /* for searching for the device number */
     int found = FALSE;
     /* search each 8 bits */
-    mcFuck(lineNumber);
     while(!found) {
         /* if the bit i in word j is set to 1, then
         the device attached to interrupt j + 3 has a pending 
@@ -106,7 +105,6 @@ void interruptHandler() {
     state_PTR oldInterupt = (state_PTR) INTRUPTOLDAREA;
     device_PTR devReg;
     unsigned int cause = oldInterupt->s_cause;
-    debugA((int) cause);
     cause += (cause & IM) >> 8;
     cpu_t startTime;
     cpu_t endTime;
