@@ -81,7 +81,7 @@ int map(unsigned int cause) {
     int i;
     int finding = 0;
     for(i = 0; i < (DEVPERINT - NOSEM); i++) {
-        if(((cause) & (lineNumbers[i]) != 0) {
+        if(((cause) & (lineNumbers[i])) != 0) {
             finding = devices[i];
         }
     }
