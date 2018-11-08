@@ -88,6 +88,25 @@ int map(unsigned int cause) {
     return finding;
 }
 
+static void intervalTimerHandler(cpu_t startTime, cpu_t endTime) {
+    LDIT(INTERVAL);
+    int *semaphore = &(semdTable[MAXSEMALLOC - 1]);
+    while (headBlocked(semaphore) != NULL) {
+        STCK(endTime);
+        pcb_PTR p = removeBlocked(semaphore);
+        if (p != NULL) {
+            cpu_t elapsedTime = (endTime - startTime);
+            /* handle the charging of time */
+            currentProcess->p_time += elapsedTime;
+            insertProcQ(&(readyQueue), p);
+            softBlockedCount--;
+        }
+    }
+    /*handle the charging of time */
+    (*semaphore) = 0;
+    exitInterruptHandler(startTime);
+}
+
 
 /*
 * Function: The interrupt handler 
@@ -109,23 +128,10 @@ void interruptHandler() {
     if ((cause & FIRST) != 0) {
         PANIC();
     } else if((cause & SECOND) != 0) {
-        exitInterruptHandler(startTime);
+        exitInterruptHandler(startTime, en);
         /* skip for now */
-    } else if((cause & THIRD) != 0){
-        int *semaphore = &(semdTable[MAXSEMALLOC - 1]);
-        while (headBlocked(semaphore) != NULL) {
-            STCK(endTime);
-            pcb_PTR p = removeBlocked(semaphore);
-            if(p != NULL) {
-                insertProcQ(&(readyQueue), p);
-                softBlockedCount--;
-                /* handle the charging of time */
-                STCK(endTime);
-                currentProcess->p_time += endTime - startTime;
-            }
-            /* handle the charging of time */
-            exitInterruptHandler(startTime);
-        }
+    } else if((cause & THIRD) != 0) {
+       intervalTimerHandler(startTime, endTime);
     } else if((cause & FOURTH) != 0) {
         lineNumber = DISKINT;
     } else if((cause & FIFTH) != 0) {
