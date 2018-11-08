@@ -143,6 +143,8 @@ void interruptHandler() {
     the modified line number, it must be done outside the function */
     /* DEBUG NOTES: makes it to here */
     deviceNumber = getDeviceNumber(lineNumber);
+    debugThisSonOfAFuck(softBlockedCount);
+    debugThisSonOfAFuck(((lineNumber - 2) * 8) + deviceNumber);
     /* have both line and device numbers, calculate the device register */
     devReg = (device_PTR) (INTDEVREG + ((lineNumber - NOSEM) * DEVREGSIZE * DEVPERINT) + (deviceNumber * DEVREGSIZE));
     /* handle the terminal, if the terminal is causing the interrupt. else, acknowledge the 
