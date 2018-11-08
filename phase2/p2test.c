@@ -19,6 +19,10 @@
 
 typedef unsigned int devregtr;
 
+int debugthing(int i) {
+    i = 0;
+    i = 42;
+}
 
 extern int debugThisSonOfAFuck(int* i) {
 	i = 0;
@@ -326,8 +330,9 @@ void p2()
 	p1p2synch = 1; /* p1 will check this */
 
 	SYSCALL(VERHOGEN, (int)&endp2, 0, 0); /* V(endp2)     */
-
+    debugthing(1);
 	SYSCALL(TERMINATETHREAD, 0, 0, 0); /* terminate p2 */
+    debugthing(2);
 
 	/* just did a SYS2, so should not get to this point */
 	print("error: p2 didn't terminate\n");
