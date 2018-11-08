@@ -99,7 +99,6 @@ void interruptHandler() {
     device_PTR devReg;
     unsigned int cause = oldInterupt->s_cause;
     debugThisSonOfAFuck(cause);
-    cause += (cause & IM) >> 8;
     cpu_t startTime;
     cpu_t endTime;
     int deviceNumber = 0;
