@@ -54,7 +54,7 @@ static void terminateProgeny(pcb_PTR p) {
         debugA(300);
         if(semaphore >= semdTable[0]) {
             softBlockedCount--;
-            debugA(400)
+            debugA(400);
         } else {
             (*semaphore)++;
             debugA(500);
