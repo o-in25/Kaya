@@ -63,8 +63,8 @@ static int getDeviceNumber(int lineNumber) {
 
 static void exitInterruptHandler(cpu_t startTime) {
     state_PTR oldInterrupt = (memaddr) INTRUPTOLDAREA;
-    cpu_t endTime;
     if(currentProcess != NULL) {
+        cpu_t endTime;
         STCK(endTime);
         startTOD += (endTime - startTime);
         copyState(oldInterrupt, &(currentProcess->p_state));
@@ -91,7 +91,7 @@ int map(unsigned int cause) {
 static void intervalTimerHandler(cpu_t startTime, cpu_t endTime) {
     LDIT(INTERVAL);
     int *semaphore = &(semdTable[MAXSEMALLOC - 1]);
-    while (headBlocked(semaphore) != NULL) {
+    while(headBlocked(semaphore) != NULL) {
         STCK(endTime);
         pcb_PTR p = removeBlocked(semaphore);
         if (p != NULL) {
@@ -139,8 +139,6 @@ void interruptHandler() {
     the modified line number, it must be done outside the function */
     /* DEBUG NOTES: makes it to here */
     deviceNumber = getDeviceNumber(lineNumber);
-    debugThisSonOfAFuck(softBlockedCount);
-    debugThisSonOfAFuck(((lineNumber - 2) * 8) + deviceNumber);
     /* have both line and device numbers, calculate the device register */
     devReg = (device_PTR) (INTDEVREG + ((lineNumber - NOSEM) * DEVREGSIZE * DEVPERINT) + (deviceNumber * DEVREGSIZE));
     /* handle the terminal, if the terminal is causing the interrupt. else, acknowledge the 
@@ -174,7 +172,7 @@ void interruptHandler() {
         exitInterruptHandler(startTime);
     } else {
         index = DEVPERINT * (lineNumber - NOSEM) + deviceNumber;
-        /* DEBUG NOTES: ended up here */
+        /* DE.BUG NOTES: ended up here */
         int* semaphore = &(semdTable[index]);
         (*semaphore)++;
         if ((*semaphore) <= 0) {

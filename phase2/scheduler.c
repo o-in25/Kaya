@@ -7,7 +7,6 @@
 
 /* clock timer */
 cpu_t startTOD;
-/* * */
 cpu_t currentTOD;
 extern void invokeScheduler() {
     if(emptyProcQ(readyQueue)) {
