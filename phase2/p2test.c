@@ -19,6 +19,12 @@
 
 typedef unsigned int devregtr;
 
+
+extern int debugThisSonOfAFuck(int* i) {
+	i = 0;
+	i = 42;
+}
+
 /* hardware constants */
 #define PRINTCHR 2
 #define BYTELEN 8

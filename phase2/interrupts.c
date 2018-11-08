@@ -105,6 +105,7 @@ void interruptHandler() {
     state_PTR oldInterupt = (state_PTR) INTRUPTOLDAREA;
     device_PTR devReg;
     unsigned int cause = oldInterupt->s_cause;
+    debugThisSonOfAFuck(cause);
     cause += (cause & IM) >> 8;
     cpu_t startTime;
     cpu_t endTime;
