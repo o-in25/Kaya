@@ -160,8 +160,8 @@ to external (and internal) device events */
 #define TRANSREADY 0x0000000F
 
 /* Set the timer constant - that is 5 miliseconds */
-#define INTERVAL 10000
-#define QUANTUM 5000
+#define INTERVAL 100000
+#define QUANTUM 50000
 
 /* initial bit map address */
 #define INTBITMAP 0x1000003C
