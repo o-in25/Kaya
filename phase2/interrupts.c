@@ -117,7 +117,6 @@ void interruptHandler() {
     state_PTR oldInterupt = (state_PTR) INTRUPTOLDAREA;
     device_PTR devReg;
     unsigned int cause = oldInterupt->s_cause;
-    debugThisSonOfAFuck(cause);
     cause += (cause & IM) >> 8;
     cpu_t startTime;
     cpu_t endTime;
@@ -130,20 +129,8 @@ void interruptHandler() {
     } else if((cause & SECOND) != 0) {
         exitInterruptHandler(startTime);
         /* skip for now */
-    } else if((cause & THIRD) != 0) {
-       intervalTimerHandler(startTime, endTime);
-    } else if((cause & FOURTH) != 0) {
-        lineNumber = DISKINT;
-    } else if((cause & FIFTH) != 0) {
-        lineNumber = TAPEINT;
-    } else if((cause & SIXTH) != 0) {
-        lineNumber = NETWINT;
-    } else if((cause & SEVENTH) != 0) {
-        lineNumber = PRNTINT;
-    } else if((cause & EIGHTH) != 0) {
-        lineNumber = TERMINT;
     } else {
-        PANIC();
+        lineNumber = map(cause);
     }
     /* since the find device number helper function does not save
     the modified line number, it must be done outside the function */
