@@ -128,7 +128,7 @@ void interruptHandler() {
     if ((cause & FIRST) != 0) {
         PANIC();
     } else if((cause & SECOND) != 0) {
-        exitInterruptHandler(startTime, endTime);
+        exitInterruptHandler(startTime);
         /* skip for now */
     } else if((cause & THIRD) != 0) {
        intervalTimerHandler(startTime, endTime);
