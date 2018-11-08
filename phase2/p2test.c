@@ -18,8 +18,8 @@
 #include "/usr/local/include/umps2/umps/libumps.e"
 
 typedef unsigned int devregtr;
-debugthing(2)
-extern int debugthing(int i) {
+
+int debugthing(int i) {
     i = 0;
     i = 42;
 }
