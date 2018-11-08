@@ -42,18 +42,11 @@ static int getDeviceNumber(int lineNumber) {
     /* for searching for the device number */
     int found = FALSE;
     /* search each 8 bits */
-    while(!found) {
-        /* if the bit i in word j is set to 1, then
-        the device attached to interrupt j + 3 has a pending 
-        interrupt */
+    for(deviceNumber; deviceNumber < DEVPERINT; deviceNumber++) {
         if((deviceBitMap & candidate) != 0) {
-            /* since this index is equal to 1, we found it */
-            found = TRUE;
+            break;
         } else {
-            /* it's not this device, so increment and try again */
-            deviceNumber++;
-            /* bitwise shift right and go to the next one */
-            candidate = candidate << 1;
+            candidate << 1;
         }
     }
     return deviceNumber;
