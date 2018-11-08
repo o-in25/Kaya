@@ -185,13 +185,13 @@ void interruptHandler() {
     } else {
         index = DEVPERINT * (lineNumber - NOSEM) + deviceNumber;
         /* DEBUG NOTES: ended up here */
-        devReg->d_command = ACK;
         int* semaphore = &(semdTable[index]);
         (*semaphore)++;
         if ((*semaphore) <= 0) {
             pcb_PTR p = removeBlocked(semaphore);
             if(p != NULL) {
                 p->p_state.s_v0 = devReg->d_status;
+                devReg->d_command = ACK;
                 softBlockedCount--;
                 insertProcQ(&(readyQueue), p);
             }
