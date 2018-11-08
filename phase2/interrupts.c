@@ -66,7 +66,7 @@ static void exitInterruptHandler(cpu_t startTime) {
     cpu_t endTime;
     if(currentProcess != NULL) {
         STCK(endTime);
-        currentProcess->p_time = currentProcess->p_time + (endTime - startTime);
+        startTOD += (endTime - startTime);
         copyState(oldInterrupt, &(currentProcess->p_state));
         insertProcQ(&(readyQueue), currentProcess);
     }
@@ -102,7 +102,7 @@ static void intervalTimerHandler(cpu_t startTime, cpu_t endTime) {
             softBlockedCount--;
         }
     }
-    /*handle the charging of time */
+    /*handle the charging of time */ 
     (*semaphore) = 0;
     exitInterruptHandler(startTime);
 }
