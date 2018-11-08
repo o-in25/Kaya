@@ -315,12 +315,12 @@ void p2()
 	cpu_t2 = SYSCALL(GETCPUTIME, 0, 0, 0); /* CPU time used */
 	STCK(now2);							   /* time of day  */
 
-    if (((now2 - now1) >= (cpu_t2 - cpu_t1))){
+    if (((cpu_t2 - cpu_t1) >= (MINLOOPTIME / (*((cpu_t *)TIMESCALEADDR))))){
         debugthing(50);
-        if (((cpu_t2 - cpu_t1) >= (MINLOOPTIME / (*((cpu_t *)TIMESCALEADDR))))){
+        if (((now2 - now1) >= (cpu_t2 - cpu_t1)) ){
             debugthing(100);
+            print("p2 is OK\n");
         }
-		print("p2 is OK\n");
     }
 	else
 	{
