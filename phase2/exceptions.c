@@ -8,6 +8,10 @@
 #include "../e/asl.e"
 #include "/usr/local/include/umps2/umps/libumps.e"
 
+extern debugA(int* i) {
+    i = 0;
+    i = 42;
+}
 
 extern startTOD;
 extern stopTOD;
@@ -37,18 +41,23 @@ static void terminateProgeny(pcb_PTR p) {
         terminateProgeny(removeChild(p));
     }
     int* semaphore = p->p_semAdd;
+    debugA(100);
     /* if the semaphore is not null, that means that the process on the ASL 
     and is blocked */
     if(semaphore != NULL) {
+        debugA(200);
         /* here, if the process is not null, then we need to do all of the work.
         Beause these steps are mutex with the I/O interrupt handler, if the process
         is not null, we do the following. If it IS null, the I/O interrupt handler already
         took care of this for us */
         outBlocked(semaphore);
+        debugA(300);
         if(semaphore >= semdTable[0]) {
             softBlockedCount--;
+            debugA(400)
         } else {
             (*semaphore)++;
+            debugA(500);
         }
     } else {
         /* here, the semaphore is null, meaning that the I/O handler already took care of 
@@ -56,17 +65,23 @@ static void terminateProgeny(pcb_PTR p) {
         now, we handle the case of if the process is the current process or if the process
         is on the ready queue */
         if(p == currentProcess) {
+            debugA(600);
             /* yank the child from its parent */
             outChild(currentProcess);
         } else {
+            debugA(700);
             /* yank it from the ready queue */
             outProcQ(&(readyQueue), p);
+            debugA(800);
         }
     }
     /* free the process block and decrement the process count regardless of what 
     case it is */
+    debugA(900);
     freePcb(p);
+    debugA(1000);
     processCount--;
+    debugA(1100);
 }
 
 /* Function: context switch 

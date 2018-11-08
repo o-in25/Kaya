@@ -35,10 +35,6 @@ pcb_PTR readyQueue;
 /* semaphore list */
 int semdTable[MAXSEMALLOC];
 
-
-
-
-
 /* 
 * Function: the boot squence for the OS; it will initalize process control blocks and 
 * will initialize the active semaphore list. It will also populate low areas of memory
