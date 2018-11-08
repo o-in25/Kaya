@@ -124,6 +124,7 @@ void interruptHandler() {
     int lineNumber = 0;
     int index = 0;
     int status = 0;
+    STCK(startTime);
     if ((cause & FIRST) != 0) {
         PANIC();
     } else if((cause & SECOND) != 0) {
