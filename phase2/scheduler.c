@@ -5,7 +5,10 @@
 #include "../e/asl.e"
 #include "/usr/local/include/umps2/umps/libumps.e"
 
-
+/* clock timer */
+cpu_t startTOD;
+/* * */
+cpu_t currentTOD;
 extern void invokeScheduler() {
     if(emptyProcQ(readyQueue)) {
         if(processCount == 0) { /* case 1 */
@@ -33,7 +36,7 @@ extern void invokeScheduler() {
     }
     if(currentProcess != NULL) {
         STCK(currentTOD);
-        currentProcess->p_time += currentTOD - startTOD;
+        currentProcess->p_time += (currentTOD - startTOD);
     }
     currentProcess = removeProcQ(&(readyQueue));
     STCK(startTOD);
