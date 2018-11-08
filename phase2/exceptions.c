@@ -67,7 +67,8 @@ static void terminateProgeny(pcb_PTR p) {
         if(p == currentProcess) {
             debugA(600);
             /* yank the child from its parent */
-            outChild(p);
+            outChild(currentProcess);
+            debugA(601);
         } else {
             debugA(700);
             /* yank it from the ready queue */
