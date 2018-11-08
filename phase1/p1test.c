@@ -43,35 +43,7 @@ char *mp = okbuf;
 /************************************************************************************************************************/
 /******************************************** DEBUG FUNCTIONS  *********************************************************/
 /************************************************************************************************************************/
-int debugA(int a) {
-	int i;
-	i = 0;
-}
 
-int debugB(int a) {
-	int i;
-	i = 0;
-}
-
-int debugC(int a) {
-	int i;
-	i = 0;
-}
-
-int debugD(int a) {
-	int i;
-	i = 0;
-}
-
-int debugE(int a) {
-	int i;
-	i = 0;
-}
-
-int debugF(int a) {
-	int i;
-	i = 0;
-}
 
 typedef unsigned int devreg;
 
@@ -347,5 +319,4 @@ void main() {
 	addokbuf("headBlocked and outBlocked ok   \n");
 	addokbuf("ASL module ok   \n");
 	addokbuf("So Long and Thanks for All the Fish\n");
-	debugA(100);
 }
