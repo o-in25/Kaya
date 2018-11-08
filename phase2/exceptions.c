@@ -173,11 +173,11 @@ void copyState(state_PTR from, state_PTR to) {
 static int findSemaphoreIndex(int lineNumber, int deviceNumber, int flag) {
     int offset;
     if(flag == TRUE) {
-        offset = (lineNumber - NOSEM + flag) + deviceNumber; 
+        offset = (lineNumber - NOSEM + flag); 
     } else {
-        offset = (lineNumber - NOSEM) + deviceNumber;
+        offset = (lineNumber - NOSEM);
     }
-    int calculation = DEVPERINT * offset + deviceNumber;
+    int calculation = (DEVPERINT * offset) + deviceNumber;
     return calculation;
 }
 
