@@ -66,7 +66,7 @@ static void exitInterruptHandler(cpu_t startTime) {
     cpu_t endTime;
     if(currentProcess != NULL) {
         STCK(endTime);
-        currentProcess->p_time += (endTime - startTime);
+        currentProcess->p_time = currentProcess->p_time + (endTime - startTime);
         copyState(oldInterrupt, &(currentProcess->p_state));
         insertProcQ(&(readyQueue), currentProcess);
     }

@@ -161,7 +161,7 @@ to external (and internal) device events */
 
 /* Set the timer constant - that is 5 miliseconds */
 #define INTERVAL 100000
-#define QUANTUM 50000
+#define QUANTUM 5000
 
 /* initial bit map address */
 #define INTBITMAP 0x1000003C
