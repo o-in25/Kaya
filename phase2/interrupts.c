@@ -132,7 +132,7 @@ void interruptHandler() {
         /* skip for now */
     } else if((cause & THIRD) != 0) {
        intervalTimerHandler(startTime, endTime);
-    } else if((cause & FORUTH) != 0) {
+    } else if((cause & FOURTH) != 0) {
         lineNumber = DISKINT;
     }
     else if ((cause & FIFTH) != 0)
