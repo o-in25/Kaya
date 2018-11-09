@@ -64,6 +64,7 @@ static void terminateProgeny(pcb_PTR p) {
         debugger(2150);
         /* yank the child from its parent */
         outChild(currentProcess);
+        debugger(333);
     }
     else {
         debugger(2155);
