@@ -69,11 +69,8 @@ static void terminateProgeny(pcb_PTR p) {
     }
     /* free the process block and decrement the process count regardless of what 
     case it is */
-    debugA(900);
     freePcb(p);
-    debugA(1000);
     processCount--;
-    debugA(1100);
 }
 
 /* Function: context switch 
