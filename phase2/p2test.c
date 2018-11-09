@@ -231,13 +231,10 @@ void test()
 	SYSCALL(VERHOGEN, (int)&startp2, 0, 0); /* V(startp2)   */
 
 	SYSCALL(PASSERN, (int)&endp2, 0, 0); /* P(endp2)     */
-    debugthing(2);
 	/* make sure we really blocked */
 	if (p1p2synch == 0)
 		print("error: p1/p2 synchronization bad\n");
-    debugthing(3);
 	SYSCALL(CREATETHREAD, (int)&p3state, 0, 0); /* start p3     */
-    debugthing(4);
 	print("p3 is started\n");
 
 	SYSCALL(PASSERN, (int)&endp3, 0, 0); /* P(endp3)     */
@@ -316,11 +313,8 @@ void p2()
 	cpu_t2 = SYSCALL(GETCPUTIME, 0, 0, 0); /* CPU time used */
 	STCK(now2);							   /* time of day  */
 
-    if (((cpu_t2 - cpu_t1) >= (MINLOOPTIME / (*((cpu_t *)TIMESCALEADDR))))){
-        if (((now2 - now1) >= (cpu_t2 - cpu_t1)) ){
+    if (((cpu_t2 - cpu_t1) >= (MINLOOPTIME / (*((cpu_t *)TIMESCALEADDR))))) && ((now2 - now1) >= (cpu_t2 - cpu_t1)))
             print("p2 is OK\n");
-        }
-    }
 	else
 	{
 		if ((now2 - now1) < (cpu_t2 - cpu_t1))
@@ -344,7 +338,6 @@ void p2()
 /* p3 -- clock semaphore test process */
 void p3()
 {
-    debugthing(16*3);
 	cpu_t time1, time2;
 	cpu_t cpu_t1, cpu_t2; /* cpu time used       */
 	int i;
