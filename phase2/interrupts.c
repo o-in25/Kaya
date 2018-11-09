@@ -121,6 +121,7 @@ void interruptHandler() {
     cpu_t startTime;
     cpu_t endTime;
     STCK(startTime);
+
     int deviceNumber = 0;
     int lineNumber = 0;
     int index = 0;
@@ -132,25 +133,8 @@ void interruptHandler() {
         /* skip for now */
     } else if((cause & THIRD) != 0) {
        intervalTimerHandler(startTime, endTime);
-    } else if((cause & FOURTH) != 0) {
-        lineNumber = DISKINT;
-    }
-    else if ((cause & FIFTH) != 0)
-    {
-        
-        lineNumber = TAPEINT;
-    }
-    else if ((cause & SIXTH) != 0)
-    {
-        lineNumber = NETWINT;
-    }
-    else if ((cause & SEVENTH) != 0)
-    {
-        lineNumber = PRNTINT;
-    }
-    else if ((cause & EIGHTH) != 0)
-    {
-        lineNumber = TERMINT;
+    } else {
+        lineNumber = map(cause);
     }
     /* since the find device number helper function does not save
     the modified line number, it must be done outside the function */

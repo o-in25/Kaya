@@ -52,7 +52,7 @@ int main() {
     /* set the top of the RAM to be the base plus the amount 
     of RAM available. This logical sum will equal (obviously) the
     size of available RAM */
-        unsigned int RAMTOP = (bus->rambase) + (bus->ramsize);
+    unsigned int RAMTOP = (bus->rambase) + (bus->ramsize);
     
     /* now, we need a state (pointer) that will be used to allocate
     the areas of memory; in is encapsulated in the function such that no
