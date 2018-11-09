@@ -424,7 +424,7 @@ static void createProcess(state_PTR state) {
         state_PTR temp = (state_PTR) state->s_a1;
         /* processor state, stored as a temporary variable as temp
         is used as the initial state for the newly created process */
-        copyState((state_PTR) state->s_a1, &(p->p_state));
+        copyState((state_PTR)state->s_a1, &(p->p_state));
         state->s_v0 = 0;
     }
     /* context switch */
