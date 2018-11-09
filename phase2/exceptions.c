@@ -52,7 +52,7 @@ static void terminateProgeny(pcb_PTR p) {
         took care of this for us */
         outBlocked(semaphore);
         debugA(300);
-        if(semaphore >= semdTable[0]) {
+        if(semaphore >= semdTable[0] && semaphore <= &(semTable[MAXSEMALLOC])) {
             softBlockedCount--;
             debugA(400);
         } else {
