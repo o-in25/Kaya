@@ -45,7 +45,7 @@ static void terminateProgeny(pcb_PTR p) {
      is on the ready queue */
     if(p->p_semAdd != NULL) {
         debugger(2151);
-        int *semaphore = p->p_semAdd;
+        int* semaphore = p->p_semAdd;
         /* here, if the process is not 
         null, then we need to do all of the work.
         Beause these steps are mutex with the I/O interrupt handler, if the process
@@ -53,7 +53,7 @@ static void terminateProgeny(pcb_PTR p) {
         took care of this for us */
         outBlocked(p);
         debugger(2152);
-        if(semaphore >= &(semdTable[0])) {
+        if(semaphore >= &(semdTable[0]) && semaphore <= &(semdTable[MAXSEMALLOC - 1])) {
             debugger(2153);
             softBlockedCount--;
          } else {
