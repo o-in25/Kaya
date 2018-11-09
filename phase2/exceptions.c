@@ -52,10 +52,10 @@ static void terminateProgeny(pcb_PTR p) {
         Beause these steps are mutex with the I/O interrupt handler, if the process
         is not null, we do the following. If it IS null, the I/O interrupt handler already
         took care of this for us */
-        outBlocked(p);
+        outBlocked(currentProcess);
         if(semaphore >= semdTable[0]) {
             softBlockedCount--;
-         } else {
+        } else {
             outBlocked(currentProcess);
             if(semaphore >= &(semdTable[0]) && semaphore <= &(semdTable[MAXSEMALLOC])) {
                 softBlockedCount--;
