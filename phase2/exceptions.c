@@ -57,34 +57,28 @@ static void terminateProgeny(pcb_PTR p) {
         outChild(currentProcess);
     }
     int* semaphore = p->p_semAdd;
-<<<<<<< HEAD
     /* if the semaphore is not null, that means that the process on the ASL 
     and is blocked */
     if(semaphore != NULL) {
-=======
     debugT(3);
     /* if the semaphore is not null, that means that the process on the ASL 
     and is blocked */
     if(semaphore != NULL) {
         debugT(4);
->>>>>>> 3d423f7bf3cda3599df054c346165b274f61fbe5
         /* here, if the process is not null, then we need to do all of the work.
         Beause these steps are mutex with the I/O interrupt handler, if the process
         is not null, we do the following. If it IS null, the I/O interrupt handler already
         took care of this for us */
-<<<<<<< HEAD
         outBlocked(semaphore);
         if(semaphore >= semdTable[0]) {
             softBlockedCount--;
          } else {
-=======
         outBlocked(p);
         if(semaphore >= &(semdTable[0]) && semaphore <= &(semdTable[MAXSEMALLOC])) {
             debugT(5);
             softBlockedCount--;
         } else {
             debugT(6);
->>>>>>> 3d423f7bf3cda3599df054c346165b274f61fbe5
             (*semaphore)++;
         }
     } else {
