@@ -44,9 +44,11 @@ static void terminateProgeny(pcb_PTR p) {
      now, we handle the case of if the process is the current process or if the process
      is on the ready queue */
     if(p == currentProcess) {
+        debugger(2150);
         /* yank the child from its parent */
         outChild(currentProcess);
     } else if(p->p_semAdd != NULL) {
+        debugger(2151);
         int *semaphore = p->p_semAdd;
         /* here, if the process is not 
         null, then we need to do all of the work.
@@ -54,17 +56,22 @@ static void terminateProgeny(pcb_PTR p) {
         is not null, we do the following. If it IS null, the I/O interrupt handler already
         took care of this for us */
         outBlocked(p);
+        debugger(2152);
         if(semaphore >= &(semdTable[0])) {
+            debugger(2153);
             softBlockedCount--;
          } else {
-            (*semaphore)++;
+             debugger(2154);
+             (*semaphore)++;
         }
     } else {
+        debugger(2155);
         /* yank it from the ready queue */
         outProcQ(&(readyQueue), p);
     }
     /* free the process block and decrement the process count regardless of what 
     case it is */
+    debugger(2156);
     freePcb(p);
     processCount--;
 }
@@ -386,7 +393,7 @@ static void terminateProcess() {
         outChild(currentProcess);
         freePcb(currentProcess);
     }
-    
+
     currentProcess = NULL;
     /* resechdule */
     invokeScheduler();
