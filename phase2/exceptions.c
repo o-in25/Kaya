@@ -323,6 +323,7 @@ static void specifyExceptionsStateVector(state_PTR state) {
 static void passeren(state_PTR state) {
     /* place the value of the physical address of the
     semaphore to be passerened into register a1 */
+    debugger(8000);
     int* semaphore = (int*) state->s_a1;
     /* decrement the semaphore - per the protocol of a p oeration */
     (*(semaphore))--;
@@ -334,8 +335,10 @@ static void passeren(state_PTR state) {
         new processor state pointed to by the current process'
         p_state field */
         /* reschedule */
+        debugger(8002);
         invokeScheduler();
     }
+    debugger(8001);
     /* context switch */
     contextSwitch(state);
 }
@@ -348,7 +351,7 @@ static void passeren(state_PTR state) {
 * placing the value 3 in a0, the physical address of the semaphore to be V’ed in a1, 
 * and then executing a SYSCALL instruction.
 */
-static void verhogen(state_PTR state) {
+static void     verhogen(state_PTR state) {
     /* place the value of the physical address of the
     semaphore to be verhogened into register a1 */
     int* semaphore = (int*) state->s_a1;

@@ -10,6 +10,7 @@ cpu_t startTOD;
 cpu_t currentTOD;
 extern void invokeScheduler() {
     if(emptyProcQ(readyQueue)) {
+        debugger(8003);
         currentProcess = NULL;
         if(processCount == 0) { /* case 1 */
                 /* our work here is done. there are no jobs in the ready queue
@@ -41,6 +42,7 @@ extern void invokeScheduler() {
         STCK(startTOD);
         setTIMER(QUANTUM);
         /* DEBUG NOTES: got to here before printing p */
+        debugger(8004);
         contextSwitch(&(currentProcess->p_state));
     }
 }
