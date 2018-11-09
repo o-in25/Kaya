@@ -54,7 +54,7 @@ static void terminateProgeny(pcb_PTR p) {
         is not null, we do the following. If it IS null, the I/O interrupt handler already
         took care of this for us */
         outBlocked(p);
-        if(semaphore >= &(semdTable[0]) {
+        if(semaphore >= &(semdTable[0])) {
             softBlockedCount--;
          } else {
             (*semaphore)++;
