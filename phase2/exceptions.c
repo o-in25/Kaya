@@ -43,11 +43,7 @@ static void terminateProgeny(pcb_PTR p) {
      decrementing the softblocked count, incrementing the semaphore and calling outblocked.
      now, we handle the case of if the process is the current process or if the process
      is on the ready queue */
-    if(p == currentProcess) {
-        debugger(2150);
-        /* yank the child from its parent */
-        outChild(currentProcess);
-    } else if(p->p_semAdd != NULL) {
+    if(p->p_semAdd != NULL) {
         debugger(2151);
         int *semaphore = p->p_semAdd;
         /* here, if the process is not 
@@ -64,7 +60,12 @@ static void terminateProgeny(pcb_PTR p) {
              debugger(2154);
              (*semaphore)++;
         }
-    } else {
+    } else if (p == currentProcess) {
+        debugger(2150);
+        /* yank the child from its parent */
+        outChild(currentProcess);
+    }
+    else {
         debugger(2155);
         /* yank it from the ready queue */
         outProcQ(&(readyQueue), p);
