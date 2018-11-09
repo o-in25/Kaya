@@ -389,13 +389,17 @@ static void terminateProcess() {
     if(!emptyChild(currentProcess)) {
         terminateProgeny(currentProcess);
     } else {
+        debugger(311);
         processCount--;
+        debugger(312);
         outChild(currentProcess);
+        debugger(313);
         freePcb(currentProcess);
     }
 
     currentProcess = NULL;
     /* resechdule */
+    debugger(314);
     invokeScheduler();
     /* no context switch, invoke the scheduler */
 }
