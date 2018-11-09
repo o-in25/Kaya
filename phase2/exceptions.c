@@ -13,8 +13,6 @@ extern debugA(int* i) {
     i = 42;
 }
 
-extern startTOD;
-extern stopTOD;
 
 /************************************************************************************************************************/
 /******************************************** HELPER FUNCTIONS  *********************************************************/
@@ -239,11 +237,9 @@ static void waitForIODevice(state_PTR state) {
 static void waitForClock(state_PTR state) {
     int* semaphore = (int*) &(semdTable[MAXSEMALLOC - 1]);
     (*semaphore)--;
-    if (*semaphore < 0){
-        softBlockedCount++;
-        insertBlocked(semaphore, currentProcess);
-        copyState(state, &(currentProcess->p_state));
-    }
+    softBlockedCount++;
+    insertBlocked(semaphore, currentProcess);
+    copyState(state, &(currentProcess->p_state));
     invokeScheduler();
 }
 
@@ -481,14 +477,11 @@ static void createProcess(state_PTR state) {
  void programTrapHandler() {
      state_PTR oldState = (state_PTR) PRGMTRAPOLDAREA;
      passUpOrDie(PROGTRAP, oldState);
-     /* TODO program handler */
  }
 
  void tableHandler() {
      state_PTR oldState = (state_PTR) TBLMGMTOLDAREA;
      passUpOrDie(TLBTRAP, oldState);
-     /* TODO table handler */  
-
  }
 
 
