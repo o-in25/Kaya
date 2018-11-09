@@ -253,8 +253,9 @@ void test() {
     SYSCALL(CREATETHREAD, (int)&p3state, 0, 0);                /* start p3     */
     halt(100);
     print("p3 is started\n");
-    SYSCALL(PASSERN, (int)&endp3, 0, 0);                    /* P(endp3)     */
     halt(200);
+    SYSCALL(PASSERN, (int)&endp3, 0, 0);                    /* P(endp3)     */
+    halt(300);
     SYSCALL(CREATETHREAD, (int)&p4state, 0, 0);                /* start p4     */
     SYSCALL(CREATETHREAD, (int)&p5state, 0, 0);             /* start p5     */
     SYSCALL(CREATETHREAD, (int)&p6state, 0, 0);                /* start p6        */
