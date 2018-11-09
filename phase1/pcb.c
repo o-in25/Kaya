@@ -499,33 +499,31 @@ pcb_PTR outChild(pcb_PTR p) {
 		return NULL;
 		/* the next case to consider - the removed element is at the
 	BACK of a list whose size is >1 at least */
-	} else if((p->p_nextSib) == NULL) {
+	} 
+	if ((p->p_prnt->p_child) == p) {
+		sink(904);
+		/* since this child being removed is the head,
+		simply call the function to do so */
+		return removeChild(p);
+	} 
+	if((p->p_nextSib) == NULL) {
 		sink(902);
 		/* in this case, the pcb_t is at the
 		end of the list */
 		/* remove the parent */;
 		p->p_prevSib->p_nextSib = NULL;
 		sink(903);
-		rmvdPcb = p;
+		return p;
 	/* the next case to consider - the removed element is at the
 	FRONT of a list whose size is >1 at least */
-	} else if((p->p_prnt->p_child) == p) {
-		sink(904);
-		/* since this child being removed is the head,
-		simply call the function to do so */
-		return removeChild(p);
-	} else {
+	if((((p -> p_sibPrev) != NULL) && ((p -> p_sibNext) != NULL))) {
 		/* in this case, since the pcb_t is not the last,
 		and not the first, it must be a middle one, since
 		the verification would not have gotten this far */
 		p->p_prevSib->p_nextSib = p->p_nextSib;
 		p->p_nextSib->p_prevSib = p->p_prevSib;
 		sink(905);
-		rmvdPcb = p;
+		return p;
 	}
-	if(rmvdPcb != NULL) {
-		sink(906);
-		rmvdPcb->p_prnt = NULL;
-	}
-	return rmvdPcb;
+	return NULL;
 }
