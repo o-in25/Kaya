@@ -241,21 +241,19 @@ void test() {
     /* make sure fe really blocked */
     if (p1p2synch == 0)
     print("error: p1/p2 synchronization bad\n");
-    debugthing(1);
     SYSCALL(CREATETHREAD, (int)&p3state, 0, 0);                /* start p3     */
-    debugthing(2);
     print("p3 is started\n");
-    
+    debugthing(100);
     SYSCALL(PASSERN, (int)&endp3, 0, 0);                    /* P(endp3)     */
-    
+    debugthing(200);
     SYSCALL(CREATETHREAD, (int)&p4state, 0, 0);                /* start p4     */
-    
+    debugthing(300);
     SYSCALL(CREATETHREAD, (int)&p5state, 0, 0);             /* start p5     */
-    
+    debugthing(400);
     SYSCALL(CREATETHREAD, (int)&p6state, 0, 0);                /* start p6        */
-    
+    debugthing(500);
     SYSCALL(CREATETHREAD, (int)&p7state, 0, 0);                /* start p7        */
-    
+    debugthing(600);
     SYSCALL(PASSERN, (int)&endp5, 0, 0);                    /* P(endp5)        */
     
     print("p1 knows p5 ended\n");
