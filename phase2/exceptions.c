@@ -388,6 +388,7 @@ static void terminateProcess() {
     if(!emptyChild(currentProcess)) {
         terminateProgeny(currentProcess);
     } else {
+        outChild(currentProcess);
         processCount--;
         freePcb(currentProcess);
     }
