@@ -15,6 +15,7 @@ extern void invokeScheduler() {
                 /* our work here is done. there are no jobs in the ready queue
                 and we have no processes running */
                 HALT();
+                
         }
         if(processCount > 0) {
             /* no current process, since the we have no process counts */
