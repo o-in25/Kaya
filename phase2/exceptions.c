@@ -465,7 +465,7 @@ static void createProcess(state_PTR state) {
             state_PTR programTrapOldArea = (state_PTR) PRGMTRAPOLDAREA;
             /* copy the state */
             copyState(status, programTrapOldArea);
-            programTrapOldArea->s_cause = RESERVED;
+            programTrapOldArea->s_cause = ((programTrapHandler->s_cause & ~(0xFF)) | 10 << 2);
             /* call a program trap */
             programTrapHandler();
         } else {
