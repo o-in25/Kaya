@@ -384,7 +384,6 @@ static void verhogen(state_PTR state) {
 static void terminateProcess() {
     /* invoke the helper function */
     terminateProgeny(currentProcess);
-    /* The current process is over */
     /* resechdule */
     invokeScheduler();
     /* no context switch, invoke the scheduler */
@@ -411,7 +410,6 @@ static void createProcess(state_PTR state) {
         /* context switch */
     } else {
         /* we hace a sucessful running process, so v0 is now 1 */
-        state->s_v0 = 0;
         /* we have a new process, so add it to the count */
         processCount++;
         /* add the new process to the current process's child - how cute */
@@ -424,6 +422,7 @@ static void createProcess(state_PTR state) {
         /* processor state, stored as a temporary variable as temp
         is used as the initial state for the newly created process */
         copyState(temp, &(p->p_state));
+        state->s_v0 = 0;
     }
     /* context switch */
     contextSwitch(state);
