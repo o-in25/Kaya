@@ -33,51 +33,71 @@ extern stopTOD;
 * count is decreased by 1. Second subcase,
 * the easy case, it is not a device semaphore. Therefore, the semaphore address 
 * is incremented by 1 */
+void debugT (int i){
+    i = 0;
+    i = 42;
+}
 static void terminateProgeny(pcb_PTR p) {
     /* first, kill all of the parents children - time to get violent */
+    debugT(1);
     while(!emptyChild(p)) {
         /* perform head recursion on all of the 
         process's children */
         terminateProgeny(removeChild(p));
+        debugT(16);
+    }
+    debugT(2);
+    /* here, the semaphore is null, meaning that the I/O handler already took care of
+     decrementing the softblocked count, incrementing the semaphore and calling outblocked.
+     now, we handle the case of if the process is the current process or if the process
+     is on the ready queue */
+    if(p == currentProcess) {
+        debugT(17);
+        /* yank the child from its parent */
+        outChild(currentProcess);
     }
     int* semaphore = p->p_semAdd;
+<<<<<<< HEAD
     /* if the semaphore is not null, that means that the process on the ASL 
     and is blocked */
     if(semaphore != NULL) {
+=======
+    debugT(3);
+    /* if the semaphore is not null, that means that the process on the ASL 
+    and is blocked */
+    if(semaphore != NULL) {
+        debugT(4);
+>>>>>>> 3d423f7bf3cda3599df054c346165b274f61fbe5
         /* here, if the process is not null, then we need to do all of the work.
         Beause these steps are mutex with the I/O interrupt handler, if the process
         is not null, we do the following. If it IS null, the I/O interrupt handler already
         took care of this for us */
+<<<<<<< HEAD
         outBlocked(semaphore);
         if(semaphore >= semdTable[0]) {
             softBlockedCount--;
          } else {
+=======
+        outBlocked(p);
+        if(semaphore >= &(semdTable[0]) && semaphore <= &(semdTable[MAXSEMALLOC])) {
+            debugT(5);
+            softBlockedCount--;
+        } else {
+            debugT(6);
+>>>>>>> 3d423f7bf3cda3599df054c346165b274f61fbe5
             (*semaphore)++;
         }
     } else {
-        /* here, the semaphore is null, meaning that the I/O handler already took care of 
-        decrementing the softblocked count, incrementing the semaphore and calling outblocked. 
-        now, we handle the case of if the process is the current process or if the process
-        is on the ready queue */
-        if(p == currentProcess) {
-            debugA(600);
-            /* yank the child from its parent */
-            outChild(currentProcess);
-            debugA(601);
-        } else {
-            debugA(700);
-            /* yank it from the ready queue */
-            outProcQ(&(readyQueue), p);
-            debugA(800);
-        }
+        debugT(7);
+        /* yank it from the ready queue */
+        outProcQ(&(readyQueue), p);
     }
     /* free the process block and decrement the process count regardless of what 
     case it is */
-    debugA(900);
+    debugT(8);
     freePcb(p);
-    debugA(1000);
     processCount--;
-    debugA(1100);
+    debugT(9);
 }
 
 /* Function: context switch 
@@ -239,9 +259,11 @@ static void waitForIODevice(state_PTR state) {
 static void waitForClock(state_PTR state) {
     int* semaphore = (int*) &(semdTable[MAXSEMALLOC - 1]);
     (*semaphore)--;
-    softBlockedCount++;
-    insertBlocked(semaphore, currentProcess);
-    copyState(state, &(currentProcess->p_state));
+    if (*semaphore < 0){
+        softBlockedCount++;
+        insertBlocked(semaphore, currentProcess);
+        copyState(state, &(currentProcess->p_state));
+    }
     invokeScheduler();
 }
 
@@ -255,6 +277,7 @@ static void getCpuTime(state_PTR state) {
     /* when a process' turn with the cpu is over,
     the value of teh clock is stored again and is 
     added to the elapsed cpu */
+    copyState (state, &(currentProcess->p_state));
     cpu_t stopTOD;
     STCK(stopTOD);
     /* the elasped time */
@@ -262,10 +285,10 @@ static void getCpuTime(state_PTR state) {
     /* store the time in the pcb_t */
     currentProcess->p_time = (currentProcess->p_time) + elapsedTime;
     /* store the processor time in the caller's v0 */
-    state->s_v0 = currentProcess->p_time;
+    currentProcess->p_state.s_v0 = currentProcess->p_time;
     STCK(startTOD);
     /* context switch */
-    contextSwitch(state);
+    contextSwitch(&(currentProcess->p_state));
 }
 
 /*********************************************** SYS 5 **************************************************/
@@ -388,8 +411,6 @@ static void verhogen(state_PTR state) {
 static void terminateProcess() {
     /* invoke the helper function */
     terminateProgeny(currentProcess);
-    /* The current process is over */
-    currentProcess = NULL;
     /* resechdule */
     invokeScheduler();
     /* no context switch, invoke the scheduler */
@@ -416,7 +437,6 @@ static void createProcess(state_PTR state) {
         /* context switch */
     } else {
         /* we hace a sucessful running process, so v0 is now 1 */
-        state->s_v0 = 0;
         /* we have a new process, so add it to the count */
         processCount++;
         /* add the new process to the current process's child - how cute */
@@ -429,6 +449,7 @@ static void createProcess(state_PTR state) {
         /* processor state, stored as a temporary variable as temp
         is used as the initial state for the newly created process */
         copyState(temp, &(p->p_state));
+        state->s_v0 = 0;
     }
     /* context switch */
     contextSwitch(state);
