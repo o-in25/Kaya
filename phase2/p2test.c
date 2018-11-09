@@ -152,12 +152,20 @@ void test()
 
 	/* set up p2's state */
 	STST(&p2state); /* create a state area             */
-
+    
+    debugthing(100);
+    
 	p2state.s_sp = p2state.s_sp - QPAGE;	   /* stack of p2 should sit above    */
+    
+    debugthing(200);
+    
 	p2state.s_pc = p2state.s_t9 = (memaddr)p2; /* p2 starts executing function p2 */
+    
+    debugthing(300);
+    
 	p2state.s_status = p2state.s_status | IEPBITON | CAUSEINTMASK;
     
-    debugthing(500);
+    debugthing(400);
     
 	STST(&p3state);
 
