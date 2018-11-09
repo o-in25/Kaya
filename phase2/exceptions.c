@@ -323,17 +323,23 @@ static void specifyExceptionsStateVector(state_PTR state) {
 static void passeren(state_PTR state) {
     /* place the value of the physical address of the
     semaphore to be passerened into register a1 */
+    debugger(300);
     int* semaphore = (int*) state->s_a1;
+    debugger(301);
     /* decrement the semaphore - per the protocol of a p oeration */
     (*(semaphore))--;
     if(*(semaphore) < 0) {
+        debugger(302);
         copyState(state, &(currentProcess->p_state));
         /* wait for the operation */
         insertBlocked(semaphore, currentProcess);
+        debugger(304);
         /* copy the current processor state to the
         new processor state pointed to by the current process'
         p_state field */
         /* reschedule */
+        debugger(303);
+        debugger(processCount);
         invokeScheduler();
     }
     /* context switch */
