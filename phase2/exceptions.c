@@ -331,6 +331,8 @@ static void specifyExceptionsStateVector(state_PTR state) {
 * to be V’ed in a1, and then executing a SYSCALL instruction.
 */
 static void passeren(state_PTR state) {
+        debugger(8000);
+    debugger(processCount);
     /* place the value of the physical address of the
     semaphore to be passerened into register a1 */
     debugger(8000);
