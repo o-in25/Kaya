@@ -514,6 +514,7 @@ pcb_PTR outChild(pcb_PTR p) {
 		p->p_prevSib->p_nextSib = NULL;
 		sink(903);
 		return p;
+	}
 	/* the next case to consider - the removed element is at the
 	FRONT of a list whose size is >1 at least */
 	if (p->p_prevSib != NULL && p->p_nextSib != NULL) {
