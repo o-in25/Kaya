@@ -516,13 +516,13 @@ pcb_PTR outChild(pcb_PTR p) {
 		return p;
 	/* the next case to consider - the removed element is at the
 	FRONT of a list whose size is >1 at least */
-	if (((p->p_prevSib) != NULL) && ((p->p_nextSib) != NULL)))) {
+	if (((p->p_prevSib) != NULL) && ((p->p_nextSib) != NULL))) {
 		/* in this case, since the pcb_t is not the last,
 		and not the first, it must be a middle one, since
 		the verification would not have gotten this far */
 		p->p_prevSib->p_nextSib = p->p_nextSib;
 		p->p_nextSib->p_prevSib = p->p_prevSib;
-		sink(ß905);
+		sink(905);
 		return p;
 	}
 	return NULL;
