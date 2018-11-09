@@ -33,43 +33,58 @@ extern stopTOD;
 * count is decreased by 1. Second subcase,
 * the easy case, it is not a device semaphore. Therefore, the semaphore address 
 * is incremented by 1 */
+void debugT (int i){
+    i = 0;
+    i = 42;
+}
 static void terminateProgeny(pcb_PTR p) {
     /* first, kill all of the parents children - time to get violent */
+    debugT(1);
     while(!emptyChild(p)) {
         /* perform head recursion on all of the 
         process's children */
         terminateProgeny(removeChild(p));
+        debugT(16);
     }
+    debugT(2);
     /* here, the semaphore is null, meaning that the I/O handler already took care of
      decrementing the softblocked count, incrementing the semaphore and calling outblocked.
      now, we handle the case of if the process is the current process or if the process
      is on the ready queue */
     if(p == currentProcess) {
+        debugT(17);
         /* yank the child from its parent */
         outChild(currentProcess);
     }
     int* semaphore = p->p_semAdd;
+    debugT(3);
     /* if the semaphore is not null, that means that the process on the ASL 
     and is blocked */
     if(semaphore != NULL) {
+        debugT(4);
         /* here, if the process is not null, then we need to do all of the work.
         Beause these steps are mutex with the I/O interrupt handler, if the process
         is not null, we do the following. If it IS null, the I/O interrupt handler already
         took care of this for us */
         outBlocked(p);
         if(semaphore >= &(semdTable[0]) && semaphore <= &(semdTable[MAXSEMALLOC])) {
+            debugT(5);
             softBlockedCount--;
         } else {
+            debugT(6);
             (*semaphore)++;
         }
     } else {
+        debugT(7);
         /* yank it from the ready queue */
         outProcQ(&(readyQueue), p);
     }
     /* free the process block and decrement the process count regardless of what 
     case it is */
+    debugT(8);
     freePcb(p);
     processCount--;
+    debugT(9);
 }
 
 /* Function: context switch 
