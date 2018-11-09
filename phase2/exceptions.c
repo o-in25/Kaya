@@ -385,8 +385,13 @@ static void verhogen(state_PTR state) {
 * calling process by placing the value 2 in a0 and then executing a SYSCALL instructio
 */
 static void terminateProcess() {
-    /* invoke the helper function */
-    terminateProgeny(currentProcess);
+    if(!emptyChild(currentProcess)) {
+        terminateProgeny(currentProcess);
+    } else {
+        processCount--;
+        freePcb(currentProcess);
+    }
+    currentProcess = NULL;
     /* resechdule */
     invokeScheduler();
     /* no context switch, invoke the scheduler */
