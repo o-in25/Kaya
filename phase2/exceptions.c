@@ -386,7 +386,7 @@ static void verhogen(state_PTR state) {
 * calling process by placing the value 2 in a0 and then executing a SYSCALL instructio
 */
 static void terminateProcess() {
-    if(!emptyChild(currentProcess)) {
+    if(emptyChild(currentProcess)) {
         terminateProgeny(currentProcess);
     } else {
         debugger(311);
