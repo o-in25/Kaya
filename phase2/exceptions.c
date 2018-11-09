@@ -382,7 +382,6 @@ static void terminateProcess() {
         terminateProgeny(currentProcess);
     } else {
         processCount--;
-        outChild(currentProcess);
         freePcb(currentProcess);
     }
     currentProcess = NULL;
