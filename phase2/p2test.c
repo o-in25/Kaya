@@ -121,6 +121,10 @@ memaddr *p5MemLocation = 0;        /* To cause a p5 trap */
 void    p2(),p3(),p4(),p5(),p5a(),p5b(),p6(),p7(),p7a(),p5prog(),p5mm();
 void    p5sys(),p8root(),child1(),child2(),p8leaf();
 
+void debugger(int* i) {
+    i = 0;
+    i = 42;
+}
 
 /* a procedure to print on terminal 0 */
 void print(char *msg) {
@@ -243,17 +247,13 @@ void test() {
     print("error: p1/p2 synchronization bad\n");
     SYSCALL(CREATETHREAD, (int)&p3state, 0, 0);                /* start p3     */
     print("p3 is started\n");
-    debugthing(100);
+    debugger(100);
     SYSCALL(PASSERN, (int)&endp3, 0, 0);                    /* P(endp3)     */
-    debugthing(200);
+    debugger(200);
     SYSCALL(CREATETHREAD, (int)&p4state, 0, 0);                /* start p4     */
-    debugthing(300);
     SYSCALL(CREATETHREAD, (int)&p5state, 0, 0);             /* start p5     */
-    debugthing(400);
     SYSCALL(CREATETHREAD, (int)&p6state, 0, 0);                /* start p6        */
-    debugthing(500);
     SYSCALL(CREATETHREAD, (int)&p7state, 0, 0);                /* start p7        */
-    debugthing(600);
     SYSCALL(PASSERN, (int)&endp5, 0, 0);                    /* P(endp5)        */
     
     print("p1 knows p5 ended\n");
