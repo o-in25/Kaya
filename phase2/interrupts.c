@@ -97,7 +97,7 @@ static void intervalTimerHandler(cpu_t startTime, cpu_t endTime) {
         if (p != NULL) {
             cpu_t elapsedTime = (endTime - startTime);
             /* handle the charging of time */
-            currentProcess->p_time += elapsedTime;
+            currentProcess->p_time = currentProcess->p_time + elapsedTime;
             insertProcQ(&(readyQueue), p);
             softBlockedCount--;
         }

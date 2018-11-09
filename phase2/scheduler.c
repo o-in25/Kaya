@@ -35,7 +35,7 @@ extern void invokeScheduler() {
     } else {
         if (currentProcess != NULL) {
             STCK(currentTOD);
-            currentProcess->p_time += (currentTOD - startTOD);
+            currentProcess->p_time = currentProcess->p_time + (currentTOD - startTOD);
         }
         currentProcess = removeProcQ(&(readyQueue));
         STCK(startTOD);
