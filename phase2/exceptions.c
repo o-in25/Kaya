@@ -385,7 +385,6 @@ static void terminateProcess() {
     /* invoke the helper function */
     terminateProgeny(currentProcess);
     /* The current process is over */
-    currentProcess = NULL;
     /* resechdule */
     invokeScheduler();
     /* no context switch, invoke the scheduler */
