@@ -339,7 +339,7 @@ void p2() {
     debugthing(4);
     halt(69); /* PANIC!           */
     SYSCALL(TERMINATETHREAD, 0, 0, 0);            /* terminate p2 */
-    
+    halt(70);                                     /* PANIC!           */
     /* just did a SYS2, so should not get to this point */
     print("error: p2 didn't terminate\n");
     PANIC();  
