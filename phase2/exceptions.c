@@ -40,6 +40,14 @@ static void terminateProgeny(pcb_PTR p) {
         process's children */
         terminateProgeny(removeChild(p));
     }
+    /* here, the semaphore is null, meaning that the I/O handler already took care of
+     decrementing the softblocked count, incrementing the semaphore and calling outblocked.
+     now, we handle the case of if the process is the current process or if the process
+     is on the ready queue */
+    if(p == currentProcess) {
+        /* yank the child from its parent */
+        outChild(currentProcess);
+    }
     int* semaphore = p->p_semAdd;
     /* if the semaphore is not null, that means that the process on the ASL 
     and is blocked */
@@ -55,17 +63,8 @@ static void terminateProgeny(pcb_PTR p) {
             (*semaphore)++;
         }
     } else {
-        /* here, the semaphore is null, meaning that the I/O handler already took care of 
-        decrementing the softblocked count, incrementing the semaphore and calling outblocked. 
-        now, we handle the case of if the process is the current process or if the process
-        is on the ready queue */
-        if(p == currentProcess) {
-            /* yank the child from its parent */
-            outChild(currentProcess);
-        } else {
-            /* yank it from the ready queue */
-            outProcQ(&(readyQueue), p);
-        }
+        /* yank it from the ready queue */
+        outProcQ(&(readyQueue), p);
     }
     /* free the process block and decrement the process count regardless of what 
     case it is */
