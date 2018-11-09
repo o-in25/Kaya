@@ -17,6 +17,11 @@
 #include "../h/types.h"
 #include "/usr/local/include/umps2/umps/libumps.e"
 
+void debugthing(int a){
+    int i;
+    i=0;
+}
+
 void debugTest(int a, int b, int c, int d){
     int i;
     i=0;
@@ -236,9 +241,9 @@ void test() {
     /* make sure fe really blocked */
     if (p1p2synch == 0)
     print("error: p1/p2 synchronization bad\n");
-    
+    debugthing(1);
     SYSCALL(CREATETHREAD, (int)&p3state, 0, 0);                /* start p3     */
-    
+    debugthing(2);
     print("p3 is started\n");
     
     SYSCALL(PASSERN, (int)&endp3, 0, 0);                    /* P(endp3)     */
@@ -256,7 +261,6 @@ void test() {
     print("p1 knows p5 ended\n");
     
     SYSCALL(PASSERN, (int)&blkp4, 0, 0);                    /* P(blkp4)        */
-    debugTest(0xaaaaaaaa,1,1,1);
     
     /* now for a more rigorous check of process termination */
     for (p8inc=0; p8inc<4; p8inc++) {
@@ -269,7 +273,6 @@ void test() {
         
         SYSCALL(PASSERN, (int)&endp8, 0, 0);
     }
-    debugTest(0xbbbbbbbb,0,0,0);
     print("p1 finishes OK -- TTFN\n");
     * ((memaddr *) BADADDR) = 0;                /* terminate p1 */
     
