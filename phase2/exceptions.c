@@ -426,22 +426,22 @@ static void createProcess(state_PTR state) {
         process blocks - so add -1 in the state's v0 register */
         state->s_v0 = -1;
         /* context switch */
-    } else {
-        /* we hace a sucessful running process, so v0 is now 1 */
-        /* we have a new process, so add it to the count */
-        processCount++;
-        /* add the new process to the current process's child - how cute */
-        insertChild(currentProcess, p);
-        /* insert the process into the ready queue */
-        insertProcQ(&(readyQueue), p);
-        /* a1 register contains the physical address of a processor state 
-        area at the time this instruction is executed */
-        state_PTR temp = (state_PTR) state->s_a1;
-        /* processor state, stored as a temporary variable as temp
-        is used as the initial state for the newly created process */
-        copyState(temp, &(p->p_state));
-        state->s_v0 = 0;
+        contextSwitch(state);
     }
+    /* we hace a sucessful running process, so v0 is now 1 */
+    /* we have a new process, so add it to the count */
+    processCount++;
+    /* add the new process to the current process's child - how cute */
+    insertChild(currentProcess, p);
+    /* insert the process into the ready queue */
+    insertProcQ(&(readyQueue), p);
+    /* a1 register contains the physical address of a processor state 
+        area at the time this instruction is executed */
+    state_PTR temp = (state_PTR)state->s_a1;
+    /* processor state, stored as a temporary variable as temp
+        is used as the initial state for the newly created process */
+    copyState(temp, &(p->p_state));
+    state->s_v0 = 0;
     /* context switch */
     contextSwitch(state);
 }
