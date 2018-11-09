@@ -39,7 +39,6 @@ static void terminateProgeny(pcb_PTR p) {
         process's children */
         terminateProgeny(removeChild(p));
     }
-    int* semaphore = p->p_semAdd;
     /* here, the semaphore is null, meaning that the I/O handler already took care of
      decrementing the softblocked count, incrementing the semaphore and calling outblocked.
      now, we handle the case of if the process is the current process or if the process
@@ -47,13 +46,15 @@ static void terminateProgeny(pcb_PTR p) {
     if(p == currentProcess) {
         /* yank the child from its parent */
         outChild(currentProcess);
-    } else if(semaphore != NULL) {
-        /* here, if the process is not null, then we need to do all of the work.
+    } else if(p->p_semAdd != NULL) {
+        int *semaphore = p->p_semAdd;
+        /* here, if the process is not 
+        null, then we need to do all of the work.
         Beause these steps are mutex with the I/O interrupt handler, if the process
         is not null, we do the following. If it IS null, the I/O interrupt handler already
         took care of this for us */
         outBlocked(p);
-        if(semaphore >= semdTable[0]) {
+        if(semaphore >= &(semdTable[0]) {
             softBlockedCount--;
          } else {
             (*semaphore)++;
@@ -351,7 +352,7 @@ static void passeren(state_PTR state) {
 * placing the value 3 in a0, the physical address of the semaphore to be V’ed in a1, 
 * and then executing a SYSCALL instruction.
 */
-static void     verhogen(state_PTR state) {
+static void verhogen(state_PTR state) {
     /* place the value of the physical address of the
     semaphore to be verhogened into register a1 */
     int* semaphore = (int*) state->s_a1;
@@ -382,7 +383,7 @@ static void terminateProcess() {
         terminateProgeny(currentProcess);
     } else {
         processCount--;
-        outChild(currentProcess);
+        outChild(currentProcess)
         freePcb(currentProcess);
     }
     currentProcess = NULL;
