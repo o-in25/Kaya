@@ -45,8 +45,5 @@ extern void invokeScheduler() {
                 WAIT();
             }
         }
-    } else {
-       
-      
-    }
+    } 
 }
