@@ -327,12 +327,12 @@ static void passeren(state_PTR state) {
     /* decrement the semaphore - per the protocol of a p oeration */
     (*(semaphore))--;
     if(*(semaphore) < 0) {
+        copyState(state, &(currentProcess->p_state));
         /* wait for the operation */
         insertBlocked(semaphore, currentProcess);
         /* copy the current processor state to the
         new processor state pointed to by the current process'
         p_state field */
-        copyState(state, &(currentProcess->p_state));
         /* reschedule */
         invokeScheduler();
     }
