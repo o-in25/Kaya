@@ -153,19 +153,10 @@ void test()
 	/* set up p2's state */
 	STST(&p2state); /* create a state area             */
     
-    debugthing(100);
     
 	p2state.s_sp = p2state.s_sp - QPAGE;	   /* stack of p2 should sit above    */
-    
-    debugthing(200);
-    
 	p2state.s_pc = p2state.s_t9 = (memaddr)p2; /* p2 starts executing function p2 */
-    
-    debugthing(300);
-    
 	p2state.s_status = p2state.s_status | IEPBITON | CAUSEINTMASK;
-    
-    debugthing(400);
     
 	STST(&p3state);
 
@@ -326,9 +317,7 @@ void p2()
 	STCK(now2);							   /* time of day  */
 
     if (((cpu_t2 - cpu_t1) >= (MINLOOPTIME / (*((cpu_t *)TIMESCALEADDR))))){
-        debugthing(50);
         if (((now2 - now1) >= (cpu_t2 - cpu_t1)) ){
-            debugthing(100);
             print("p2 is OK\n");
         }
     }
@@ -344,7 +333,7 @@ void p2()
 	p1p2synch = 1; /* p1 will check this */
 
 	SYSCALL(VERHOGEN, (int)&endp2, 0, 0); /* V(endp2)     */
-    debugthing(1);
+    
 	SYSCALL(TERMINATETHREAD, 0, 0, 0); /* terminate p2 */
 
 	/* just did a SYS2, so should not get to this point */
@@ -355,7 +344,7 @@ void p2()
 /* p3 -- clock semaphore test process */
 void p3()
 {
-    debugthing(300);
+    debugthing(16*3);
 	cpu_t time1, time2;
 	cpu_t cpu_t1, cpu_t2; /* cpu time used       */
 	int i;
