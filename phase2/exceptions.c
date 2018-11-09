@@ -386,6 +386,7 @@ static void terminateProcess() {
         outChild(currentProcess);
         freePcb(currentProcess);
     }
+    
     currentProcess = NULL;
     /* resechdule */
     invokeScheduler();
