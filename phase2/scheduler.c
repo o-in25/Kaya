@@ -41,7 +41,6 @@ extern void invokeScheduler() {
         STCK(startTOD);
         setTIMER(QUANTUM);
         /* DEBUG NOTES: got to here before printing p */
-        debugger(68);
         contextSwitch(&(currentProcess->p_state));
     }
 }

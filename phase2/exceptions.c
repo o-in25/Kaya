@@ -324,25 +324,18 @@ static void passeren(state_PTR state) {
     /* place the value of the physical address of the
     semaphore to be passerened into register a1 */
     int* semaphore = (int*) state->s_a1;
-    debugger(8080);
     /* decrement the semaphore - per the protocol of a p oeration */
     (*(semaphore))--;
-    debugger(8081);
     if(*(semaphore) < 0) {
-        debugger(8082);
         copyState(state, &(currentProcess->p_state));
-        debugger(8083);
         /* wait for the operation */
         insertBlocked(semaphore, currentProcess);
-        debugger(8084);
         /* copy the current processor state to the
         new processor state pointed to by the current process'
         p_state field */
         /* reschedule */
         invokeScheduler();
-        debugger(8085);
     }
-    debugger(8086);
     /* context switch */
     contextSwitch(state);
 }
