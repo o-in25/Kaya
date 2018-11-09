@@ -116,6 +116,7 @@ void interruptHandler() {
     /* the old interrupt */
     state_PTR oldInterupt = (state_PTR) INTRUPTOLDAREA;
     device_PTR devReg;
+    STCK(startTime);
     unsigned int cause = oldInterupt->s_cause;
     cause += (cause & IM) >> 8;
     cpu_t startTime;
@@ -124,7 +125,6 @@ void interruptHandler() {
     int lineNumber = 0;
     int index = 0;
     int status = 0;
-    STCK(startTime);
     if ((cause & FIRST) != 0) {
         PANIC();
     } else if((cause & SECOND) != 0) {

@@ -39,6 +39,7 @@ static void terminateProgeny(pcb_PTR p) {
         process's children */
         terminateProgeny(removeChild(p));
     }
+    int *semaphore = p->p_semAdd;
     /* here, the semaphore is null, meaning that the I/O handler already took care of
      decrementing the softblocked count, incrementing the semaphore and calling outblocked.
      now, we handle the case of if the process is the current process or if the process
@@ -46,13 +47,7 @@ static void terminateProgeny(pcb_PTR p) {
     if(p == currentProcess) {
         /* yank the child from its parent */
         outChild(currentProcess);
-    }
-    int* semaphore = p->p_semAdd;
-    /* if the semaphore is not null, that means that the process on the ASL 
-    and is blocked */
-    /* if the semaphore is not null, that means that the process on the ASL 
-    and is blocked */
-    if(semaphore != NULL) {
+    } else if(semaphore != NULL) {
         /* here, if the process is not null, then we need to do all of the work.
         Beause these steps are mutex with the I/O interrupt handler, if the process
         is not null, we do the following. If it IS null, the I/O interrupt handler already
