@@ -401,6 +401,7 @@ static void terminateProcess() {
 * the physical address of a processor state in a1, and then executing a SYSCALL instruction.
 */
 static void createProcess(state_PTR state) {
+    debugger(9000);
     /* create the new process */
     pcb_PTR p = allocPcb();
     if(p == NULL) {
