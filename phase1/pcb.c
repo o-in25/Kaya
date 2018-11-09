@@ -11,7 +11,6 @@
 ***************************************************** pcb.c ************************************************************/
 
 
-
 /* h files to include */
 #include "../h/const.h"
 #include "../h/types.h"
@@ -490,7 +489,7 @@ pcb_PTR outChild(pcb_PTR p) {
 	pcb_PTR rmvdPcb = NULL;
 	/* if the child has no parent, and is therefore
 	returned null per the function definition implementation */
-	if(p->p_prnt == NULL) {
+	if(p == NULL || p->p_prnt == NULL) {
 		return NULL;
 	/* the next case to consider - the removed element is at the
 	BACK of a list whose size is >1 at least */
