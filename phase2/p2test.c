@@ -126,6 +126,11 @@ void debugger(int* i) {
     i = 42;
 }
 
+void halt(int* i) {
+    i = 0; 
+    i = 42;
+}
+
 /* a procedure to print on terminal 0 */
 void print(char *msg) {
     
