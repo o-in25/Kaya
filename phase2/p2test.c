@@ -156,7 +156,9 @@ void test()
 	p2state.s_sp = p2state.s_sp - QPAGE;	   /* stack of p2 should sit above    */
 	p2state.s_pc = p2state.s_t9 = (memaddr)p2; /* p2 starts executing function p2 */
 	p2state.s_status = p2state.s_status | IEPBITON | CAUSEINTMASK;
-
+    
+    debugthing(500);
+    
 	STST(&p3state);
 
 	p3state.s_sp = p2state.s_sp - QPAGE;
@@ -307,8 +309,6 @@ void p2()
 
 	STCK(now1);							   /* time of day   */
 	cpu_t1 = SYSCALL(GETCPUTIME, 0, 0, 0); /* CPU time used */
-    debugthing(cpu_t1);
-    debugthing(now1);
 
 	/* delay for several milliseconds */
 	for (i = 1; i < LOOPNUM; i++)
@@ -316,8 +316,6 @@ void p2()
 
 	cpu_t2 = SYSCALL(GETCPUTIME, 0, 0, 0); /* CPU time used */
 	STCK(now2);							   /* time of day  */
-    debugthing(cpu_t2);
-    debugthing(now2);
 
     if (((cpu_t2 - cpu_t1) >= (MINLOOPTIME / (*((cpu_t *)TIMESCALEADDR))))){
         debugthing(50);
