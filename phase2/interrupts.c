@@ -66,7 +66,7 @@ static void exitInterruptHandler(cpu_t startTime) {
     if(currentProcess != NULL) {
         cpu_t endTime;
         STCK(endTime);
-        startTOD += (endTime - startTime);
+        startTOD = startTOD + (endTime - startTime);
         copyState(oldInterrupt, &(currentProcess->p_state));
         insertProcQ(&(readyQueue), currentProcess);
     }
@@ -116,11 +116,11 @@ void interruptHandler() {
     /* the old interrupt */
     state_PTR oldInterupt = (state_PTR) INTRUPTOLDAREA;
     device_PTR devReg;
-    STCK(startTime);
     unsigned int cause = oldInterupt->s_cause;
     cause += (cause & IM) >> 8;
     cpu_t startTime;
     cpu_t endTime;
+    STCK(startTime);
     int deviceNumber = 0;
     int lineNumber = 0;
     int index = 0;
