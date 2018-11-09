@@ -28,6 +28,10 @@ static pcb_PTR pcbFl_h;
 /******************************************** HELPER FUNCTIONS  *********************************************************/
 /************************************************************************************************************************/
 
+void sink(int* i) {
+	i = 0;
+	i = 42;
+}
 
 /*
 * Function: nulls out all of the fields for
@@ -487,21 +491,26 @@ pcb_PTR removeChild(pcb_PTR p) {
 */
 pcb_PTR outChild(pcb_PTR p) {
 	pcb_PTR rmvdPcb = NULL;
+	sink(900);
 	/* if the child has no parent, and is therefore
 	returned null per the function definition implementation */
 	if(p == NULL || p->p_prnt == NULL) {
+		sink(901);
 		return NULL;
-	/* the next case to consider - the removed element is at the
+		/* the next case to consider - the removed element is at the
 	BACK of a list whose size is >1 at least */
 	} else if((p->p_nextSib) == NULL) {
+		sink(902);
 		/* in this case, the pcb_t is at the
 		end of the list */
 		/* remove the parent */;
 		p->p_prevSib->p_nextSib = NULL;
+		sink(903);
 		rmvdPcb = p;
 	/* the next case to consider - the removed element is at the
 	FRONT of a list whose size is >1 at least */
 	} else if((p->p_prnt->p_child) == p) {
+		sink(904);
 		/* since this child being removed is the head,
 		simply call the function to do so */
 		return removeChild(p);
@@ -511,9 +520,11 @@ pcb_PTR outChild(pcb_PTR p) {
 		the verification would not have gotten this far */
 		p->p_prevSib->p_nextSib = p->p_nextSib;
 		p->p_nextSib->p_prevSib = p->p_prevSib;
+		sink(905);
 		rmvdPcb = p;
 	}
 	if(rmvdPcb != NULL) {
+		sink(906);
 		rmvdPcb->p_prnt = NULL;
 	}
 	return rmvdPcb;
