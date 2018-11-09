@@ -424,7 +424,7 @@ static void createProcess(state_PTR state) {
         state_PTR temp = (state_PTR) state->s_a1;
         /* processor state, stored as a temporary variable as temp
         is used as the initial state for the newly created process */
-        copyState(temp, &(p->p_state));
+        copyState((state_PTR) caller->s_a1, &(p->p_state));
         state->s_v0 = 0;
     }
     /* context switch */
@@ -465,7 +465,7 @@ static void createProcess(state_PTR state) {
             state_PTR programTrapOldArea = (state_PTR) PRGMTRAPOLDAREA;
             /* copy the state */
             copyState(caller, programTrapOldArea);
-            programTrapOldArea->s_cause = ((programTrapOldArea->s_cause & ~(0xFF)) | 10 << 2);
+            programTrapOldArea->s_cause = RESERVED;
             /* call a program trap */
             programTrapHandler();
         } else {
