@@ -349,6 +349,7 @@ void p2()
 /* p3 -- clock semaphore test process */
 void p3()
 {
+    debugthing(300);
 	cpu_t time1, time2;
 	cpu_t cpu_t1, cpu_t2; /* cpu time used       */
 	int i;
