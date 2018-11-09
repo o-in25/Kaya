@@ -114,7 +114,6 @@ int main() {
     /* insert the newly allocated process into the ready queue */
     insertProcQ(&(readyQueue), currentProcess);
     /* its in the queue */
-    currentProcess = NULL;
     /* call the scheduler */
     LDIT(INTERVAL);
     invokeScheduler();
