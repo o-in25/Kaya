@@ -426,7 +426,7 @@ static void createProcess(state_PTR state) {
         is used as the initial state for the newly created process */
         copyState((state_PTR)state->s_a1, &(p->p_state));
         state->s_v0 = 0;
-        contextSwitch(state)
+        contextSwitch(state);
     }
     /* context switch */
 }
