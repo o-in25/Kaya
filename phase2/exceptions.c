@@ -39,7 +39,7 @@ static void terminateProgeny(pcb_PTR p) {
         process's children */
         terminateProgeny(removeChild(p));
     }
-    int *semaphore = p->p_semAdd;
+    int* semaphore = p->p_semAdd;
     /* here, the semaphore is null, meaning that the I/O handler already took care of
      decrementing the softblocked count, incrementing the semaphore and calling outblocked.
      now, we handle the case of if the process is the current process or if the process
@@ -52,16 +52,11 @@ static void terminateProgeny(pcb_PTR p) {
         Beause these steps are mutex with the I/O interrupt handler, if the process
         is not null, we do the following. If it IS null, the I/O interrupt handler already
         took care of this for us */
-        outBlocked(currentProcess);
+        outBlocked(p);
         if(semaphore >= semdTable[0]) {
             softBlockedCount--;
-        } else {
-            outBlocked(currentProcess);
-            if(semaphore >= &(semdTable[0]) && semaphore <= &(semdTable[MAXSEMALLOC])) {
-                softBlockedCount--;
-            } else {
-                (*semaphore)++;
-            }
+         } else {
+            (*semaphore)++;
         }
     } else {
         /* yank it from the ready queue */
