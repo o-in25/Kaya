@@ -56,6 +56,7 @@ static void terminateProgeny(pcb_PTR p) {
         /* yank the child from its parent */
         outChild(currentProcess);
     }
+    debugT(144);
     int* semaphore = p->p_semAdd;
     debugT(3);
     /* if the semaphore is not null, that means that the process on the ASL 
