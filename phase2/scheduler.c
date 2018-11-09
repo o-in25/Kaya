@@ -6,8 +6,8 @@
 #include "/usr/local/include/umps2/umps/libumps.e"
 
 /* clock timer */
-extern cpu_t startTOD;
-extern cpu_t currentTOD;
+cpu_t startTOD;
+cpu_t currentTOD;
 extern void invokeScheduler() {
     if(emptyProcQ(readyQueue)) {
         if(processCount == 0) { /* case 1 */
