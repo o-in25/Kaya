@@ -341,7 +341,8 @@ void p2() {
     
     /* just did a SYS2, so should not get to this point */
     print("error: p2 didn't terminate\n");
-    PANIC();                    /* PANIC!           */
+    PANIC();  
+    halt(69);                  /* PANIC!           */
 }
 
 
