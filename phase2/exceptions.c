@@ -409,6 +409,7 @@ static void createProcess(state_PTR state) {
         for whatever reason that may be - most likley no more free 
         process blocks - so add -1 in the state's v0 register */
         state->s_v0 = -1;
+        contextSwitch(state);
         /* context switch */
     } else {
         /* we hace a sucessful running process, so v0 is now 1 */
@@ -425,9 +426,9 @@ static void createProcess(state_PTR state) {
         is used as the initial state for the newly created process */
         copyState((state_PTR)state->s_a1, &(p->p_state));
         state->s_v0 = 0;
+        contextSwitch(state)
     }
     /* context switch */
-    contextSwitch(state);
 }
 
 /************************************************************************************************************************/
