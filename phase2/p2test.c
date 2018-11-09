@@ -237,7 +237,7 @@ void test() {
     SYSCALL(VERHOGEN, (int)&startp2, 0, 0);                    /* V(startp2)   */
     
     SYSCALL(PASSERN, (int)&endp2, 0, 0);                    /* P(endp2)     */
-    
+    debugthing(8);
     /* make sure fe really blocked */
     if (p1p2synch == 0)
     print("error: p1/p2 synchronization bad\n");
