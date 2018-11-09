@@ -8,10 +8,6 @@
 #include "../e/asl.e"
 #include "/usr/local/include/umps2/umps/libumps.e"
 
-extern debugA(int* i) {
-    i = 0;
-    i = 42;
-}
 
 
 /************************************************************************************************************************/
@@ -44,7 +40,6 @@ static void terminateProgeny(pcb_PTR p) {
      now, we handle the case of if the process is the current process or if the process
      is on the ready queue */
     if(p->p_semAdd != NULL) {
-        debugger(2151);
         int* semaphore = p->p_semAdd;
         /* here, if the process is not 
         null, then we need to do all of the work.
@@ -52,28 +47,21 @@ static void terminateProgeny(pcb_PTR p) {
         is not null, we do the following. If it IS null, the I/O interrupt handler already
         took care of this for us */
         outBlocked(p);
-        debugger(2152);
         if(semaphore >= &(semdTable[0]) && semaphore <= &(semdTable[MAXSEMALLOC - 1])) {
-            debugger(2153);
             softBlockedCount--;
          } else {
-             debugger(2154);
              (*semaphore)++;
         }
     } else if (p == currentProcess) {
-        debugger(2150);
         /* yank the child from its parent */
         outChild(currentProcess);
-        debugger(333);
     }
     else {
-        debugger(2155);
         /* yank it from the ready queue */
         outProcQ(&(readyQueue), p);
     }
     /* free the process block and decrement the process count regardless of what 
     case it is */
-    debugger(2156);
     freePcb(p);
     processCount--;
 }
@@ -94,7 +82,6 @@ void contextSwitch(state_PTR s) {
 static void passUpOrDie(int callNumber, state_PTR old) {
     /* has a sys5 for that trap type been called?
     if not, terminate the process and all its progeny */
-    debugA (callNumber);
     switch(callNumber) {
         /* if yes, copy the state the caused the exception to 
         the location secified in the pcb. context switch */
@@ -293,6 +280,7 @@ static void specifyExceptionsStateVector(state_PTR state) {
             currentProcess->newTlb = (state_PTR) state->s_a3;
             /* store the old area in the a2 register */
             currentProcess->oldPgm = (state_PTR) state->s_a2;
+            break;
         case PROGTRAP:
             if(currentProcess->newPgm != NULL) {
                 /* the area has already been specified, so treat
@@ -303,6 +291,7 @@ static void specifyExceptionsStateVector(state_PTR state) {
             currentProcess->newPgm = (state_PTR) state->s_a3;
             /* store the old area in the a2 register */
             currentProcess->oldPgm = (state_PTR) state->s_a2;
+            break;
         case SYSTRAP:
           if(currentProcess->newSys != NULL) {
                 /* the area has already been specified, so treat
@@ -313,6 +302,7 @@ static void specifyExceptionsStateVector(state_PTR state) {
             currentProcess->newSys = (state_PTR) state->s_a3;
             /* store the old area in the a2 register */
             currentProcess->oldSys = (state_PTR) state->s_a2;
+            break;
         default:
             /* should never happen */
             terminateProcess();
@@ -331,11 +321,8 @@ static void specifyExceptionsStateVector(state_PTR state) {
 * to be V’ed in a1, and then executing a SYSCALL instruction.
 */
 static void passeren(state_PTR state) {
-        debugger(8000);
-    debugger(processCount);
     /* place the value of the physical address of the
     semaphore to be passerened into register a1 */
-    debugger(8000);
     int* semaphore = (int*) state->s_a1;
     /* decrement the semaphore - per the protocol of a p oeration */
     (*(semaphore))--;
@@ -347,10 +334,8 @@ static void passeren(state_PTR state) {
         new processor state pointed to by the current process'
         p_state field */
         /* reschedule */
-        debugger(8002);
         invokeScheduler();
     }
-    debugger(8001);
     /* context switch */
     contextSwitch(state);
 }
@@ -393,17 +378,13 @@ static void terminateProcess() {
     if(emptyChild(currentProcess)) {
         terminateProgeny(currentProcess);
     } else {
-        debugger(311);
         processCount--;
-        debugger(312);
         outChild(currentProcess);
-        debugger(313);
         freePcb(currentProcess);
     }
 
     currentProcess = NULL;
     /* resechdule */
-    debugger(314);
     invokeScheduler();
     /* no context switch, invoke the scheduler */
 }
@@ -419,7 +400,6 @@ static void terminateProcess() {
 * the physical address of a processor state in a1, and then executing a SYSCALL instruction.
 */
 static void createProcess(state_PTR state) {
-    debugger(9000);
     /* create the new process */
     pcb_PTR p = allocPcb();
     if(p == NULL) {

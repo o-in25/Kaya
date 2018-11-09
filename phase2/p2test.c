@@ -121,15 +121,7 @@ memaddr *p5MemLocation = 0;        /* To cause a p5 trap */
 void    p2(),p3(),p4(),p5(),p5a(),p5b(),p6(),p7(),p7a(),p5prog(),p5mm();
 void    p5sys(),p8root(),child1(),child2(),p8leaf();
 
-void debugger(int* i) {
-    i = 0;
-    i = 42;
-}
 
-void halt(int* i) {
-    i = 0; 
-    i = 42;
-}
 
 /* a procedure to print on terminal 0 */
 void print(char *msg) {
@@ -251,11 +243,8 @@ void test() {
     if (p1p2synch == 0)
     print("error: p1/p2 synchronization bad\n");
     SYSCALL(CREATETHREAD, (int)&p3state, 0, 0);                /* start p3     */
-    halt(100);
     print("p3 is started\n");
-    halt(200);
     SYSCALL(PASSERN, (int)&endp3, 0, 0);                    /* P(endp3)     */
-    halt(300);
     SYSCALL(CREATETHREAD, (int)&p4state, 0, 0);                /* start p4     */
     SYSCALL(CREATETHREAD, (int)&p5state, 0, 0);             /* start p5     */
     SYSCALL(CREATETHREAD, (int)&p6state, 0, 0);                /* start p6        */
@@ -337,9 +326,8 @@ void p2() {
     debugthing (3);
     SYSCALL(VERHOGEN, (int)&endp2, 0, 0);                /* V(endp2)     */
     debugthing(4);
-    halt(69); /* PANIC!           */
+    /* PANIC!           */
     SYSCALL(TERMINATETHREAD, 0, 0, 0);            /* terminate p2 */
-    halt(70);                                     /* PANIC!           */
     /* just did a SYS2, so should not get to this point */
     print("error: p2 didn't terminate\n");
     PANIC();  

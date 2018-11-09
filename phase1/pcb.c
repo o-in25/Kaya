@@ -491,28 +491,23 @@ pcb_PTR removeChild(pcb_PTR p) {
 */
 pcb_PTR outChild(pcb_PTR p) {
 	pcb_PTR rmvdPcb = NULL;
-	sink(900);
 	/* if the child has no parent, and is therefore
 	returned null per the function definition implementation */
 	if(p == NULL || p->p_prnt == NULL) {
-		sink(901);
 		return NULL;
 		/* the next case to consider - the removed element is at the
 	BACK of a list whose size is >1 at least */
 	} 
 	if ((p->p_prnt->p_child) == p) {
-		sink(904);
 		/* since this child being removed is the head,
 		simply call the function to do so */
 		return removeChild(p);
 	} 
 	if((p->p_nextSib) == NULL) {
-		sink(902);
 		/* in this case, the pcb_t is at the
 		end of the list */
 		/* remove the parent */;
 		p->p_prevSib->p_nextSib = NULL;
-		sink(903);
 		return p;
 	}
 	/* the next case to consider - the removed element is at the
