@@ -86,7 +86,16 @@ typedef unsigned int devregtr;
 #define NOLEAVES        4    /* number of leaves of p8 process tree */
 #define MAXSEM            20
 
+/* used for halting */
+extern halt(int i) {
+    i = 0;
+    i = 42;
+}
 
+extern debugger(int i) {
+    i = 0;
+    i = 42;
+}
 
 SEMAPHORE term_mut=1,    /* for mutual exclusion on terminal */
 s[MAXSEM+1],    /* semaphore array */
@@ -244,7 +253,9 @@ void test() {
     print("error: p1/p2 synchronization bad\n");
     SYSCALL(CREATETHREAD, (int)&p3state, 0, 0);                /* start p3     */
     print("p3 is started\n");
-    SYSCALL(PASSERN, (int)&endp3, 0, 0);                    /* P(endp3)     */
+    halt(500);
+    SYSCALL(PASSERN, (int)&endp3, 0, 0);
+    halt(501);    /* P(endp3)     */
     SYSCALL(CREATETHREAD, (int)&p4state, 0, 0);                /* start p4     */
     SYSCALL(CREATETHREAD, (int)&p5state, 0, 0);             /* start p5     */
     SYSCALL(CREATETHREAD, (int)&p6state, 0, 0);                /* start p6        */
