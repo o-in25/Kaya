@@ -155,7 +155,6 @@ to external (and internal) device events */
 
 /* device register */
 #define DEVREG 0x10000050
-#define DEVREGSIZE 0x00000010
 #define DEVREGAREA 0x000002D0
 #define TRANSREADY 0x0000000F
 

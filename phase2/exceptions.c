@@ -35,45 +35,6 @@ void contextSwitch(state_PTR s) {
     LDST(s);
 }
 
-/* Fucntion: Pass up or die 
-* the syscall 5 helper mechanism. Whenever an exception
-* or interrupts occur, the current processor state 
-* is loaded. The sys5 passup or die provides this functionality 
-* and a new processor state is loaded. It allows the caller to store
-* the address of two processor states */
-static void passUpOrDie(int callNumber, state_PTR old) {
-    /* has a sys5 for that trap type been called?
-    if not, terminate the process and all its progeny */
-    switch(callNumber) {
-        /* if yes, copy the state the caused the exception to 
-        the location secified in the pcb. context switch */
-        case SYSTRAP: {
-            if(currentProcess->newSys != NULL) {
-                copyState(old, currentProcess->oldSys);
-                contextSwitch(currentProcess->newSys);
-            }
-            break;
-        }
-        case TLBTRAP: {
-            if(currentProcess->newTlb != NULL) {
-                copyState(old, currentProcess->oldTlb);
-                contextSwitch(currentProcess->newTlb);
-            }
-            break;
-        }
-        case PROGTRAP: {
-            if(currentProcess->newPgm != NULL) {
-                copyState(old, currentProcess->oldPgm);
-                contextSwitch(currentProcess->newPgm);
-            }
-            break;
-        }
-        default: {
-            terminateProcess();
-        }
-    }
-}
-
 
 /* Function: Copy state 
 * copies the state of the processor from one new area
@@ -489,3 +450,41 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
      processCount--;
  }
 
+ /* Fucntion: Pass up or die 
+* the syscall 5 helper mechanism. Whenever an exception
+* or interrupts occur, the current processor state 
+* is loaded. The sys5 passup or die provides this functionality 
+* and a new processor state is loaded. It allows the caller to store
+* the address of two processor states */
+ static void passUpOrDie(int callNumber, state_PTR old) {
+     /* has a sys5 for that trap type been called?
+    if not, terminate the process and all its progeny */
+    switch (callNumber) {
+            /* if yes, copy the state the caused the exception to 
+            the location secified in the pcb. context switch */
+        case SYSTRAP: {
+            if (currentProcess->newSys != NULL) {
+                copyState(old, currentProcess->oldSys);
+                contextSwitch(currentProcess->newSys);
+            }
+            break;
+        }
+        case TLBTRAP: {
+            if (currentProcess->newTlb != NULL) {
+                copyState(old, currentProcess->oldTlb);
+                contextSwitch(currentProcess->newTlb);
+            }
+            break;
+        }
+        case PROGTRAP: {
+            if (currentProcess->newPgm != NULL) {
+                copyState(old, currentProcess->oldPgm);
+                contextSwitch(currentProcess->newPgm);
+            }
+            break;
+        }
+        default: {
+            terminateProcess();
+        }
+    }
+ }
