@@ -144,6 +144,7 @@ void interruptHandler() {
     } else {
         lineNumber = map(cause);
     }
+    debugger(707);
     /* since the find device number helper function does not save
     the modified line number, it must be done outside the function */
     /* DEBUG NOTES: makes it to here */
@@ -152,6 +153,7 @@ void interruptHandler() {
     devReg = (device_PTR) (INTDEVREG + ((lineNumber - NOSEM) * DEVREGSIZE * DEVPERINT) + (deviceNumber * DEVREGSIZE));
     /* handle the terminal, if the terminal is causing the interrupt. else, acknowledge the 
     reception of the terminal interrupt in the overwritten command recieved field */
+    debugger(708);
     if(lineNumber == TERMINT) {
         debugger(707);
         int receive = TRUE;
