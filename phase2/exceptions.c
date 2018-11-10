@@ -162,7 +162,7 @@ static void specifyExceptionsStateVector(state_PTR state) {
             if(currentProcess->newTlb != NULL) {
                 /* the area has already been specified, so treat
                 this operation like a sys2 i.e. terminate the process */
-                terminateProcess();
+                terminateProgeny(currentProcess);
                 invokeScheduler();
             }
             /* store the new area in the a3 register */
@@ -174,7 +174,7 @@ static void specifyExceptionsStateVector(state_PTR state) {
             if(currentProcess->newPgm != NULL) {
                 /* the area has already been specified, so treat
                 this operation like a sys2 i.e. terminate the process */
-                terminateProcess();
+                terminateProgeny(currentProcess);
                 invokeScheduler();
             }
             /* store the new area in the a3 register */
@@ -186,7 +186,7 @@ static void specifyExceptionsStateVector(state_PTR state) {
           if(currentProcess->newSys != NULL) {
                 /* the area has already been specified, so treat
                 this operation like a sys2 i.e. terminate the process */
-                terminateProcess();
+                terminateProgeny(currentProcess);
                 invokeScheduler();
             }
             /* store the new area in the a3 register */
