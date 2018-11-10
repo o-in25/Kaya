@@ -28,44 +28,6 @@
 * the easy case, it is not a device semaphore. Therefore, the semaphore address 
 * is incremented by 1 */
 
-static void terminateProgeny(pcb_PTR p) {
-    /* first, kill all of the parents children - time to get violent */
-    while(!emptyChild(p)) {
-        /* perform head recursion on all of the 
-        process's children */
-        terminateProgeny(removeChild(p));
-    }
-    /* here, the semaphore is null, meaning that the I/O handler already took care of
-     decrementing the softblocked count, incrementing the semaphore and calling outblocked.
-     now, we handle the case of if the process is the current process or if the process
-     is on the ready queue */
-    if(p->p_semAdd != NULL) {
-        int* semaphore = p->p_semAdd;
-        /* here, if the process is not 
-        null, then we need to do all of the work.
-        Beause these steps are mutex with the I/O interrupt handler, if the process
-        is not null, we do the following. If it IS null, the I/O interrupt handler already
-        took care of this for us */
-        outBlocked(p);
-        if(semaphore >= &(semdTable[0]) && semaphore <= &(semdTable[MAXSEMALLOC - 1])) {
-            softBlockedCount--;
-         } else {
-             (*semaphore)++;
-        }
-    } else if (p == currentProcess) {
-        /* yank the child from its parent */
-        outChild(currentProcess);
-    }
-    else {
-        /* yank it from the ready queue */
-        outProcQ(&(readyQueue), p);
-    }
-    /* free the process block and decrement the process count regardless of what 
-    case it is */
-    freePcb(p);
-    processCount--;
-}
-
 /* Function: context switch 
 * ROM instruction that will change the state of the 
 * processor */
@@ -112,41 +74,6 @@ static void passUpOrDie(int callNumber, state_PTR old) {
     }
 }
 
-/* Function: delegate syscall
-* Issues a switch statement to determine which 
-* syscall occurs 
-*/
-static void delegateSyscall(int callNumber, state_PTR caller) {
-    switch(callNumber) {
-        case WAITFORIODEVICE: /* SYSCALL 8 */
-            waitForIODevice(caller);
-            break;
-        case WAITFORCLOCK: /* SYSCALL 7 */
-            waitForClock(caller);
-            break;
-        case GETCPUTIME: /* SYSCALL 6 */
-            getCpuTime(caller);
-            break;
-        case SPECIFYEXCEPTIONSTATEVECTOR: /* SYSCALL 5 */
-            specifyExceptionsStateVector(caller);
-            break;
-        case PASSEREN: /* SYSCALL 4 */
-            passeren(caller);
-            break;
-        case VERHOGEN: /* SYSCALL 3 */
-            verhogen(caller);
-            break;
-        case TERMINATEPROCESS: /* SYSCALL 2 */ 
-            terminateProcess();   
-            break;
-        case CREATEPROCESS: /* SYSCALL 1 */
-            createProcess(caller);
-            break;
-        default: 
-            passUpOrDie(caller, callNumber);
-            break;
-    }
-}
 
 /* Function: Copy state 
 * copies the state of the processor from one new area
@@ -434,6 +361,42 @@ static void createProcess(state_PTR state) {
     contextSwitch(state);
 }
 
+/* Function: delegate syscall
+* Issues a switch statement to determine which 
+* syscall occurs 
+*/
+static void delegateSyscall(int callNumber, state_PTR caller) {
+    switch (callNumber) {
+    case WAITFORIODEVICE: /* SYSCALL 8 */
+        waitForIODevice(caller);
+        break;
+    case WAITFORCLOCK: /* SYSCALL 7 */
+        waitForClock(caller);
+        break;
+    case GETCPUTIME: /* SYSCALL 6 */
+        getCpuTime(caller);
+        break;
+    case SPECIFYEXCEPTIONSTATEVECTOR: /* SYSCALL 5 */
+        specifyExceptionsStateVector(caller);
+        break;
+    case PASSEREN: /* SYSCALL 4 */
+        passeren(caller);
+        break;
+    case VERHOGEN: /* SYSCALL 3 */
+        verhogen(caller);
+        break;
+    case TERMINATEPROCESS: /* SYSCALL 2 */
+        terminateProcess();
+        break;
+    case CREATEPROCESS: /* SYSCALL 1 */
+        createProcess(caller);
+        break;
+    default:
+        passUpOrDie(caller, callNumber);
+        break;
+    }
+}
+
 /************************************************************************************************************************/
 /*************************************** EXCEPTION HANDLERS *************************************************************/
 /************************************************************************************************************************/
@@ -487,5 +450,42 @@ static void createProcess(state_PTR state) {
      passUpOrDie(TLBTRAP, oldState);
  }
 
+ static void terminateProgeny(pcb_PTR p)
+ {
+     /* first, kill all of the parents children - time to get violent */
+     while (!emptyChild(p))
+     {
+         /* perform head recursion on all of the 
+        process's children */
+         terminateProgeny(removeChild(p));
+     }
+     /* here, the semaphore is null, meaning that the I/O handler already took care of
+     decrementing the softblocked count, incrementing the semaphore and calling outblocked.
+     now, we handle the case of if the process is the current process or if the process
+     is on the ready queue */
+     if (p->p_semAdd != NULL) {
+         int *semaphore = p->p_semAdd;
+         /* here, if the process is not 
+        null, then we need to do all of the work.
+        Beause these steps are mutex with the I/O interrupt handler, if the process
+        is not null, we do the following. If it IS null, the I/O interrupt handler already
+        took care of this for us */
+         outBlocked(p);
+        if (semaphore >= &(semdTable[0]) && semaphore <= &(semdTable[MAXSEMALLOC - 1])) {
+             softBlockedCount--;
+        } else {
+             (*semaphore)++;
+        }
+     } else if (p == currentProcess){
+         /* yank the child from its parent */
+         outChild(currentProcess);
+     } else {
+         /* yank it from the ready queue */
+         outProcQ(&(readyQueue), p);
+     }
+     /* free the process block and decrement the process count regardless of what 
+    case it is */
+     freePcb(p);
+     processCount--;
+ }
 
- 
