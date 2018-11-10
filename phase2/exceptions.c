@@ -366,6 +366,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
  * 
  */ 
  void syscallHandler() {
+     debugger(400);
     /* get the address of the old syscall area, since we
     wake up in the syscall handler */
     state_PTR caller = (state_PTR) SYSCALLOLDAREA;
