@@ -89,21 +89,34 @@ int map(unsigned int cause) {
 }
 
 static void intervalTimerHandler(cpu_t startTime, cpu_t endTime) {
+    debugger(420420);
+    debugger(690);
     LDIT(INTERVAL);
+    debugger(691);
     int *semaphore = &(semdTable[MAXSEMALLOC - 1]);
+    debugger(692);
     while(headBlocked(semaphore) != NULL) {
+        debugger(693);
         STCK(endTime);
+        debugger(694);
         pcb_PTR p = removeBlocked(semaphore);
+        debugger(695);
         if (p != NULL) {
+            debugger(696);
             cpu_t elapsedTime = (endTime - startTime);
+            debugger(697);
             /* handle the charging of time */
             currentProcess->p_time = currentProcess->p_time + elapsedTime;
+            debugger(698);
             insertProcQ(&(readyQueue), p);
+            debugger(699);
             softBlockedCount--;
         }
     }
-    /*handle the charging of time */ 
+    /*handle the charging of time */
+    debugger(670);
     (*semaphore) = 0;
+    debugger(6001);
     exitInterruptHandler(startTime);
 }
 
@@ -184,7 +197,7 @@ void interruptHandler() {
         }
         exitInterruptHandler(startTime);
     } else {
-        debugger(708);
+        debugger(710);
         index = DEVPERINT * (lineNumber - NOSEM) + deviceNumber;
         /* DE.BUG NOTES: ended up here */
         int* semaphore = &(semdTable[index]);
