@@ -61,6 +61,7 @@ static int getDeviceNumber(int lineNumber) {
 */
 
 static void exitInterruptHandler(cpu_t startTime) {
+    debugger(777);
     state_PTR oldInterrupt = (memaddr) INTRUPTOLDAREA;
     if(currentProcess != NULL) {
         cpu_t endTime;
@@ -113,13 +114,17 @@ static void intervalTimerHandler(cpu_t startTime, cpu_t endTime) {
 */
 void interruptHandler() {
     debugger(700);
+    debugger(4206969);
     /* the old interrupt */
     state_PTR oldInterupt = (state_PTR) INTRUPTOLDAREA;
     device_PTR devReg;
+    debugger(701);
     unsigned int cause = oldInterupt->s_cause;
+    debugger(702);
     cause += (cause & IM) >> 8;
     cpu_t startTime;
     cpu_t endTime;
+    debugger(703);
     STCK(startTime);
 
     int deviceNumber = 0;
@@ -127,12 +132,15 @@ void interruptHandler() {
     int index = 0;
     int status = 0;
     if ((cause & FIRST) != 0) {
+        debugger(704);
         PANIC();
     } else if((cause & SECOND) != 0) {
+        debugger(705);
         exitInterruptHandler(startTime);
         /* skip for now */
     } else if((cause & THIRD) != 0) {
        intervalTimerHandler(startTime, endTime);
+       debugger(706);
     } else {
         lineNumber = map(cause);
     }
@@ -145,6 +153,7 @@ void interruptHandler() {
     /* handle the terminal, if the terminal is causing the interrupt. else, acknowledge the 
     reception of the terminal interrupt in the overwritten command recieved field */
     if(lineNumber == TERMINT) {
+        debugger(707);
         int receive = TRUE;
         if((devReg->t_transm_status & 0x0F) != READY) {
             index = DEVPERINT * (lineNumber - NOSEM) + deviceNumber;
@@ -172,6 +181,7 @@ void interruptHandler() {
         }
         exitInterruptHandler(startTime);
     } else {
+        debugger(708);
         index = DEVPERINT * (lineNumber - NOSEM) + deviceNumber;
         /* DE.BUG NOTES: ended up here */
         int* semaphore = &(semdTable[index]);
