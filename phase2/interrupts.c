@@ -38,15 +38,14 @@ static int getDeviceNumber(int lineNumber) {
     unsigned int deviceBitMap = temp->interrupt_dev[(lineNumber - NOSEM)];
     /* start at the first device */
     unsigned int candidate = FIRST;
-    int deviceNumber = 0;
+    int deviceNumber;
     /* for searching for the device number */
-    int found = FALSE;
     /* search each 8 bits */
-    for(deviceNumber; deviceNumber < DEVPERINT; deviceNumber++) {
+    for(deviceNumber = 0; deviceNumber < DEVPERINT; deviceNumber++) {
         if((deviceBitMap & candidate) != 0) {
             break;
         } else {
-            candidate << 1;
+            candidate = candidate << 1;
         }
     }
     return deviceNumber;
