@@ -133,7 +133,7 @@ static void getCpuTime(state_PTR state) {
     /* the elasped time */
     cpu_t elapsedTime = stopTOD - startTOD;
     /* store the time in the pcb_t */
-    currentProcess->p_time = (currentProcess->p_time) + elapsedTime;
+    (currentProcess->p_time) = (currentProcess->p_time) + elapsedTime;
     /* store the processor time in the caller's v0 */
     state->s_v0 = currentProcess->p_time;
     STCK(startTOD);
