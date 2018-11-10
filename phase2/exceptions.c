@@ -330,29 +330,36 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
                 debugger(403);
     switch (callNumber) {
     case WAITFORIODEVICE: /* SYSCALL 8 */
+        debugger(108);
         waitForIODevice(caller);
         break;
     case WAITFORCLOCK: /* SYSCALL 7 */
+        debugger(107);
         waitForClock(caller);
         break;
     case GETCPUTIME: /* SYSCALL 6 */
+        debugger(106);
         getCpuTime(caller);
         break;
     case SPECIFYEXCEPTIONSTATEVECTOR: /* SYSCALL 5 */
+        debugger(105);
         specifyExceptionsStateVector(caller);
         break;
     case PASSEREN: /* SYSCALL 4 */
-        debugger(404);
+        debugger(104);
         debugger(processCount);
         passeren(caller);
         break;
     case VERHOGEN: /* SYSCALL 3 */
+        debugger(103);
         verhogen(caller);
         break;
     case TERMINATEPROCESS: /* SYSCALL 2 */
+        debugger(102);
         terminateProcess();
         break;
     case CREATEPROCESS: /* SYSCALL 1 */
+        debugger(101);
         createProcess(caller);
         break;
     default:
