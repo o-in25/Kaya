@@ -80,9 +80,9 @@ int main() {
     /* privlaged ROM instruction */
     state->s_status = ALLOFF;   
     state->s_sp = RAMTOP;
-    state->s_pc = (memaddr) tableHandler; 
+    state->s_pc = (memaddr) translationLookasideBufferHandler; 
     /* fill the t9 register */
-    state->s_t9 = (memaddr) tableHandler; 
+    state->s_t9 = (memaddr) translationLookasideBufferHandler;
     /******************************************** INTRUPT AREA ****************************************/
     state = (state_PTR) INTRUPTNEWAREA;
     state->s_status = ALLOFF;   
