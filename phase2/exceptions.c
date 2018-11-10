@@ -156,7 +156,7 @@ static void getCpuTime(state_PTR state) {
 * is treated like a sys2 terminate process if this is not the case 
 */
 static void specifyExceptionsStateVector(state_PTR state) {
-    const unsigned int callNumber = state->s_a1;
+    unsigned int callNumber = state->s_a1;
     switch(callNumber) {
         case TLBTRAP:
             if(currentProcess->newTlb != NULL) {
@@ -211,7 +211,7 @@ static void passeren(state_PTR state) {
     int* semaphore = (int*) state->s_a1;
     /* decrement the semaphore - per the protocol of a p oeration */
     (*(semaphore))--;
-    if(*(semaphore) < 0) {
+    if((*(semaphore)) < 0) {
         copyState(state, &(currentProcess->p_state));
         /* wait for the operation */
         insertBlocked(semaphore, currentProcess);
@@ -264,6 +264,7 @@ static void terminateProcess() {
         terminateProgeny(currentProcess);
     } else {
         processCount--;
+        outChild(currProc);
         freePcb(currentProcess);
     }
 
