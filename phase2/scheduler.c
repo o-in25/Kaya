@@ -9,44 +9,50 @@
 cpu_t startTOD;
 cpu_t currentTOD;
 extern void invokeScheduler() {
-    debugger(200);
-    if(emptyProcQ(readyQueue)) {
-        debugger(201);
-        currentProcess = NULL;
-        if(processCount == 0) { /* case 1 */
-                /* our work here is done. there are no jobs in the ready queue
-                and we have no processes running */
-                debugger(202);
-                HALT();
-        }
-        if(processCount > 0) {
-            /* no current process, since the we have no process counts */
-            /* now, we have 2 subcases. there isn't anything on the ready queue, but we have at least one active process
-            so why is this? we are either softblocked and waiting on I/O - in which case all is good, we just wait it out.
-            but if we are not waiting on I/O there's nothing on the ready queue, AND we have a processes lingering,
-            we panic */
-            if(softBlockedCount == 0) {
-                debugger(203);
-                /* all is good - waiting on I/O to finish up */
-                PANIC();
-            } else if(softBlockedCount > 0) {
-                /* kernel panic. we have nothing on the ready queue, we have a process lingering - but it's not
-                I/O - time to panic */
-                debugger(204);
-                setSTATUS(getSTATUS() | ALLOFF | INTERRUPTSON | IEc | IM);
-                WAIT();
-            }
-        }
-    } else {
-        debugger(205);
-        if (currentProcess != NULL) {
-            STCK(currentTOD);
-            currentProcess->p_time = currentProcess->p_time + (currentTOD - startTOD);
-        }
-        currentProcess = removeProcQ(&(readyQueue));
+    /* was someone just running? */
+    /* this means a process was running and was then blocked 
+	 * or returned to readyQ for some reason */
+    if (currProc != NULL)
+    {
+        /* save how much time current process used on CPU */
+        /* subtract current time from global start time to get this ^ */
+        STCK(currentTOD);
+        currentProcess->p_time = (currentProcess->p_time) + (currentTOD - startTOD);
+    }
+
+    if (!emptyProcQ(readyQueue))
+    {
+        /* start next process in queue */
+        currentProcess = removeProcQ(&readyQueue);
+        /* get start time */
         STCK(startTOD);
+        /* load QUANTUM into process timer */
         setTIMER(QUANTUM);
-        /* DEBUG NOTES: got to here before printing p */
-        contextSwitch(&(currentProcess->p_state));
+
+        contextSwitch(&(currentProcess->p_s));
+    }
+    else
+    {
+        /* nothing was in readyQueue */
+        currentProcess = NULL; /* no running process */
+
+        /* finished all processes properly */
+        if (processCount == 0)
+        {
+            HALT();
+        }
+
+        /* deadlock */
+        if (processCount > 0 && softBlockedCount == 0)
+        {
+            PANIC();
+        }
+
+        /* now it's just a waiting game */
+        if (processCount > 0 && softBlockedCount > 0)
+        {
+            setSTATUS((getSTATUS() | ALLOFF | IEON | IECON | IMON));
+            WAIT(); /* run silent run deep */
+        }
     }
 }
