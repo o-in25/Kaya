@@ -327,6 +327,7 @@ static void createProcess(state_PTR state) {
 * syscall occurs 
 */
 static void delegateSyscall(int callNumber, state_PTR caller) {
+                debugger(403);
     switch (callNumber) {
     case WAITFORIODEVICE: /* SYSCALL 8 */
         waitForIODevice(caller);
@@ -341,6 +342,8 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
         specifyExceptionsStateVector(caller);
         break;
     case PASSEREN: /* SYSCALL 4 */
+        debugger(404);
+        debugger(processCount);
         passeren(caller);
         break;
     case VERHOGEN: /* SYSCALL 3 */
@@ -380,6 +383,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
     to 255 syscalls */
     unsigned int callNumber = caller->s_a0;
     unsigned int status = caller->s_status;
+    debugger(401);
     if((status & KUp) != ALLOFF) {
         /* in kernel mode */
         userMode = TRUE;
@@ -387,6 +391,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
     if(!userMode && callNumber < 9) {
         /* call our helper function to assist with handling the syscalls IF we are
         in kernel mode */
+            debugger(402);
         delegateSyscall(callNumber, caller);
     } else {
         if (userMode) {
@@ -412,8 +417,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
      passUpOrDie(TLBTRAP, oldState);
  }
 
- static void terminateProgeny(pcb_PTR p)
- {
+ static void terminateProgeny(pcb_PTR p) {
      /* first, kill all of the parents children - time to get violent */
      while (!emptyChild(p))
      {
