@@ -385,7 +385,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
             state_PTR programTrapOldArea = (state_PTR) PRGMTRAPOLDAREA;
             /* copy the state */
             copyState(caller, programTrapOldArea);
-            programTrapOldArea->s_cause = ((programTrapOldArea->s_cause & ~(0xFF)) | (10 << 2));
+            programTrapOldArea->s_cause = RESERVED;
             /* call a program trap */
             programTrapHandler();
         } else {
@@ -475,8 +475,6 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
             }
             break;
         }
-        default: {
-            terminateProcess();
-        }
+    terminateProcess();
     }
  }
