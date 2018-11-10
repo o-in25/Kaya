@@ -111,7 +111,7 @@ static void waitForIODevice(state_PTR state) {
 */
 static void waitForClock(state_PTR state) {
     debugger(2251);
-    int* semaphore = (int*) &(semdTable[MAXSEMALLOC - 1]);
+    int* semaphore = (int*) &(semdTable[(MAXSEMALLOC - 1)]);
     debugger(2252);
     (*semaphore)--;
     debugger(2253);
@@ -280,7 +280,6 @@ static void terminateProcess() {
         terminateProgeny(currentProcess);
     } else {
         processCount--;
-        outChild(currentProcess);
         freePcb(currentProcess);
     }
 
