@@ -141,7 +141,7 @@ void interruptHandler() {
                 debugger(696);
                 debugger(697);
                 /* handle the charging of time */
-                (currentProcess->p_time) = (currentProcess->p_time) + (endTime - startTime);
+                (p->p_time) = (p->p_time) + (endTime - startTime);
                 debugger(698);
                 insertProcQ(&(readyQueue), p);
                 debugger(699);
