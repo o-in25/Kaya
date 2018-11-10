@@ -574,6 +574,7 @@ void p7() {
     print("p7 starts\n");
     halt(100);
     * ((memaddr *) BADADDR) = 0;
+    halt(200);
     print("error: p7 alive after program trap with no trap vector\n");
     PANIC();
 }
