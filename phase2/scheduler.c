@@ -12,7 +12,7 @@ extern void invokeScheduler() {
     /* was someone just running? */
     /* this means a process was running and was then blocked 
 	 * or returned to readyQ for some reason */
-    if (currProc != NULL)
+    if (currentProcess != NULL)
     {
         /* save how much time current process used on CPU */
         /* subtract current time from global start time to get this ^ */
