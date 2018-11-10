@@ -346,7 +346,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
             createProcess(caller);
             break;
         default:
-            passUpOrDie(caller, 2);
+            passUpOrDie(2, caller);
             break;
     }
 }
@@ -389,7 +389,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
             /* call a program trap */
             programTrapHandler();
         } else {
-            passUpOrDie(caller, callNumber);
+            passUpOrDie(callNumber, caller);
         }
     } 
  }
