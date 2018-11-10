@@ -29,7 +29,7 @@ extern void invokeScheduler() {
         /* load QUANTUM into process timer */
         setTIMER(QUANTUM);
 
-        contextSwitch(&(currentProcess->p_s));
+        contextSwitch(&(currentProcess->p_state));
     }
     else
     {
