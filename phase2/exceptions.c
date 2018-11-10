@@ -191,11 +191,10 @@ static void specifyExceptionsStateVector(state_PTR state) {
             /* store the old area in the a2 register */
             currentProcess->oldSys = (state_PTR) state->s_a2;
             break;
-        default:
-            terminateProcess();
     }
+    terminateProcess();
     /* context switch */
-    contextSwitch(state);
+    invokeScheduler();
 }
 
 
@@ -382,8 +381,9 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
     } else {
         if(userMode) {
             state_PTR programTrapOldArea = (state_PTR) PRGMTRAPOLDAREA;
+            state_PTR syscallOldArea = (state_PTR) SYSCALLOLDAREA;
             /* copy the state */
-            copyState(caller, programTrapOldArea);
+            copyState(syscallOldArea, programTrapOldArea);
             programTrapOldArea->s_cause = RESERVED;
             /* call a program trap */
             programTrapHandler();
