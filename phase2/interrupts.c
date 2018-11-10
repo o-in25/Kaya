@@ -139,12 +139,13 @@ void interruptHandler() {
         exitInterruptHandler(startTime);
         /* skip for now */
     } else if((cause & THIRD) != 0) {
-       intervalTimerHandler(startTime, endTime);
-       debugger(706);
+        debugger(706);
+        intervalTimerHandler(startTime, endTime);
     } else {
+        debugger(707);
         lineNumber = map(cause);
     }
-    debugger(707);
+    debugger(708);
     /* since the find device number helper function does not save
     the modified line number, it must be done outside the function */
     /* DEBUG NOTES: makes it to here */
