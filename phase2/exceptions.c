@@ -110,18 +110,11 @@ static void waitForIODevice(state_PTR state) {
 * Function: Syscall 7 - Wait for clock
 */
 static void waitForClock(state_PTR state) {
-    debugger(2251);
     int* semaphore = (int*) &(semdTable[(MAXSEMALLOC - 1)]);
-    debugger(2252);
     (*semaphore)--;
-    debugger(2253);
     softBlockedCount++;
-    debugger(2254);
     insertBlocked(semaphore, currentProcess);
-    debugger(2255);
     copyState(state, &(currentProcess->p_state));
-    debugger(2256);
-    debugger(processCount);
     invokeScheduler();
 }
 
@@ -218,23 +211,17 @@ static void specifyExceptionsStateVector(state_PTR state) {
 static void passeren(state_PTR state) {
     /* place the value of the physical address of the
     semaphore to be passerened into register a1 */
-    debugger(300);
     int* semaphore = (int*) state->s_a1;
-    debugger(301);
     /* decrement the semaphore - per the protocol of a p oeration */
     (*(semaphore))--;
     if(*(semaphore) < 0) {
-        debugger(302);
         copyState(state, &(currentProcess->p_state));
         /* wait for the operation */
         insertBlocked(semaphore, currentProcess);
-        debugger(304);
         /* copy the current processor state to the
         new processor state pointed to by the current process'
         p_state field */
         /* reschedule */
-        debugger(303);
-        debugger(processCount);
         invokeScheduler();
     }
     /* context switch */
@@ -319,12 +306,11 @@ static void createProcess(state_PTR state) {
     insertProcQ(&(readyQueue), p);
     /* a1 register contains the physical address of a processor state 
         area at the time this instruction is executed */
-    state_PTR temp = (state_PTR)state->s_a1;
+    state_PTR temp = (state_PTR) state->s_a1;
     /* processor state, stored as a temporary variable as temp
         is used as the initial state for the newly created process */
     copyState(temp, &(p->p_state));
     state->s_v0 = 0;
-    debugger(100);
     /* context switch */
     contextSwitch(state);
 }
@@ -334,44 +320,34 @@ static void createProcess(state_PTR state) {
 * syscall occurs 
 */
 static void delegateSyscall(int callNumber, state_PTR caller) {
-                debugger(403);
     switch (callNumber) {
-    case WAITFORIODEVICE: /* SYSCALL 8 */
-        debugger(108);
-        waitForIODevice(caller);
-        break;
-    case WAITFORCLOCK: /* SYSCALL 7 */
-        debugger(107);
-        waitForClock(caller);
-        break;
-    case GETCPUTIME: /* SYSCALL 6 */
-        debugger(106);
-        getCpuTime(caller);
-        break;
-    case SPECIFYEXCEPTIONSTATEVECTOR: /* SYSCALL 5 */
-        debugger(105);
-        specifyExceptionsStateVector(caller);
-        break;
-    case PASSEREN: /* SYSCALL 4 */
-        debugger(104);
-        debugger(processCount);
-        passeren(caller);
-        break;
-    case VERHOGEN: /* SYSCALL 3 */
-        debugger(103);
-        verhogen(caller);
-        break;
-    case TERMINATEPROCESS: /* SYSCALL 2 */
-        debugger(102);
-        terminateProcess();
-        break;
-    case CREATEPROCESS: /* SYSCALL 1 */
-        debugger(101);
-        createProcess(caller);
-        break;
-    default:
-        passUpOrDie(caller, callNumber);
-        break;
+        case WAITFORIODEVICE: /* SYSCALL 8 */
+            waitForIODevice(caller);
+            break;
+        case WAITFORCLOCK: /* SYSCALL 7 */
+            waitForClock(caller);
+            break;
+        case GETCPUTIME: /* SYSCALL 6 */
+            getCpuTime(caller);
+            break;
+        case SPECIFYEXCEPTIONSTATEVECTOR: /* SYSCALL 5 */
+            specifyExceptionsStateVector(caller);
+            break;
+        case PASSEREN: /* SYSCALL 4 */
+            passeren(caller);
+            break;
+        case VERHOGEN: /* SYSCALL 3 */
+            verhogen(caller);
+            break;
+        case TERMINATEPROCESS: /* SYSCALL 2 */
+            terminateProcess();
+            break;
+        case CREATEPROCESS: /* SYSCALL 1 */
+            createProcess(caller);
+            break;
+        default:
+            passUpOrDie(caller, callNumber);
+            break;
     }
 }
 
@@ -383,7 +359,6 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
  * 
  */ 
  void syscallHandler() {
-     debugger(400);
     /* get the address of the old syscall area, since we
     wake up in the syscall handler */
     state_PTR caller = (state_PTR) SYSCALLOLDAREA;
@@ -397,7 +372,6 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
     to 255 syscalls */
     unsigned int callNumber = caller->s_a0;
     unsigned int status = caller->s_status;
-    debugger(401);
     if((status & KUp) != ALLOFF) {
         /* in kernel mode */
         userMode = TRUE;
@@ -405,7 +379,6 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
     if(!userMode && callNumber < 9) {
         /* call our helper function to assist with handling the syscalls IF we are
         in kernel mode */
-            debugger(402);
         delegateSyscall(callNumber, caller);
     } else {
         if (userMode) {
@@ -444,7 +417,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
      now, we handle the case of if the process is the current process or if the process
      is on the ready queue */
      if (p->p_semAdd != NULL) {
-         int *semaphore = p->p_semAdd;
+         int* semaphore = p->p_semAdd;
          /* here, if the process is not 
         null, then we need to do all of the work.
         Beause these steps are mutex with the I/O interrupt handler, if the process

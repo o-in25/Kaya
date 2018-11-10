@@ -9,14 +9,11 @@
 cpu_t startTOD;
 cpu_t currentTOD;
 extern void invokeScheduler() {
-    debugger(200);
     if(emptyProcQ(readyQueue)) {
-        debugger(201);
         currentProcess = NULL;
         if(processCount == 0) { /* case 1 */
                 /* our work here is done. there are no jobs in the ready queue
                 and we have no processes running */
-                debugger(202);
                 HALT();
         }
         if(processCount > 0) {
@@ -26,19 +23,16 @@ extern void invokeScheduler() {
             but if we are not waiting on I/O there's nothing on the ready queue, AND we have a processes lingering,
             we panic */
             if(softBlockedCount == 0) {
-                debugger(203);
                 /* all is good - waiting on I/O to finish up */
                 PANIC();
             } else if(softBlockedCount > 0) {
                 /* kernel panic. we have nothing on the ready queue, we have a process lingering - but it's not
                 I/O - time to panic */
-                debugger(204);
                 setSTATUS(getSTATUS() | ALLOFF | INTERRUPTSON | IEc | IM);
                 WAIT();
             }
         }
     } else {
-        debugger(205);
         if (currentProcess != NULL) {
             STCK(currentTOD);
             currentProcess->p_time = currentProcess->p_time + (currentTOD - startTOD);
