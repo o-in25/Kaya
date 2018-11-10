@@ -106,7 +106,7 @@ static void intervalTimerHandler(cpu_t startTime, cpu_t endTime) {
             cpu_t elapsedTime = (endTime - startTime);
             debugger(697);
             /* handle the charging of time */
-            currentProcess->p_time = currentProcess->p_time + elapsedTime;
+            (currentProcess->p_time) = (currentProcess->p_time) + elapsedTime;
             debugger(698);
             insertProcQ(&(readyQueue), p);
             debugger(699);
