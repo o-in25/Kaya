@@ -118,4 +118,5 @@ int main() {
     /* call the scheduler */
     LDIT(INTERVAL);
     invokeScheduler();
+    return -1;
 }
