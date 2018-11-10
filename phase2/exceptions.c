@@ -361,7 +361,6 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
     wake up in the syscall handler */
     state_PTR caller = (state_PTR) SYSCALLOLDAREA;
     /* increment program count */
-    caller->s_pc = caller->s_pc + 4;
     /* in order to execute syscals 1-9, we
     must be in kernel mode */
     int userMode = FALSE;    
@@ -377,13 +376,13 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
     if(!userMode && callNumber < 9) {
         /* call our helper function to assist with handling the syscalls IF we are
         in kernel mode */
+        caller->s_pc = caller->s_pc + 4;
         delegateSyscall(callNumber, caller);
     } else {
         if(userMode) {
             state_PTR programTrapOldArea = (state_PTR) PRGMTRAPOLDAREA;
-            state_PTR syscallOldArea = (state_PTR) SYSCALLOLDAREA;
             /* copy the state */
-            copyState(syscallOldArea, programTrapOldArea);
+            copyState(caller, programTrapOldArea);
             programTrapOldArea->s_cause = RESERVED;
             /* call a program trap */
             programTrapHandler();
