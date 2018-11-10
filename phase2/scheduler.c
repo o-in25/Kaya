@@ -43,10 +43,12 @@ extern void invokeScheduler() {
             STCK(currentTOD);
             currentProcess->p_time = currentProcess->p_time + (currentTOD - startTOD);
         }
-        currentProcess = removeProcQ(&(readyQueue));
-        STCK(startTOD);
-        setTIMER(QUANTUM);
-        /* DEBUG NOTES: got to here before printing p */
-        contextSwitch(&(currentProcess->p_state));
+        if(!emptyProcQ(readyQueue)) {
+            currentProcess = removeProcQ(&(readyQueue));
+            STCK(startTOD);
+            setTIMER(QUANTUM);
+            /* DEBUG NOTES: got to here before printing p */
+            contextSwitch(&(currentProcess->p_state));
+        }
     }
 }
