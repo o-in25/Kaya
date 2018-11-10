@@ -11,7 +11,7 @@
 #define MAXPROC 20
 #define MAXINT 2147483647
 #define MAXSEMALLOC 49 
-/* Maximum 32-bit signed
+/* Maximum 32-bit signed */
 /* Hardware and software constants */
 #define PAGESIZE 4096	/* page size in bytes */
 #define WORDLEN	4		/* word size in bytes */
