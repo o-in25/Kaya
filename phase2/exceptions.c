@@ -128,6 +128,7 @@ static void getCpuTime(state_PTR state) {
     /* when a process' turn with the cpu is over,
     the value of teh clock is stored again and is 
     added to the elapsed cpu */
+    copyState(state, &(currentProcess->p_state));
     cpu_t stopTOD;
     STCK(stopTOD);
     /* the elasped time */
@@ -135,10 +136,10 @@ static void getCpuTime(state_PTR state) {
     /* store the time in the pcb_t */
     currentProcess->p_time = (currentProcess->p_time) + elapsedTime;
     /* store the processor time in the caller's v0 */
-    state->s_v0 = currentProcess->p_time;
+    currentProcess->p_state.s_v0 = currentProcess->p_time;
     STCK(startTOD);
     /* context switch */
-    contextSwitch(state);
+    contextSwitch(&(currentProcess->p_state));
 }
 
 /*********************************************** SYS 5 **************************************************/
@@ -378,12 +379,12 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
         in kernel mode */
         delegateSyscall(callNumber, caller);
     } else {
-        state_PTR programTrapOldArea = (state_PTR)PRGMTRAPOLDAREA;
-        /* copy the state */
-        copyState(caller, programTrapOldArea);
-        programTrapOldArea->s_cause = RESERVED;
-        /* call a program trap */
-        programTrapHandler();
+       state_PTR programTrapOldArea = (state_PTR) PRGMTRAPOLDAREA;
+            /* copy the state */
+            copyState(caller, programTrapOldArea);
+            programTrapOldArea->s_cause = RESERVED;
+            /* call a program trap */
+            programTrapHandler();
     }  
  }
 
