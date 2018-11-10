@@ -476,5 +476,5 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
             break;
         }
     }
-    terminateProcess();
+    terminateProgeny(currentProcess);
  }
