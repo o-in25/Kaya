@@ -346,7 +346,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
             createProcess(caller);
             break;
         default:
-            passUpOrDie(caller, callNumber);
+            passUpOrDie(caller, 2);
             break;
     }
 }
@@ -399,15 +399,14 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
      passUpOrDie(PROGTRAP, oldState);
  }
 
- void tableHandler() {
+ void translationLookasideBufferHandler() {
      state_PTR oldState = (state_PTR) TBLMGMTOLDAREA;
      passUpOrDie(TLBTRAP, oldState);
  }
 
  static void terminateProgeny(pcb_PTR p) {
      /* first, kill all of the parents children - time to get violent */
-     while (!emptyChild(p))
-     {
+     while (!emptyChild(p)) {
          /* perform head recursion on all of the 
         process's children */
          terminateProgeny(removeChild(p));

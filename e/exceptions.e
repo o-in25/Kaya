@@ -4,6 +4,6 @@
 #define EXCEPT
     extern void syscallHandler();
     extern void programTrapHandler();
-    extern void tableHandler();
+    extern void translationLookasideBufferHandler();
     extern void contextSwitch(state_PTR s);
 #endif
