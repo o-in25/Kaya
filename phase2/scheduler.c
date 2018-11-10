@@ -51,7 +51,7 @@ extern void invokeScheduler() {
         /* now it's just a waiting game */
         if (processCount > 0 && softBlockedCount > 0)
         {
-            setSTATUS((getSTATUS() | ALLOFF | IEON | IECON | IMON));
+            setSTATUS(getSTATUS() | ALLOFF | INTERRUPTSON | IEc | IM);
             WAIT(); /* run silent run deep */
         }
     }
