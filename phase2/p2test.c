@@ -253,9 +253,7 @@ void test() {
     print("error: p1/p2 synchronization bad\n");
     SYSCALL(CREATETHREAD, (int)&p3state, 0, 0);                /* start p3     */
     print("p3 is started\n");
-    halt(500);
     SYSCALL(PASSERN, (int)&endp3, 0, 0);
-    halt(501);    /* P(endp3)     */
     SYSCALL(CREATETHREAD, (int)&p4state, 0, 0);                /* start p4     */
     SYSCALL(CREATETHREAD, (int)&p5state, 0, 0);             /* start p5     */
     SYSCALL(CREATETHREAD, (int)&p6state, 0, 0);                /* start p6        */
@@ -574,9 +572,9 @@ void p6() {
 /*p7 -- program trap without initializing passup vector*/
 void p7() {
     print("p7 starts\n");
-    
+    halt(100);
     * ((memaddr *) BADADDR) = 0;
-    
+    halt(200);
     print("error: p7 alive after program trap with no trap vector\n");
     PANIC();
 }
