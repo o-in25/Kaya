@@ -110,11 +110,18 @@ static void waitForIODevice(state_PTR state) {
 * Function: Syscall 7 - Wait for clock
 */
 static void waitForClock(state_PTR state) {
+    debugger(2251);
     int* semaphore = (int*) &(semdTable[MAXSEMALLOC - 1]);
+    debugger(2252);
     (*semaphore)--;
+    debugger(2253);
     softBlockedCount++;
+    debugger(2254);
     insertBlocked(semaphore, currentProcess);
+    debugger(2255);
     copyState(state, &(currentProcess->p_state));
+    debugger(2256);
+    debugger(processCount);
     invokeScheduler();
 }
 
