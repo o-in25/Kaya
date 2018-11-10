@@ -112,6 +112,7 @@ static void intervalTimerHandler(cpu_t startTime, cpu_t endTime) {
 * 
 */
 void interruptHandler() {
+    debugger(700);
     /* the old interrupt */
     state_PTR oldInterupt = (state_PTR) INTRUPTOLDAREA;
     device_PTR devReg;
