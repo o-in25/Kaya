@@ -163,6 +163,7 @@ static void specifyExceptionsStateVector(state_PTR state) {
                 /* the area has already been specified, so treat
                 this operation like a sys2 i.e. terminate the process */
                 terminateProcess();
+                invokeScheduler();
             }
             /* store the new area in the a3 register */
             currentProcess->newTlb = (state_PTR) state->s_a3;
@@ -174,6 +175,7 @@ static void specifyExceptionsStateVector(state_PTR state) {
                 /* the area has already been specified, so treat
                 this operation like a sys2 i.e. terminate the process */
                 terminateProcess();
+                invokeScheduler();
             }
             /* store the new area in the a3 register */
             currentProcess->newPgm = (state_PTR) state->s_a3;
@@ -185,6 +187,7 @@ static void specifyExceptionsStateVector(state_PTR state) {
                 /* the area has already been specified, so treat
                 this operation like a sys2 i.e. terminate the process */
                 terminateProcess();
+                invokeScheduler();
             }
             /* store the new area in the a3 register */
             currentProcess->newSys = (state_PTR) state->s_a3;
@@ -192,9 +195,8 @@ static void specifyExceptionsStateVector(state_PTR state) {
             currentProcess->oldSys = (state_PTR) state->s_a2;
             break;
     }
-    terminateProcess();
     /* context switch */
-    invokeScheduler();
+    contextSwitch(state);
 }
 
 
