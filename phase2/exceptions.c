@@ -117,9 +117,11 @@ static void waitForIODevice(state_PTR state) {
 static void waitForClock(state_PTR state) {
     int* semaphore = (int*) &(semdTable[(MAXSEMALLOC - 1)]);
     (*semaphore)--;
-    softBlockedCount++;
-    insertBlocked(semaphore, currentProcess);
-    copyState(state, &(currentProcess->p_state));
+    if((*semaphore) < 0) {
+        softBlockedCount++;
+        insertBlocked(semaphore, currentProcess);
+        copyState(state, &(currentProcess->p_state));
+    }
     invokeScheduler();
 }
 
@@ -198,7 +200,7 @@ static void specifyExceptionsStateVector(state_PTR state) {
             break;
     }
     /* context switch */
-    contextSwitch(&(currentProcess->p_state));
+    contextSwitch(state);
 }
 
 
