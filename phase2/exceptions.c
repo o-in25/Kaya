@@ -390,6 +390,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
         programTrapOldArea->s_cause = (RESERVED);
         /* call a program trap */
         programTrapHandler();
+        
     }  
  }
 
