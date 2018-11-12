@@ -537,9 +537,15 @@ void p5() {
     /* specify trap vectors */
     SYSCALL(SPECTRAPVEC, PROGTRAP, (int)&pstat_o, (int)&pstat_n);
     
+    debugB(4);
+    
     SYSCALL(SPECTRAPVEC, TLBTRAP, (int)&mstat_o, (int)&mstat_n);
     
+    debugB(5);
+    
     SYSCALL(SPECTRAPVEC, SYSTRAP, (int)&sstat_o, (int)&sstat_n);
+    
+    debugB(6);
     
     /* to cause a pgm trap access some non-existent memory */
     *p5MemLocation = *p5MemLocation + 1;         /* Should cause a program trap */
