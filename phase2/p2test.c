@@ -470,9 +470,11 @@ void p5prog() {
         break;
         
         default:
+        debugthing(14);
         print("other program trap\n");
+        debugthing(15);
     }
-    debugthing(14);
+    debugthing(16);
     
     LDST(&pstat_o);
 }
