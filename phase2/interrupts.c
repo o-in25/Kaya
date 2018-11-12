@@ -145,7 +145,7 @@ void interruptHandler() {
     reception of the terminal interrupt in the overwritten command recieved field */
     if(lineNumber == TERMINT) {
         int receive = TRUE;
-        if((devReg->t_transm_status & 0x0F) != READY) {
+        if((devReg->t_transm_status & 0xFF) != READY) {
             index = DEVPERINT * (lineNumber - NOSEM) + deviceNumber;
             receive = FALSE;
         } else {

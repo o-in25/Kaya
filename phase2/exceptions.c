@@ -382,7 +382,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
        state_PTR programTrapOldArea = (state_PTR) PRGMTRAPOLDAREA;
             /* copy the state */
             copyState(caller, programTrapOldArea);
-            programTrapOldArea->s_cause = RESERVED;
+            programTrapOldArea->s_cause = programTrapOldArea->s_cause | (10<<2);
             /* call a program trap */
             programTrapHandler();
     }  
@@ -393,7 +393,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
      passUpOrDie(PROGTRAP, oldState);
  }
 
- void translationLookasideBufferHandler() {
+ void translationLookasideBufferHandler() { 
      state_PTR oldState = (state_PTR) TBLMGMTOLDAREA;
      passUpOrDie(TLBTRAP, oldState);
  }
