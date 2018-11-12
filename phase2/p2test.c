@@ -505,6 +505,11 @@ void p5sys(unsigned int cause) {
     LDST(&sstat_o);
 }
 
+void debugB(int a){
+    int i;
+    i = 0;
+}
+
 /* p5 -- SYS5 test process */
 void p5() {
     print("p5 starts\n");
@@ -513,8 +518,12 @@ void p5() {
     STST(&pstat_n);
     pstat_n.s_pc = pstat_n.s_t9 = (memaddr)p5prog;
     
+    debugB(1);
+    
     STST(&mstat_n);
     mstat_n.s_pc = mstat_n.s_t9 = (memaddr)p5mm;
+    
+    debugB(2);
     
     STST(&sstat_n);
     sstat_n.s_pc = sstat_n.s_t9 = (memaddr)p5sys;
