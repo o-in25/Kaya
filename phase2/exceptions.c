@@ -382,7 +382,9 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
        state_PTR programTrapOldArea = (state_PTR) PRGMTRAPOLDAREA;
             /* copy the state */
             copyState(caller, programTrapOldArea);
-            programTrapOldArea->s_cause = (programTrapOldArea->s_cause & ~NOTRES) | (RESERVED << 2);
+        
+        temp = programTrapOldArea->s_cause & ~NOTRES
+        programTrapOldArea->s_cause = temp | (RESERVED << 2);
             /* call a program trap */
             programTrapHandler();
     }  
