@@ -383,8 +383,8 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
             /* copy the state */
             copyState(caller, programTrapOldArea);
         
-        unsigned int temp = programTrapOldArea->s_cause & ~NOTRES
-        programTrapOldArea->s_cause = temp | (RESERVED << 2);
+        unsigned int theThing = programTrapOldArea->s_cause & ~NOTRES;
+        programTrapOldArea->s_cause = theThing | (RESERVED << 2);
             /* call a program trap */
             programTrapHandler();
     }  
