@@ -470,6 +470,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
             break;
         }
         case PROGTRAP: {
+            debugL(10, 473);
             if (currentProcess->newPgm != NULL) {
                 debugL(old->s_cause, 474);
                 copyState(old, currentProcess->oldPgm);
