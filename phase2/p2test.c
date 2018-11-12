@@ -444,11 +444,11 @@ void p4() {
 
 /* p5's program trap handler */
 void p5prog() {
-    debugthin(11);
+    debugthing(11);
     unsigned int exeCode = pstat_o.s_cause;
-    debugthin(12);
+    debugthing(12);
     exeCode = (exeCode & CAUSEMASK) >> 2;
-    debugthin(13);
+    debugthing(13);
     switch (exeCode) {
         case BUSERROR:
         print("Access non-existent memory\n");
