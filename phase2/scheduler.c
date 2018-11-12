@@ -6,7 +6,7 @@
 #include "/usr/local/include/umps2/umps/libumps.e"
 
 void ohShitMuthaFucka (int a){
-    PANIC()
+    PANIC();
 }
 
 /* clock timer */
