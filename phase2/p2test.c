@@ -139,15 +139,10 @@ void    p5sys(),p8root(),child1(),child2(),p8leaf();
 
 /* a procedure to print on terminal 0 */
 void print(char *msg) {
-    debugA (1);
     char * s = msg;
-    debugA (2);
     devregtr * base = (devregtr *) (TERM0ADDR);
-    debugA (3);
     devregtr status;
-    debugA (4);
     SYSCALL(PASSERN, (int)&term_mut, 0, 0);                /* P(term_mut) */
-    debugA (5);
     while (*s != EOS) {
         *(base + 3) = PRINTCHR | (((devregtr) *s) << BYTELEN);
         status = SYSCALL(WAITIO, TERMINT, 0, 0);
@@ -155,9 +150,7 @@ void print(char *msg) {
         PANIC();
         s++;
     }
-    debugA (6);
     SYSCALL(VERHOGEN, (int)&term_mut, 0, 0);                /* V(term_mut) */
-    debugA (7);
 }
 
 
@@ -257,7 +250,6 @@ void test() {
     SYSCALL(VERHOGEN, (int)&startp2, 0, 0);                    /* V(startp2)   */
     
     SYSCALL(PASSERN, (int)&endp2, 0, 0);                    /* P(endp2)     */
-    debugthing(8);
     /* make sure fe really blocked */
     if (p1p2synch == 0)
     print("error: p1/p2 synchronization bad\n");
@@ -342,9 +334,7 @@ void p2() {
     }
     
     p1p2synch = 1;                /* p1 will check this */
-    debugthing (3);
     SYSCALL(VERHOGEN, (int)&endp2, 0, 0);                /* V(endp2)     */
-    debugthing(4);
     /* PANIC!           */
     SYSCALL(TERMINATETHREAD, 0, 0, 0);            /* terminate p2 */
     /* just did a SYS2, so should not get to this point */
@@ -411,11 +401,8 @@ void p4() {
     SYSCALL(VERHOGEN, (int)&synp4, 0, 0);                /* V(synp4)     */
     
     print("P'ing blkp4\n");
-    debugthing(9);
     SYSCALL(PASSERN, (int)&blkp4, 0, 0);                /* P(blkp4)     */
-    debugthing(10);
     print("Woke from P'ing blkp4\n");
-    debugthing(11);
     SYSCALL(PASSERN, (int)&synp4, 0, 0);                /* P(synp4)     */
     
     /* start another incarnation of p4 running, and wait for  */
@@ -444,11 +431,8 @@ void p4() {
 
 /* p5's program trap handler */
 void p5prog() {
-    debugthing(11);
     unsigned int exeCode = pstat_o.s_cause;
-    debugthing(12);
     exeCode = (exeCode & CAUSEMASK) >> 2;
-    debugthing(13);
     switch (exeCode) {
         case BUSERROR:
         print("Access non-existent memory\n");
@@ -470,11 +454,8 @@ void p5prog() {
         break;
         
         default:
-        debugthing(14);
         print("other program trap\n");
-        debugthing(15);
     }
-    debugthing(16);
     
     LDST(&pstat_o);
 }
@@ -518,17 +499,11 @@ void p5() {
     STST(&pstat_n);
     pstat_n.s_pc = pstat_n.s_t9 = (memaddr)p5prog;
     
-    debugB(1);
-    
     STST(&mstat_n);
     mstat_n.s_pc = mstat_n.s_t9 = (memaddr)p5mm;
     
-    debugB(2);
-    
     STST(&sstat_n);
     sstat_n.s_pc = sstat_n.s_t9 = (memaddr)p5sys;
-    
-    debugB(3);
     
     /* trap handlers should operate in complete mutex: no interrupts on */
     /* this because they must restart using some BIOS area */
@@ -537,19 +512,12 @@ void p5() {
     /* specify trap vectors */
     SYSCALL(SPECTRAPVEC, PROGTRAP, (int)&pstat_o, (int)&pstat_n);
     
-    debugB(4);
-    
     SYSCALL(SPECTRAPVEC, TLBTRAP, (int)&mstat_o, (int)&mstat_n);
-    
-    debugB(5);
     
     SYSCALL(SPECTRAPVEC, SYSTRAP, (int)&sstat_o, (int)&sstat_n);
     
-    debugB(6);
-    
     /* to cause a pgm trap access some non-existent memory */
     *p5MemLocation = *p5MemLocation + 1;         /* Should cause a program trap */
-    debugB(7);
 }
 
 void p5a() {
