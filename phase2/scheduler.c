@@ -5,6 +5,15 @@
 #include "../e/asl.e"
 #include "/usr/local/include/umps2/umps/libumps.e"
 
+void ohShitMuthaFucka (int a){
+    PANIC();
+}
+
+void debugThePanic (int a){
+    int i;
+    i = 0;
+}
+
 /* clock timer */
 cpu_t startTOD;
 cpu_t currentTOD;
@@ -24,7 +33,9 @@ extern void invokeScheduler() {
             we panic */
             if(softBlockedCount == 0) {
                 /* all is good - waiting on I/O to finish up */
-                PANIC();
+                debugThePanic (softBlockedCount);
+                debugThePanic(processCount);
+                ohShitMuthaFucka(31);
             } else if(softBlockedCount > 0) {
                 /* kernel panic. we have nothing on the ready queue, we have a process lingering - but it's not
                 I/O - time to panic */

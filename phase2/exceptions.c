@@ -8,6 +8,11 @@
 #include "../e/asl.e"
 #include "/usr/local/include/umps2/umps/libumps.e"
 
+debugL(int a, int b){
+    int i;
+    i = 0;
+}
+
 
 
 /************************************************************************************************************************/
@@ -193,7 +198,7 @@ static void specifyExceptionsStateVector(state_PTR state) {
             break;
     }
     /* context switch */
-    contextSwitch(state);
+    contextSwitch(&(currentProcess->p_state));
 }
 
 
@@ -390,6 +395,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
 
  void programTrapHandler() {
      state_PTR oldState = (state_PTR) PRGMTRAPOLDAREA;
+     debugL(oldState->s_cause, 400);
      passUpOrDie(PROGTRAP, oldState);
  }
 
@@ -444,7 +450,9 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
  static void passUpOrDie(int callNumber, state_PTR old) {
      /* has a sys5 for that trap type been called?
     if not, terminate the process and all its progeny */
-    switch (callNumber) {
+     debugL(callNumber, 455);
+     debugL(old, 456);
+     switch (callNumber) {
             /* if yes, copy the state the caused the exception to 
             the location secified in the pcb. context switch */
         case SYSTRAP: {
@@ -462,12 +470,16 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
             break;
         }
         case PROGTRAP: {
+            debugL(10, 473);
             if (currentProcess->newPgm != NULL) {
+                debugL(old->s_cause, 474);
                 copyState(old, currentProcess->oldPgm);
+                debugL(currentProcess->oldPgm->s_cause, 476);
                 contextSwitch(currentProcess->newPgm);
             }
+            debugL (10, 482);
             break;
         }
-    }
+ }
     terminateProcess();
  }

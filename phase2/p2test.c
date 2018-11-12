@@ -17,6 +17,11 @@
 #include "../h/types.h"
 #include "/usr/local/include/umps2/umps/libumps.e"
 
+void debugA (int a) {
+    int i;
+    i=0;
+}
+
 void debugthing(int a){
     int i;
     i=0;
@@ -134,17 +139,15 @@ void    p5sys(),p8root(),child1(),child2(),p8leaf();
 
 /* a procedure to print on terminal 0 */
 void print(char *msg) {
-    
     char * s = msg;
     devregtr * base = (devregtr *) (TERM0ADDR);
     devregtr status;
-    
     SYSCALL(PASSERN, (int)&term_mut, 0, 0);                /* P(term_mut) */
     while (*s != EOS) {
         *(base + 3) = PRINTCHR | (((devregtr) *s) << BYTELEN);
         status = SYSCALL(WAITIO, TERMINT, 0, 0);
         if ((status & TERMSTATMASK) != RECVD)
-        PANIC();
+        ohShitMuthaFucka(150);
         s++;
     }
     SYSCALL(VERHOGEN, (int)&term_mut, 0, 0);                /* V(term_mut) */
@@ -247,7 +250,6 @@ void test() {
     SYSCALL(VERHOGEN, (int)&startp2, 0, 0);                    /* V(startp2)   */
     
     SYSCALL(PASSERN, (int)&endp2, 0, 0);                    /* P(endp2)     */
-    debugthing(8);
     /* make sure fe really blocked */
     if (p1p2synch == 0)
     print("error: p1/p2 synchronization bad\n");
@@ -270,7 +272,7 @@ void test() {
         
         if (creation == CREATENOGOOD) {
             print("error in process termination\n");
-            PANIC();
+            ohShitMuthaFucka(275);
         }
         
         SYSCALL(PASSERN, (int)&endp8, 0, 0);
@@ -280,7 +282,7 @@ void test() {
     
     /* should not reach this point, since p1 just got a program trap */
     print("error: p1 still alive after progtrap & no trap vector\n");
-    PANIC();                    /* PANIC !!!     */
+    ohShitMuthaFucka(285);                    /* PANIC !!!     */
 }
 
 
@@ -332,14 +334,12 @@ void p2() {
     }
     
     p1p2synch = 1;                /* p1 will check this */
-    debugthing (3);
     SYSCALL(VERHOGEN, (int)&endp2, 0, 0);                /* V(endp2)     */
-    debugthing(4);
     /* PANIC!           */
     SYSCALL(TERMINATETHREAD, 0, 0, 0);            /* terminate p2 */
     /* just did a SYS2, so should not get to this point */
     print("error: p2 didn't terminate\n");
-    PANIC();  
+    ohShitMuthaFucka(342);
 }
 
 
@@ -382,7 +382,7 @@ void p3() {
     
     /* just did a SYS2, so should not get to this point */
     print("error: p3 didn't terminate\n");
-    PANIC();                    /* PANIC            */
+    ohShitMuthaFucka(385);                    /* PANIC            */
 }
 
 
@@ -424,7 +424,7 @@ void p4() {
     
     /* just did a SYS2, so should not get to this point */
     print("error: p4 didn't terminate\n");
-    PANIC();                    /* PANIC            */
+    ohShitMuthaFucka(427);                    /* PANIC            */
 }
 
 
@@ -433,6 +433,7 @@ void p4() {
 void p5prog() {
     unsigned int exeCode = pstat_o.s_cause;
     exeCode = (exeCode & CAUSEMASK) >> 2;
+    debugB(exeCode);
     switch (exeCode) {
         case BUSERROR:
         print("Access non-existent memory\n");
@@ -484,6 +485,11 @@ void p5sys(unsigned int cause) {
     }
     sstat_o.s_pc = sstat_o.s_pc + 4;   /*     to avoid SYS looping */
     LDST(&sstat_o);
+}
+
+void debugB(int a){
+    int i;
+    i = 0;
 }
 
 /* p5 -- SYS5 test process */
@@ -553,7 +559,7 @@ void p5b() {
     
     /* should have terminated, so should not get to this point */
     print("error: p5 didn't terminate\n");
-    PANIC();                /* PANIC            */
+    ohShitMuthaFucka(562);                /* PANIC            */
 }
 
 
@@ -566,7 +572,7 @@ void p6() {
     
     print("error: p6 alive after SYS9() with no trap vector\n");
     
-    PANIC();
+    ohShitMuthaFucka(575);
 }
 
 /*p7 -- program trap without initializing passup vector*/
@@ -576,7 +582,7 @@ void p7() {
     * ((memaddr *) BADADDR) = 0;
     halt(200);
     print("error: p7 alive after program trap with no trap vector\n");
-    PANIC();
+    ohShitMuthaFucka(585);
 }
 
 

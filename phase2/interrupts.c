@@ -126,7 +126,7 @@ void interruptHandler() {
     int index = 0;
     int status = 0;
     if ((cause & FIRST) != 0) {
-        PANIC();
+        ohShitMuthaFucka(129);
     } else if((cause & SECOND) != 0) {
         exitInterruptHandler(startTime);
         /* skip for now */
