@@ -528,6 +528,8 @@ void p5() {
     STST(&sstat_n);
     sstat_n.s_pc = sstat_n.s_t9 = (memaddr)p5sys;
     
+    debugB(3);
+    
     /* trap handlers should operate in complete mutex: no interrupts on */
     /* this because they must restart using some BIOS area */
     /* thus, IEP bit is not set for them (see test() for an example of it) */
