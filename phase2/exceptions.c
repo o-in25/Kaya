@@ -453,7 +453,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
      /* has a sys5 for that trap type been called?
     if not, terminate the process and all its progeny */
      debugL(callNumber, 455);
-     debugL(old, 456)
+     debugL(old, 456);
     switch (callNumber) {
             /* if yes, copy the state the caused the exception to 
             the location secified in the pcb. context switch */
