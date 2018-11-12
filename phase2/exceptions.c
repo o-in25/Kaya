@@ -397,6 +397,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
 
  void programTrapHandler() {
      state_PTR oldState = (state_PTR) PRGMTRAPOLDAREA;
+     debugL(oldState->s_cause);
      passUpOrDie(PROGTRAP, oldState);
  }
 
