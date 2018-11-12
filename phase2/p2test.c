@@ -549,6 +549,7 @@ void p5() {
     
     /* to cause a pgm trap access some non-existent memory */
     *p5MemLocation = *p5MemLocation + 1;         /* Should cause a program trap */
+    debugB(7);
 }
 
 void p5a() {
