@@ -363,7 +363,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
     wake up in the syscall handler */
     state_PTR caller = (state_PTR) SYSCALLOLDAREA;
     /* increment program count */
-    caller->s_pc = caller->s_pc + 4;
+    caller->s_pc = caller->s_pc + 8;
     /* in order to execute syscals 1-9, we
     must be in kernel mode */
     int userMode = FALSE;    
