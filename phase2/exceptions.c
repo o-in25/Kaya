@@ -8,7 +8,7 @@
 #include "../e/asl.e"
 #include "/usr/local/include/umps2/umps/libumps.e"
 
-void debugthing(int a){
+debugL(int a){
     int i;
     i = 0;
 }
@@ -385,11 +385,11 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
        state_PTR programTrapOldArea = (state_PTR) PRGMTRAPOLDAREA;
             /* copy the state */
             copyState(caller, programTrapOldArea);
-        debugthing(NOTRES);
+        debugL(NOTRES);
         unsigned int theThing = programTrapOldArea->s_cause & ~NOTRES;
-        debugthing(theThing);
+        debugL(theThing);
         programTrapOldArea->s_cause = (theThing | (10 << 2));
-        debugthing(programTrapOldArea->s_cause);
+        debugL(programTrapOldArea->s_cause);
             /* call a program trap */
             programTrapHandler();
     }  
