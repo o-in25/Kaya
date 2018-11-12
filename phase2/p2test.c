@@ -400,9 +400,7 @@ void p4() {
     
     SYSCALL(VERHOGEN, (int)&synp4, 0, 0);                /* V(synp4)     */
     
-    print("P'ing blkp4\n");
     SYSCALL(PASSERN, (int)&blkp4, 0, 0);                /* P(blkp4)     */
-    print("Woke from P'ing blkp4\n");
     SYSCALL(PASSERN, (int)&synp4, 0, 0);                /* P(synp4)     */
     
     /* start another incarnation of p4 running, and wait for  */
