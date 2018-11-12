@@ -163,8 +163,7 @@ static void getCpuTime(state_PTR state) {
 * is treated like a sys2 terminate process if this is not the case 
 */
 static void specifyExceptionsStateVector(state_PTR state) {
-    unsigned int callNumber = state->s_a1;
-    switch(callNumber) {
+    switch(state->s_a1) {
         case TLBTRAP:
             if(currentProcess->newTlb != NULL) {
                 /* the area has already been specified, so treat
@@ -174,7 +173,7 @@ static void specifyExceptionsStateVector(state_PTR state) {
             /* store the new area in the a3 register */
             currentProcess->newTlb = (state_PTR) state->s_a3;
             /* store the old area in the a2 register */
-            currentProcess->oldPgm = (state_PTR) state->s_a2;
+            currentProcess->oldTlb = (state_PTR) state->s_a2;
             break;
         case PROGTRAP:
             if(currentProcess->newPgm != NULL) {
