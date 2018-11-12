@@ -135,7 +135,6 @@ static void getCpuTime(state_PTR state) {
     /* when a process' turn with the cpu is over,
     the value of teh clock is stored again and is 
     added to the elapsed cpu */
-    copyState(state, &(currentProcess->p_state));
     cpu_t stopTOD;
     STCK(stopTOD);
     /* the elasped time */
@@ -146,7 +145,7 @@ static void getCpuTime(state_PTR state) {
     currentProcess->p_state.s_v0 = currentProcess->p_time;
     STCK(startTOD);
     /* context switch */
-    contextSwitch(&(currentProcess->p_state));
+    contextSwitch(state);
 }
 
 /*********************************************** SYS 5 **************************************************/
