@@ -17,6 +17,11 @@
 #include "../h/types.h"
 #include "/usr/local/include/umps2/umps/libumps.e"
 
+void debugA (int a) {
+    int i;
+    i=0;
+}
+
 void debugthing(int a){
     int i;
     i=0;
@@ -134,12 +139,15 @@ void    p5sys(),p8root(),child1(),child2(),p8leaf();
 
 /* a procedure to print on terminal 0 */
 void print(char *msg) {
-    
+    debugA (1);
     char * s = msg;
+    debugA (2);
     devregtr * base = (devregtr *) (TERM0ADDR);
+    debugA (3);
     devregtr status;
-    
+    debugA (4);
     SYSCALL(PASSERN, (int)&term_mut, 0, 0);                /* P(term_mut) */
+    debugA (5);
     while (*s != EOS) {
         *(base + 3) = PRINTCHR | (((devregtr) *s) << BYTELEN);
         status = SYSCALL(WAITIO, TERMINT, 0, 0);
@@ -147,7 +155,9 @@ void print(char *msg) {
         PANIC();
         s++;
     }
+    debugA (6);
     SYSCALL(VERHOGEN, (int)&term_mut, 0, 0);                /* V(term_mut) */
+    debugA (7);
 }
 
 
