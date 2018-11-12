@@ -198,7 +198,7 @@ static void specifyExceptionsStateVector(state_PTR state) {
             break;
     }
     /* context switch */
-    contextSwitch(&(currentProcess->p_state));
+    contextSwitch(state);
 }
 
 
