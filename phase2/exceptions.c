@@ -349,9 +349,6 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
         case CREATEPROCESS: /* SYSCALL 1 */
             createProcess(caller);
             break;
-        default:
-            passUpOrDie(2, caller);
-            break;
     }
 }
 
@@ -380,17 +377,19 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
         /* in kernel mode */
         userMode = TRUE;
     }
-    if(!userMode && callNumber < 9) {
+    if(!(userMode) && callNumber < 9) {
         /* call our helper function to assist with handling the syscalls IF we are
         in kernel mode */
         delegateSyscall(callNumber, caller);
+    } else if(!(userMode)  && callNumber > 9) {
+        passUpOrDie(SYSTRAP, caller);
     } else {
-       state_PTR programTrapOldArea = (state_PTR) PRGMTRAPOLDAREA;
-            /* copy the state */
-            copyState(caller, programTrapOldArea);
-            programTrapOldArea->s_cause = (RESERVED << 2);
-            /* call a program trap */
-            programTrapHandler();
+        state_PTR programTrapOldArea = (state_PTR) PRGMTRAPOLDAREA;
+        /* copy the state */
+        copyState(caller, programTrapOldArea);
+        programTrapOldArea->s_cause = (RESERVED << 2);
+        /* call a program trap */
+        programTrapHandler();
     }  
  }
 
