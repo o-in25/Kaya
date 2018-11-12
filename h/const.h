@@ -20,7 +20,7 @@
 
 #define ROMPAGESTART 0x20000000	 /* ROM Reserved Page */
 #define RESERVED 0x0000000A
-#define NOTRES 0xFFFFFF3C
+#define NOTRES 0xFFFFFFC3
 
 
 
