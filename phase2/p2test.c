@@ -433,6 +433,7 @@ void p4() {
 void p5prog() {
     unsigned int exeCode = pstat_o.s_cause;
     exeCode = (exeCode & CAUSEMASK) >> 2;
+    debugB(exeCode);
     switch (exeCode) {
         case BUSERROR:
         print("Access non-existent memory\n");
