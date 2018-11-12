@@ -454,7 +454,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
     if not, terminate the process and all its progeny */
      debugL(callNumber, 455);
      debugL(old, 456);
-    switch (callNumber) {
+     switch (callNumber) {
             /* if yes, copy the state the caused the exception to 
             the location secified in the pcb. context switch */
         case SYSTRAP: {
@@ -479,8 +479,9 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
                 debugL(currentProcess->oldPgm->s_cause, 476);
                 contextSwitch(currentProcess->newPgm);
             }
+            debugL (10, 482);
             break;
         }
-    }
+ }
     terminateProcess();
  }
