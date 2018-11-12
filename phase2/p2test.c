@@ -405,6 +405,7 @@ void p4() {
     SYSCALL(PASSERN, (int)&blkp4, 0, 0);                /* P(blkp4)     */
     debugthing(10);
     print("Woke from P'ing blkp4\n");
+    debugthing(11);
     SYSCALL(PASSERN, (int)&synp4, 0, 0);                /* P(synp4)     */
     
     /* start another incarnation of p4 running, and wait for  */
