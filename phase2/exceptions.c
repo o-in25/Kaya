@@ -377,7 +377,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
         /* in kernel mode */
         userMode = TRUE;
     }
-    if(!(userMode) && callNumber < 9) {
+    if(!(userMode) && callNumber > 0 && callNumber < 9) {
         /* call our helper function to assist with handling the syscalls IF we are
         in kernel mode */
         delegateSyscall(callNumber, caller);
@@ -395,7 +395,6 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
 
  void programTrapHandler() {
      state_PTR oldState = (state_PTR) PRGMTRAPOLDAREA;
-     debugL(oldState->s_cause, 400);
      passUpOrDie(PROGTRAP, oldState);
  }
 
@@ -423,12 +422,12 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
         is not null, we do the following. If it IS null, the I/O interrupt handler already
         took care of this for us */
          outBlocked(p);
-        if (semaphore >= &(semdTable[0]) && semaphore <= &(semdTable[MAXSEMALLOC - 1])) {
-             softBlockedCount--;
+        if(semaphore >= &(semdTable[0]) && semaphore <= &(semdTable[MAXSEMALLOC - 1])) {
+            softBlockedCount--;
         } else {
-             (*semaphore)++;
+            (*semaphore)++;
         }
-     } else if (p == currentProcess){
+     } else if(p == currentProcess){
          /* yank the child from its parent */
          outChild(currentProcess);
      } else {
@@ -450,36 +449,27 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
  static void passUpOrDie(int callNumber, state_PTR old) {
      /* has a sys5 for that trap type been called?
     if not, terminate the process and all its progeny */
-     debugL(callNumber, 455);
-     debugL(old, 456);
-     switch (callNumber) {
+     switch(callNumber) {
             /* if yes, copy the state the caused the exception to 
             the location secified in the pcb. context switch */
-        case SYSTRAP: {
-            if (currentProcess->newSys != NULL) {
+        case SYSTRAP:
+            if(currentProcess->newSys != NULL) {
                 copyState(old, currentProcess->oldSys);
                 contextSwitch(currentProcess->newSys);
             }
             break;
-        }
-        case TLBTRAP: {
-            if (currentProcess->newTlb != NULL) {
+        case TLBTRAP:
+            if(currentProcess->newTlb != NULL) {
                 copyState(old, currentProcess->oldTlb);
                 contextSwitch(currentProcess->newTlb);
             }
             break;
-        }
-        case PROGTRAP: {
-            debugL(10, 473);
-            if (currentProcess->newPgm != NULL) {
-                debugL(old->s_cause, 474);
+        case PROGTRAP: 
+            if(currentProcess->newPgm != NULL) {
                 copyState(old, currentProcess->oldPgm);
-                debugL(currentProcess->oldPgm->s_cause, 476);
                 contextSwitch(currentProcess->newPgm);
-            }
-            debugL (10, 482);
             break;
         }
- }
+    }
     terminateProcess();
  }
