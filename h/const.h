@@ -73,7 +73,6 @@ mode and the interrupt mask */
  the processor mode of operation (kernel vs. user), the address translation
  mode, and the interrupt masking bits.
  All bit fields in the Status register are read/writable */
- #define ALLOFF 0x00000000
  /*bit 0 -the “current” global interrupt enable bit. When 0, regardless
  of the settings in Status.IM all external interrupts are disabled. When 1,
  external interrupt acceptance is controlled by Status.IM. */

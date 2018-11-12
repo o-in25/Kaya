@@ -381,7 +381,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
         /* call our helper function to assist with handling the syscalls IF we are
         in kernel mode */
         delegateSyscall(callNumber, caller);
-    } else if(!(userMode)  && (callNumber > 9 || callNumber < 1)) {
+    } else if(!(userMode) && (callNumber > 9 || callNumber < 1)) {
         passUpOrDie(SYSTRAP, caller);
     } else {
         state_PTR programTrapOldArea = (state_PTR) PRGMTRAPOLDAREA;
