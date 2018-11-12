@@ -8,7 +8,7 @@
 #include "../e/asl.e"
 #include "/usr/local/include/umps2/umps/libumps.e"
 
-debugL(int a){
+debugL(int a, int b){
     int i;
     i = 0;
 }
@@ -385,11 +385,11 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
        state_PTR programTrapOldArea = (state_PTR) PRGMTRAPOLDAREA;
             /* copy the state */
             copyState(caller, programTrapOldArea);
-        debugL(NOTRES);
+        debugL(NOTRES, 388);
         unsigned int theThing = programTrapOldArea->s_cause & ~NOTRES;
-        debugL(theThing);
+        debugL(theThing, 390);
         programTrapOldArea->s_cause = (theThing | (10 << 2));
-        debugL(programTrapOldArea->s_cause);
+        debugL(programTrapOldArea->s_cause, 392);
             /* call a program trap */
             programTrapHandler();
     }  
@@ -397,7 +397,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
 
  void programTrapHandler() {
      state_PTR oldState = (state_PTR) PRGMTRAPOLDAREA;
-     debugL(oldState->s_cause);
+     debugL(oldState->s_cause, 400);
      passUpOrDie(PROGTRAP, oldState);
  }
 
@@ -471,9 +471,9 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
         }
         case PROGTRAP: {
             if (currentProcess->newPgm != NULL) {
-                debugL(old->s_cause);
+                debugL(old->s_cause, 474);
                 copyState(old, currentProcess->oldPgm);
-                debugL(currentProcess->oldPgm->s_cause);
+                debugL(currentProcess->oldPgm->s_cause, 476);
                 contextSwitch(currentProcess->newPgm);
             }
             break;
