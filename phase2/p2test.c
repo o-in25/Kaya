@@ -472,6 +472,7 @@ void p5prog() {
         default:
         print("other program trap\n");
     }
+    debugthing(14);
     
     LDST(&pstat_o);
 }
