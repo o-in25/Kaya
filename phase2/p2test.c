@@ -147,7 +147,7 @@ void print(char *msg) {
         *(base + 3) = PRINTCHR | (((devregtr) *s) << BYTELEN);
         status = SYSCALL(WAITIO, TERMINT, 0, 0);
         if ((status & TERMSTATMASK) != RECVD)
-        PANIC();
+        ohShitMuthaFucka(150);
         s++;
     }
     SYSCALL(VERHOGEN, (int)&term_mut, 0, 0);                /* V(term_mut) */
@@ -272,7 +272,7 @@ void test() {
         
         if (creation == CREATENOGOOD) {
             print("error in process termination\n");
-            PANIC();
+            ohShitMuthaFucka(275);
         }
         
         SYSCALL(PASSERN, (int)&endp8, 0, 0);
@@ -282,7 +282,7 @@ void test() {
     
     /* should not reach this point, since p1 just got a program trap */
     print("error: p1 still alive after progtrap & no trap vector\n");
-    PANIC();                    /* PANIC !!!     */
+    ohShitMuthaFucka(285);                    /* PANIC !!!     */
 }
 
 
@@ -339,7 +339,7 @@ void p2() {
     SYSCALL(TERMINATETHREAD, 0, 0, 0);            /* terminate p2 */
     /* just did a SYS2, so should not get to this point */
     print("error: p2 didn't terminate\n");
-    PANIC();  
+    ohShitMuthaFucka(342);
 }
 
 
@@ -382,7 +382,7 @@ void p3() {
     
     /* just did a SYS2, so should not get to this point */
     print("error: p3 didn't terminate\n");
-    PANIC();                    /* PANIC            */
+    ohShitMuthaFucka(385);                    /* PANIC            */
 }
 
 
@@ -424,7 +424,7 @@ void p4() {
     
     /* just did a SYS2, so should not get to this point */
     print("error: p4 didn't terminate\n");
-    PANIC();                    /* PANIC            */
+    ohShitMuthaFucka(427);                    /* PANIC            */
 }
 
 
@@ -559,7 +559,7 @@ void p5b() {
     
     /* should have terminated, so should not get to this point */
     print("error: p5 didn't terminate\n");
-    PANIC();                /* PANIC            */
+    ohShitMuthaFucka(562);                /* PANIC            */
 }
 
 
@@ -572,7 +572,7 @@ void p6() {
     
     print("error: p6 alive after SYS9() with no trap vector\n");
     
-    PANIC();
+    ohShitMuthaFucka(575);
 }
 
 /*p7 -- program trap without initializing passup vector*/
@@ -582,7 +582,7 @@ void p7() {
     * ((memaddr *) BADADDR) = 0;
     halt(200);
     print("error: p7 alive after program trap with no trap vector\n");
-    PANIC();
+    ohShitMuthaFucka(585);
 }
 
 
