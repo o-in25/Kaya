@@ -393,8 +393,6 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
  }
 
  void programTrapHandler() {
-     state_PTR oldState = (state_PTR) PRGMTRAPOLDAREA;
-     passUpOrDie(PROGTRAP, oldState);
  }
 
  void translationLookasideBufferHandler() { 
