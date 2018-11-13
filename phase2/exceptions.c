@@ -388,10 +388,12 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
         delegateSyscall(callNumber, caller);
     } else {
         passUpOrDie(SYSTRAP, caller);
+
     }
  }
 
  void programTrapHandler() {
+     state_PTR oldState = (state_PTR) PRGMTRAPOLDAREA;
      passUpOrDie(PROGTRAP, oldState);
  }
 
