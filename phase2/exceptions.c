@@ -380,19 +380,18 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
         state_PTR programTrapOldArea = (state_PTR) PRGMTRAPOLDAREA;
         /* copy the state */
         copyState(caller, programTrapOldArea);
-        unsigned int placeholder = (programTrapOldArea->s_cause) & ~(0xFF);
-        (programTrapOldArea->s_cause) = (placeholder | (10 << 2));
+        unsigned int placeholder = (programTrapOldArea->s_cause) & ~(FULLBYTE);
+        (programTrapOldArea->s_cause) = (placeholder | (RESERVED));
         /* call a program trap */
         programTrapHandler();
     } else if(((callNumber < 9) && (callNumber > 0) && userMode)) {
         delegateSyscall(callNumber, caller);
     } else {
-
+        passUpOrDie(SYSTRAP, caller);
     }
  }
 
  void programTrapHandler() {
-     state_PTR oldState = (state_PTR) PRGMTRAPOLDAREA;
      passUpOrDie(PROGTRAP, oldState);
  }
 
