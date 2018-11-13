@@ -349,8 +349,6 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
         case CREATEPROCESS: /* SYSCALL 1 */
             createProcess(caller);
             break;
-        default:
-            passUpOrDie(SYSTRAP, caller);
     }
 }
 
@@ -375,7 +373,10 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
     to 255 syscalls */
     unsigned int callNumber = caller->s_a0;
     unsigned int status = caller->s_status;
-    if((callNumber < 9) && (callNumber > 0) && ((status & KUp) != ALLOFF)) {
+    if((status & KUp) != ALLOFF) {
+        userMode = TRUE;
+    }
+    if((callNumber < 9) && (callNumber > 0) && userMode) {
         state_PTR programTrapOldArea = (state_PTR)PRGMTRAPOLDAREA;
         /* copy the state */
         copyState(caller, programTrapOldArea);
@@ -383,36 +384,12 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
         (programTrapOldArea->s_cause) = (placeholder | RESERVED);
         /* call a program trap */
         programTrapHandler();
+    } else if((callNumber > 9) || (calllNumber < 1)) {
+        passUpOrDie(SYSTRAP, caller);
+    } else {
+        delegateSyscall(callNumber, caller);
+    }
 
-    }
-    switch (callNumber) {
-        case WAITFORIODEVICE: /* SYSCALL 8 */
-            waitForIODevice(caller);
-            break;
-        case WAITFORCLOCK: /* SYSCALL 7 */
-            waitForClock(caller);
-            break;
-        case GETCPUTIME: /* SYSCALL 6 */
-            getCpuTime(caller);
-            break;
-        case SPECIFYEXCEPTIONSTATEVECTOR: /* SYSCALL 5 */
-            specifyExceptionsStateVector(caller);
-            break;
-        case PASSEREN: /* SYSCALL 4 */
-            passeren(caller);
-            break;
-        case VERHOGEN: /* SYSCALL 3 */
-            verhogen(caller);
-            break;
-        case TERMINATEPROCESS: /* SYSCALL 2 */
-            terminateProcess();
-            break;
-        case CREATEPROCESS: /* SYSCALL 1 */
-            createProcess(caller);
-            break;
-        default:
-            passUpOrDie(SYSTRAP, caller);
-    }
  }
 
  void programTrapHandler() {
