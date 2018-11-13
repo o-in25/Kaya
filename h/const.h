@@ -19,8 +19,10 @@
 #define TIME 100000
 
 #define ROMPAGESTART 0x20000000	 /* ROM Reserved Page */
-#define RESERVED 0x00000028
-#define FULLBYTE 0x000000FF
+#define RESERVED 0x0000000A
+#define NOTRES 0xFF
+
+
 
 /* processor state areas */
 /* SYSYCALLS */
@@ -42,6 +44,10 @@
 #define INTERVALTMR	0x10000020
 #define TIMESCALEADDR	0x10000024
 
+/* status register fields.
+The status is a read/writable register that controls the 
+processor mode of operation, the addres translation 
+mode and the interrupt mask */
 /************************* INTERRUPTS *************************/
 /* use bitwise OR to turn on */
 #define INTERRUPTSON 0x00000004 
@@ -62,20 +68,78 @@
 #define ALLOFF 0x00000000
 /************************* INTERRUPTS *************************/
 
+		 /* status register fields...
+ Status is a read/writable register that controls the usability of the coprocessors,
+ the processor mode of operation (kernel vs. user), the address translation
+ mode, and the interrupt masking bits.
+ All bit fields in the Status register are read/writable */
+ #define ALLOFF 0x00000000
+ /*bit 0 -the “current” global interrupt enable bit. When 0, regardless
+ of the settings in Status.IM all external interrupts are disabled. When 1,
+ external interrupt acceptance is controlled by Status.IM. */
  #define IEc 0x00000001
+ /* bit 1 - The “current” kernel-mode user-mode control bit. When Status.KUc=0
+ the processor is in kernel-mode */
  #define KUc 0x00000002
+ /* bits 2-3 - the “previous” settings of the Status.IEc
+  and Status.KUc */
  #define IEp 0x00000004
  #define KUp 0x00000008
+ /* bits 4-5 - the “previous” settings of the Status.IEp and Status.KUp
+ - denoted the “old” bit settings. */
  #define IEo 0x00000010
  #define KUo 0x00000020
+ /* NOTE: These six bits; IEc, KUc, IEp, KUp, IEo, and KUo act as a 3-slot deep
+ KU/IE bit stack. Whenever an exception is raised the stack is pushed and
+ whenever an interrupted execution stream is restarted, the stack is popped.
+ See Section 3.2 for a more detailed explanation */
+ /*********************************************************/
+ /* bits 8-15 - The Interrupt Mask. An 8-bit mask that enables/disables
+ external interrupts. When a device raises an interrupt on the i-th line, the
+ processor accepts the interrupt only if the corresponding Status.IM[i] bit is
+ on.*/
  #define IM  0x0000FF00
+ /* bit 22 - The Bootstrap Exception Vector. This bit determines the
+ starting address for the exception vectors. */
  #define BEV 0x00400000
+ /* bit 24 - The “current” VM on/off flag bit. Status.VMc=0 indicates
+ that virtual memory translation is currently off.*/
  #define VMc 0x01000000
+ /* bit 25 - the “previous” setting of the Status.VMc bit*/
  #define VMp 0x02000000
+ /* bit 26 - the “previous” setting of the Status.VMp bit - denoted the
+ “old” bit setting */
  #define VMo 0x04000000
+ /* NOTE: These three bits; VMc, VMp, and VMo act as a 3-slot deep VM bit stack.
+ Whenever an exception is raised the stack is pushed and whenever an interrupted 
+ execution stream is restarted, the stack is popped. See Section 3.2
+ for a more detailed explanation.*/
+ /*********************************************************/
+ /* bit 27 - the processor Local Timer enable bit. A 1-bit mask that enables/disables
+ the processor’s Local Timer. See Section 5.2.2 for more information
+ about this timer */
  #define TE  0x08000000
+ /* Bits 28-31 - a 4-bit field that controls coprocessor usability. The bits
+ are numbered 0 to 3; Setting Status.CU[i] to 1 allows the use of the i-th
+ co-processor. Since µMPS2 only implements CP0 only Status.CU[0] is
+ writable; the other three bits are read-only and permanently set to 0.
+ Trying to make use of a coprocessor (via an appropriate instruction) without
+ the corresponding coprocessor control bit set to 1 will raise a Coprocessor
+ Unusable exception. In particular untrusted processes can be prevented
+ from CP0 access by setting Status.CU[0]=0. CP0 is always accessible/usable
+ when in kernel mode (Status.KUc=0), regardless of the value
+ of Status.CU[0]. */
  #define CU  0x10000000
+ /* NOTE: Important Point: Since CP1 (the floating point co-processor) is not implemented,
+ floating point instruction execution attempts generate a Coprocessor
+ Unusable exception. */
 
+
+
+/* interrupts pending */
+/* an 8-bit field indicating on which interrupt lines interrupts are currently pending. 
+If an interrupt is pending on interrupt line i, then Cause.IP[i] is set to 1. */
+/* total lines */
 #define FIRST 0x00000001
 #define SECOND 0x00000002
 #define THIRD 0x0000004
@@ -84,9 +148,14 @@
 #define SIXTH 0x00000020
 #define SEVENTH 0x00000040
 #define EIGHTH 0x00000080
-
+/* start with the first device */
 #define STARTDEVICE 0x00000001
+/* Important Point: Many interrupt lines may be active at the same time. 
+Furthermore, many devices on the same interrupt line may be requesting service. 
+Cause.IP is always up to date, immediately responding 
+to external (and internal) device events */
 
+/* device register */
 #define DEVREG 0x10000050
 #define DEVREGAREA 0x000002D0
 #define TRANSREADY 0x0000000F
