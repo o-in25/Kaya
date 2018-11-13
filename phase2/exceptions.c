@@ -349,6 +349,8 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
         case CREATEPROCESS: /* SYSCALL 1 */
             createProcess(caller);
             break;
+        default:
+            passUpOrDie(SYSTRAP, caller);
     }
 }
 
@@ -384,8 +386,6 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
         (programTrapOldArea->s_cause) = (placeholder | RESERVED);
         /* call a program trap */
         programTrapHandler();
-    } else if((callNumber > 9) || (callNumber < 1)) {
-        passUpOrDie(SYSTRAP, caller);
     } else {
         delegateSyscall(callNumber, caller);
     }
