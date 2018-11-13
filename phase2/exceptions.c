@@ -380,6 +380,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
         (programTrapOldArea->s_cause) = (placeholder | (10 << 2));
         /* call a program trap */
         programTrapHandler();
+        
     }
     caller->s_pc = caller->s_pc + 4;
 switch (callNumber) {
