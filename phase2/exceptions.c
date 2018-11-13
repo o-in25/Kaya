@@ -350,7 +350,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
             createProcess(caller);
             break;
         default:
-            passUpOrDie(SYSTRAP, caller)
+            passUpOrDie(SYSTRAP, caller);
     }
 }
 
