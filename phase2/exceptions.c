@@ -372,7 +372,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
     to 255 syscalls */
     unsigned int callNumber = caller->s_a0;
     unsigned int status = caller->s_status;
-    if((callNumber < 9) && (callNumber > 0) && ((status & KUp) != ALLOFF) {
+    if((callNumber < 9) && (callNumber > 0) && ((status & KUp) != ALLOFF)) {
         state_PTR programTrapOldArea = (state_PTR)PRGMTRAPOLDAREA;
         /* copy the state */
         copyState(caller, programTrapOldArea);
