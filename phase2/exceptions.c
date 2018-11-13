@@ -383,33 +383,35 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
         programTrapHandler();
 
     }
-switch (callNumber) {
-    case WAITFORIODEVICE: /* SYSCALL 8 */
-        waitForIODevice(caller);
-        break;
-    case WAITFORCLOCK: /* SYSCALL 7 */
-        waitForClock(caller);
-        break;
-    case GETCPUTIME: /* SYSCALL 6 */
-        getCpuTime(caller);
-        break;
-    case SPECIFYEXCEPTIONSTATEVECTOR: /* SYSCALL 5 */
-        specifyExceptionsStateVector(caller);
-        break;
-    case PASSEREN: /* SYSCALL 4 */
-        passeren(caller);
-        break;
-    case VERHOGEN: /* SYSCALL 3 */
-        verhogen(caller);
-        break;
-    case TERMINATEPROCESS: /* SYSCALL 2 */
-        terminateProcess();
-        break;
-    case CREATEPROCESS: /* SYSCALL 1 */
-        createProcess(caller);
-        break;
+    switch (callNumber) {
+        case WAITFORIODEVICE: /* SYSCALL 8 */
+            waitForIODevice(caller);
+            break;
+        case WAITFORCLOCK: /* SYSCALL 7 */
+            waitForClock(caller);
+            break;
+        case GETCPUTIME: /* SYSCALL 6 */
+            getCpuTime(caller);
+            break;
+        case SPECIFYEXCEPTIONSTATEVECTOR: /* SYSCALL 5 */
+            specifyExceptionsStateVector(caller);
+            break;
+        case PASSEREN: /* SYSCALL 4 */
+            passeren(caller);
+            break;
+        case VERHOGEN: /* SYSCALL 3 */
+            verhogen(caller);
+            break;
+        case TERMINATEPROCESS: /* SYSCALL 2 */
+            terminateProcess();
+            break;
+        case CREATEPROCESS: /* SYSCALL 1 */
+            createProcess(caller);
+            break;
+        }
+        default:
+            passUpOrDie(SYSTRAP, caller);
     }
- }
 
  void programTrapHandler() {
      state_PTR oldState = (state_PTR) PRGMTRAPOLDAREA;
