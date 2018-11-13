@@ -14,12 +14,11 @@ This includes the services provided by the ROM-Excpt handler (i.e. processor sta
 ## Level 2: The Queues Manager (Phase 1) ## 
 Based on the key operating systems concept that active entities at one layer are just data structures at lower layers, this layer supports the management of queues of structures; ProcBlk’s.
 
-
 ## Level 3: The Kernel (Phase 2) ##
 This level implements eight new kernel-mode process management and synchronization primitives in addition to multiprogramming, a process scheduler, device interrupt handlers, and deadlock detection.
 
 ## Level 4: The Support Level (Phase 3) ## 
-Level 3 is extended to support a system that can support multiple user-level cooperating processes that can request I/O and which run in their own virtual address space. Furthermore, this level adds user-level synchronization, and a pro- cess sleep/delay facility.
+Level 3 is extended to support a system that can support multiple user-level cooperating processes that can request I/O and which run in their own virtual address space. Furthermore, this level adds user-level synchronization, and a process sleep/delay facility.
 
 ## Level 5: The File System (Phase 4) ## 
 This level implements the abstraction of a flat file system by implementing primitives necessary to create, rename, delete, open, close, and modify files.
