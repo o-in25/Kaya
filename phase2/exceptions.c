@@ -387,12 +387,13 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
     } else if(((callNumber < 9) && (callNumber > 0) && userMode)) {
         delegateSyscall(callNumber, caller);
     } else {
-        passUpOrDie(SYSTRAP, caller);
 
     }
  }
 
  void programTrapHandler() {
+     state_PTR oldState = (state_PTR) PRGMTRAPOLDAREA;
+     passUpOrDie(PROGTRAP, oldState);
  }
 
  void translationLookasideBufferHandler() { 
