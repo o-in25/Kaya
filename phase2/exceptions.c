@@ -384,7 +384,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
         (programTrapOldArea->s_cause) = (placeholder | RESERVED);
         /* call a program trap */
         programTrapHandler();
-    } else if((callNumber > 9) || (calllNumber < 1)) {
+    } else if((callNumber > 9) || (callNumber < 1)) {
         passUpOrDie(SYSTRAP, caller);
     } else {
         delegateSyscall(callNumber, caller);
