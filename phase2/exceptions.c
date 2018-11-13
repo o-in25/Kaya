@@ -380,7 +380,8 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
         state_PTR programTrapOldArea = (state_PTR) PRGMTRAPOLDAREA;
         /* copy the state */
         copyState(caller, programTrapOldArea);
-        (programTrapOldArea->s_cause) = (((programTrapOldArea->s_cause) & ~(FULLBYTE)) | (RESERVED));
+        unsigned int placeholder = (programTrapOldArea->s_cause) & ~(FULLBYTE);
+        (programTrapOldArea->s_cause) = (placeholder | (RESERVED));
         /* call a program trap */
         programTrapHandler();
     } else if(((callNumber < 9) && (callNumber > 0) && userMode)) {
