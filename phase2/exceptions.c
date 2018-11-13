@@ -408,10 +408,10 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
         case CREATEPROCESS: /* SYSCALL 1 */
             createProcess(caller);
             break;
-        }
         default:
             passUpOrDie(SYSTRAP, caller);
     }
+ }
 
  void programTrapHandler() {
      state_PTR oldState = (state_PTR) PRGMTRAPOLDAREA;
