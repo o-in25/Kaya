@@ -375,11 +375,11 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
     to 255 syscalls */
     unsigned int callNumber = caller->s_a0;
     unsigned int status = caller->s_status;
-    if (((status & KUp) != ALLOFF)) {
-        userMode = FALSE;
+    if((status & KUp) != ALLOFF) {
+        userMode = TRUE;
     }
-    if((callNumber < 9) && (callNumber > 0) &&) {
-        state_PTR programTrapOldArea = (state_PTR)PRGMTRAPOLDAREA;
+    if((callNumber < 9) && (callNumber > 0) && userMode) {
+        state_PTR programTrapOldArea = (state_PTR) PRGMTRAPOLDAREA;
         /* copy the state */
         copyState(caller, programTrapOldArea);
         unsigned int placeholder = (programTrapOldArea->s_cause) & ~(0xFF);
