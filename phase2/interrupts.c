@@ -73,7 +73,7 @@ static void exitInterruptHandler(cpu_t startTime) {
 }
 
 
-int map(unsigned int cause) {
+int getLineNumber(unsigned int cause) {
     /* declare the array of possible line numbers */
     unsigned int lineNumbers[(DEVPERINT - NOSEM)] = {FOURTH, FIFTH, SIXTH, SEVENTH, EIGHTH};
     unsigned int devices[(DEVPERINT - NOSEM)] = {DISKINT, TAPEINT, NETWINT, PRNTINT, TERMINT};
@@ -120,11 +120,9 @@ void interruptHandler() {
     cpu_t startTime;
     cpu_t endTime;
     STCK(startTime);
-
     int deviceNumber = 0;
     int lineNumber = 0;
     int i = 0;
-    int status = 0;
     if ((cause & FIRST) != 0) {
         PANIC();
     } else if((cause & SECOND) != 0) {
@@ -132,7 +130,7 @@ void interruptHandler() {
     } else if((cause & THIRD) != 0) {
         intervalTimerHandler(startTime, endTime);
     } else {
-        lineNumber = map(cause);
+        lineNumber = getLineNumber(cause);
     }
     deviceNumber = getDeviceNumber(lineNumber);
     devReg = (device_PTR) (INTDEVREG + ((lineNumber - NOSEM) * DEVREGSIZE * DEVPERINT) + (deviceNumber * DEVREGSIZE));

@@ -65,14 +65,13 @@ static void waitForClock(state_PTR state) {
 }
 
 static void getCpuTime(state_PTR state) {
-    copyState(state, &(currentProcess->p_state));
     cpu_t stopTOD;
     STCK(stopTOD);
     cpu_t elapsedTime = stopTOD - startTOD;
     currentProcess->p_time = (currentProcess->p_time) + elapsedTime;
-    currentProcess->p_state.s_v0 = currentProcess->p_time;
+    state->s_v0 = currentProcess->p_time;
     STCK(startTOD);
-    contextSwitch(&(currentProcess->p_state));
+    contextSwitch(state);
 }
 
 static void specifyExceptionsStateVector(state_PTR state) {
