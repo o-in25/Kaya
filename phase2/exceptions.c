@@ -153,7 +153,7 @@ static void createProcess(state_PTR state) {
     contextSwitch(state);
 }
 
-static void delegateSyscall(int callNumber, state_PTR caller) {
+static void syscallDispatch(int callNumber, state_PTR caller) {
     switch (callNumber) {
         case WAITFORIODEVICE: /* SYSCALL 8 */
             waitForIODevice(caller);
@@ -207,7 +207,7 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
         (programTrapOldArea->s_cause) = (placeholder | RESERVED);
         programTrapHandler();
     } else {
-        delegateSyscall(callNumber, caller);
+        syscallDispatch(callNumber, caller);
     }
  }
 
