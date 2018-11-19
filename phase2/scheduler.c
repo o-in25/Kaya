@@ -9,6 +9,7 @@
 cpu_t startTOD;
 cpu_t currentTOD;
 extern void invokeScheduler() {
+    
     if(emptyProcQ(readyQueue)) {
         currentProcess = NULL;
         if(processCount == 0) { /* case 1 */
