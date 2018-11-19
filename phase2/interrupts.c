@@ -136,26 +136,15 @@ void interruptHandler() {
     }
     deviceNumber = getDeviceNumber(lineNumber);
     devReg = (device_PTR) (INTDEVREG + ((lineNumber - NOSEM) * DEVREGSIZE * DEVPERINT) + (deviceNumber * DEVREGSIZE));
-    
+    int receive = TRUE;
     if(lineNumber == TERMINT) {
-        int receive = TRUE;
         if((devReg->t_transm_status & FULLBYTE) != READY) {
             i = DEVPERINT * (lineNumber - NOSEM) + deviceNumber;
             receive = FALSE;
         } else {
             i = DEVPERINT * ((lineNumber - NOSEM) + 1) + deviceNumber;
         }
-        if (receive) {
-            p->p_state.s_v0 = devReg->t_recv_status;
-            devReg->t_recv_command = ACK;
-        } else {
-            p->p_state.s_v0 = devReg->t_transm_status;
-            devReg->t_transm_command = ACK;
-        }
-        exitInterruptHandler(startTime);
     } else {
-        p->p_state.s_v0 = devReg->d_status;
-        devReg->d_command = ACK;
         i = DEVPERINT * (lineNumber - NOSEM) + deviceNumber;
     }
     int *semaphore = &(semdTable[i]);
@@ -163,6 +152,16 @@ void interruptHandler() {
     if ((*semaphore) <= 0) {
         pcb_PTR p = removeBlocked(semaphore);
         if (p != NULL) {
+            if(receive && (lineNumber == TERMINT) {
+                p->p_state.s_v0 = devReg->t_recv_status;
+                devReg->t_recv_command = ACK;
+            } else if(!receive && (lineNumber == TERMINT)) {
+                p->p_state.s_v0 = devReg->t_transm_status;
+                devReg->t_transm_command = ACK;
+            } else {
+                p->p_state.s_v0 = devReg->d_status;
+                devReg->d_command = ACK;
+            }
             softBlockedCount--;
             insertProcQ(&(readyQueue), p);
         }
