@@ -184,6 +184,14 @@ static void syscallDispatch(int callNumber, state_PTR caller) {
     }
 }
 
+static void userModeHandler(state_PTR state) {
+    state_PTR programTrapOldArea = (state_PTR)PRGMTRAPOLDAREA;
+    copyState(state, programTrapOldArea);
+    unsigned int placeholder = (programTrapOldArea->s_cause) & ~(FULLBYTE);
+    (programTrapOldArea->s_cause) = (placeholder | RESERVED);
+    programTrapHandler();
+}
+
 /************************************************************************************************************************/
 /*************************************** EXCEPTION HANDLERS *************************************************************/
 /************************************************************************************************************************/
@@ -201,11 +209,7 @@ static void syscallDispatch(int callNumber, state_PTR caller) {
         userMode = TRUE;
     }
     if((callNumber < 9) && (callNumber > 0) && userMode) {
-        state_PTR programTrapOldArea = (state_PTR)PRGMTRAPOLDAREA;
-        copyState(caller, programTrapOldArea);
-        unsigned int placeholder = (programTrapOldArea->s_cause) & ~(FULLBYTE);
-        (programTrapOldArea->s_cause) = (placeholder | RESERVED);
-        programTrapHandler();
+        userModeHandler(caller);
     } else {
         syscallDispatch(callNumber, caller);
     }
