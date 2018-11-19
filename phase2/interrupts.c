@@ -152,7 +152,7 @@ void interruptHandler() {
     if ((*semaphore) <= 0) {
         pcb_PTR p = removeBlocked(semaphore);
         if (p != NULL) {
-            if(receive && (lineNumber == TERMINT) {
+            if(receive && (lineNumber == TERMINT)) {
                 p->p_state.s_v0 = devReg->t_recv_status;
                 devReg->t_recv_command = ACK;
             } else if(!receive && (lineNumber == TERMINT)) {
