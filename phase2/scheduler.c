@@ -9,7 +9,7 @@
 cpu_t startTOD;
 cpu_t currentTOD;
 extern void invokeScheduler() {
-    
+
     if(emptyProcQ(readyQueue)) {
         currentProcess = NULL;
         if(processCount == 0) { /* case 1 */
@@ -24,13 +24,14 @@ extern void invokeScheduler() {
             }
         }
     } else {
-        if (currentProcess != NULL) {
-            STCK(currentTOD);
-            currentProcess->p_time = currentProcess->p_time + (currentTOD - startTOD);
-        }
         currentProcess = removeProcQ(&(readyQueue));
-        STCK(startTOD);
-        setTIMER(QUANTUM);
+        if(currentTOD < 0) {
+            currentTOD = 0;
+        } else if(currentTOD < QUANTUM) {
+            setTIMER(currentTOD);
+        } else {
+            setTIMER(QUANTUM);
+        }
         contextSwitch(&(currentProcess->p_state));
     }
 }
