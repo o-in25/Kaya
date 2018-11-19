@@ -123,7 +123,7 @@ void interruptHandler() {
 
     int deviceNumber = 0;
     int lineNumber = 0;
-    int index = 0;
+    int i = 0;
     int status = 0;
     if ((cause & FIRST) != 0) {
         ohShitMuthaFucka(129);
@@ -135,35 +135,27 @@ void interruptHandler() {
     } else {
         lineNumber = map(cause);
     }
-    /* since the find device number helper function does not save
-    the modified line number, it must be done outside the function */
-    /* DEBUG NOTES: makes it to here */
     deviceNumber = getDeviceNumber(lineNumber);
-    /* have both line and device numbers, calculate the device register */
     devReg = (device_PTR) (INTDEVREG + ((lineNumber - NOSEM) * DEVREGSIZE * DEVPERINT) + (deviceNumber * DEVREGSIZE));
-    /* handle the terminal, if the terminal is causing the interrupt. else, acknowledge the 
-    reception of the terminal interrupt in the overwritten command recieved field */
     if(lineNumber == TERMINT) {
         int receive = TRUE;
         if((devReg->t_transm_status & 0xFF) != READY) {
-            index = DEVPERINT * (lineNumber - NOSEM) + deviceNumber;
+            i = DEVPERINT * (lineNumber - NOSEM) + deviceNumber;
             receive = FALSE;
         } else {
-            index = DEVPERINT * ((lineNumber - NOSEM) + 1) + deviceNumber;
+            i = DEVPERINT * ((lineNumber - NOSEM) + 1) + deviceNumber;
         }
-        int* semaphore = &(semdTable[index]);
+        int* semaphore = &(semdTable[i]);
         (*semaphore)++;
         if((*semaphore) <= 0) {
             pcb_PTR p = removeBlocked(semaphore);
             if(p != NULL) {
                 if(receive) {
-                    /* acknowledge the transmission */
                     p->p_state.s_v0 = devReg->t_recv_status;
                     devReg->t_recv_command = ACK;
                 } else {
                     p->p_state.s_v0 = devReg->t_transm_status;
                     devReg->t_transm_command = ACK;
-                    /* acknowledge the transmission */
                 }
                 softBlockedCount--;
                 insertProcQ(&(readyQueue), p);
@@ -171,9 +163,8 @@ void interruptHandler() {
         }
         exitInterruptHandler(startTime);
     } else {
-        index = DEVPERINT * (lineNumber - NOSEM) + deviceNumber;
-        /* DE.BUG NOTES: ended up here */
-        int* semaphore = &(semdTable[index]);
+        i = DEVPERINT * (lineNumber - NOSEM) + deviceNumber;
+        int* semaphore = &(semdTable[i]);
         (*semaphore)++;
         if ((*semaphore) <= 0) {
             pcb_PTR p = removeBlocked(semaphore);
