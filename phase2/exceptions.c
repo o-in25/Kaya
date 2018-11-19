@@ -65,13 +65,14 @@ static void waitForClock(state_PTR state) {
 }
 
 static void getCpuTime(state_PTR state) {
+    copyState(state, &(currentProcess->p_state));
     cpu_t stopTOD;
     STCK(stopTOD);
     cpu_t elapsedTime = stopTOD - startTOD;
     currentProcess->p_time = (currentProcess->p_time) + elapsedTime;
-    state->s_v0 = currentProcess->p_time;
+    currentProcess->p_state.s_v0 = currentProcess->p_time;
     STCK(startTOD);
-    contextSwitch(state);
+    contextSwitch(&(currentProcess->p_state));
 }
 
 static void specifyExceptionsStateVector(state_PTR state) {
@@ -186,7 +187,10 @@ static void delegateSyscall(int callNumber, state_PTR caller) {
 /************************************************************************************************************************/
 /*************************************** EXCEPTION HANDLERS *************************************************************/
 /************************************************************************************************************************/
-
+ /*
+ * Function: The Syscall Handler
+ * 
+ */ 
  void syscallHandler() {
     state_PTR caller = (state_PTR) SYSCALLOLDAREA;
     caller->s_pc = caller->s_pc + 4;
