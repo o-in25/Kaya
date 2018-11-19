@@ -23,15 +23,17 @@ extern void invokeScheduler() {
                 WAIT();
             }
         }
-    } else {
-        currentProcess = removeProcQ(&(readyQueue));
-        if(currentTOD < 0) {
-            currentTOD = 0;
-        } else if(currentTOD < QUANTUM) {
-            setTIMER(currentTOD);
-        } else {
-            setTIMER(QUANTUM);
-        }
-        contextSwitch(&(currentProcess->p_state));
     }
+    if (currentProcess != NULL) {
+        STCK(currentTOD);
+        currentProcess->p_time = currentProcess->p_time + (currentTOD - startTOD);
+    }
+    if(currentTOD < QUANTUM) {
+        setTIMER(QUANTUM);
+    } else {
+        setTIMER(QUANTUM);
+    }
+    currentProcess = removeProcQ(&(readyQueue));
+    STCK(startTOD);
+    contextSwitch(&(currentProcess->p_state));
 }
