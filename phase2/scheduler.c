@@ -28,7 +28,7 @@ extern void invokeScheduler() {
             STCK(currentTOD);
             currentProcess->p_time = currentProcess->p_time + (currentTOD - startTOD);
         }
-        if (currentTOD < QUANTUM) {
+        if(currentTOD < QUANTUM) {
             setTIMER(currentTOD);
         } else {
             setTIMER(QUANTUM);

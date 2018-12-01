@@ -116,7 +116,8 @@
 #define HIDDEN static
 #define EOS	'\0'
 #define NULL ((void *)0xFFFFFFFF)
-
+#define SUCCESS 0
+#define FAILURE -1
 
 /* vectors number and type */
 #define VECTSNUM 4

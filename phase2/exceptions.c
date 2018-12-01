@@ -1,3 +1,4 @@
+/* h files to include */
 #include "../h/const.h"
 #include "../h/types.h"
 /* e files to include */
@@ -6,6 +7,7 @@
 #include "../e/interrupts.e"
 #include "../e/pcb.e"
 #include "../e/asl.e"
+/* include the µmps2 library */
 #include "/usr/local/include/umps2/umps/libumps.e"
 
 void contextSwitch(state_PTR s) {
@@ -133,23 +135,39 @@ static void terminateProcess() {
         outChild(currentProcess);
         freePcb(currentProcess);
     }
-
     currentProcess = NULL;
     invokeScheduler();
 }
 
+/*
+* Function: Create Process - Syscall 1
+* C
+*/
 static void createProcess(state_PTR state) {
+    /* grab a new process */
     pcb_PTR p = allocPcb();
-    if(p == NULL) {
-        state->s_v0 = -1;
-        contextSwitch(state);
+    if(p != NULL) {
+        /* there is now n+1 running processes */
+        processCount++;
+        /* since there is a free process, if the process 
+        has a parent, it is inserted into the parent, and then
+        placed in the ready queue */
+        insertChild(currentProcess, p);
+        insertProcQ(&(readyQueue), p);
+        /* copy the content from the state's 
+        $a1 register to the new pcb_t's state */
+        state_PTR temp = (state_PTR) state->s_a1;
+        copyState(temp, &(p->p_state));
+        /* acknowledge the success of the new process
+        by placing 0 in the state's $v0 register */
+        state->s_v0 = SUCCESS;
+    } else {
+        /* if there are no free processes, acknowledge 
+        the failure of a new allocated pcb_t by placing 
+        -1 in the state's $v0 register */
+        state->s_v0 = FAILURE;
     }
-    processCount++;
-    insertChild(currentProcess, p);
-    insertProcQ(&(readyQueue), p);
-    state_PTR temp = (state_PTR) state->s_a1;
-    copyState(temp, &(p->p_state));
-    state->s_v0 = 0;
+    /* context switch */
     contextSwitch(state);
 }
 
@@ -192,9 +210,6 @@ static void userModeHandler(state_PTR state) {
     programTrapHandler();
 }
 
-/************************************************************************************************************************/
-/*************************************** EXCEPTION HANDLERS *************************************************************/
-/************************************************************************************************************************/
  /*
  * Function: The Syscall Handler
  * 
