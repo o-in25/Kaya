@@ -129,9 +129,9 @@ typedef struct pte_t {
 
 /* frame pool entry */
 typedef struct fp_t {
-	int processID,
-	int segmentNumber,
-	int pageNumber,
+	int processID;
+	int segmentNumber;
+	int pageNumber;
 	
 } fp_t, *fp_PTR;
 
