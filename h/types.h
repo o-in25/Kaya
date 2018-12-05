@@ -90,6 +90,39 @@ typedef struct state_t {
 
 
 
+typedef struct upe_t {
+	int semaphore,
+	fp_t* pageTable,
+	int backingStoreAddr,
+	state_t[3] newAreas,
+	state_t[3] oldAreas
+} upe_t
+
+
+
+/* page table entry */
+typedef struct pgtblentry_t  {
+	unsigned int entryHi,
+	unsigned int entryLo
+}
+
+/* page table entry */
+typedef struct pte_t {
+	int processID,
+	int segmentNumber,
+	int pageNumber,
+	pte_t* pageTableEntry
+} pte_t
+
+/* frame pool entry */
+typedef struct fp_t {
+	int processID,
+	int segmentNumber,
+	int pageNumber,
+	
+} fp_t, *fp_PTR
+
+
 /* process table entry type */
 typedef struct pcb_t {
 	/* queue relationship */
