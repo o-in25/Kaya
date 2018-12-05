@@ -43,6 +43,25 @@ typedef struct {
 	device_t   devreg[DEVINTNUM * DEVPERINT];
 } devregarea_t, *devregarea_PTR;
 
+/*frame struct, INCOMPLETE */
+typedef struct {
+	unsigned int processID;
+	unsigned int segment;
+	unsigned int pageNum;
+	/*this is a placeholder value */
+	pageTableEntry* pageTableEntry;
+} frame, *frame_PTR;
+
+/* user process storage struct */
+typedef struct {
+	unsigned int semaphore;
+	pageTable kUseg2;
+	/*backing store address */
+	unsigned int backStrAddr;
+	/* can be split into individuals for easier naming but for now they are joined */
+	state_t stateNew [3];
+	state_t stateOld[3];
+} user, *user_PTR;
 
 #define STATEREGNUM	31
 
