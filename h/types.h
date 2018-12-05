@@ -54,7 +54,6 @@ typedef struct frame_t {
 /* user process storage struct */
 typedef struct user_t {
 	unsigned int semaphore;
-	pageTable kUseg2;
 	/*backing store address */
 	unsigned int backStrAddr;
 	/* can be split into individuals for easier naming but for now they are joined */
