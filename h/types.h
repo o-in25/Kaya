@@ -44,16 +44,15 @@ typedef struct {
 } devregarea_t, *devregarea_PTR;
 
 /*frame struct, INCOMPLETE */
-typedef struct {
+typedef struct frame_t {
 	unsigned int ASID;
 	unsigned int segment;
 	unsigned int pageNum;
 	/*this is a placeholder value */
-	pageTableEntry* pageTableEntry;
-} frame, *frame_PTR;
+} frame_t, *frame_PTR;
 
 /* user process storage struct */
-typedef struct {
+typedef struct user_t {
 	unsigned int semaphore;
 	pageTable kUseg2;
 	/*backing store address */
@@ -61,7 +60,7 @@ typedef struct {
 	/* can be split into individuals for easier naming but for now they are joined */
 	state_t stateNew [3];
 	state_t stateOld[3];
-} user, *user_PTR;
+} user_t, *user_PTR;
 
 #define STATEREGNUM	31
 
