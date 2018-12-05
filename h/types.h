@@ -45,7 +45,7 @@ typedef struct {
 
 /*frame struct, INCOMPLETE */
 typedef struct {
-	unsigned int processID;
+	unsigned int ASID;
 	unsigned int segment;
 	unsigned int pageNum;
 	/*this is a placeholder value */
