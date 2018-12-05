@@ -57,8 +57,8 @@ typedef struct user_t {
 	/*backing store address */
 	unsigned int backStrAddr;
 	/* can be split into individuals for easier naming but for now they are joined */
-	state_t stateNew [3];
-	state_t stateOld[3];
+	state_t stateNew;
+	state_t stateOld;
 } user_t, *user_PTR;
 
 #define STATEREGNUM	31
