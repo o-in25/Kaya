@@ -108,6 +108,7 @@ static void passeren(state_PTR state) {
     int* semaphore = (int*) state->s_a1;
     (*(semaphore))--;
     if((*(semaphore)) < 0) {
+        cpu_t stopTOD;
         STCK(stopTOD);
         /*Store elapsed time*/
         int elapsedTime = stopTOD - startTOD;
