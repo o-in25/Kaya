@@ -108,8 +108,8 @@ typedef struct state_t {
 typedef struct upe_t {
 	int semaphore;
 	int backingStoreAddr;
-	state_t[3] newAreas;
-	state_t[3] oldAreas;
+	state_t newAreas;
+	state_t oldAreas;
 } upe_t, *upe_PTR;
 
 
