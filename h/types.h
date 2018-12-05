@@ -115,7 +115,7 @@ typedef struct upe_t {
 	int backingStoreAddr,
 	state_t[3] newAreas,
 	state_t[3] oldAreas
-} upe_t
+} upe_t;
 
 
 
@@ -123,7 +123,7 @@ typedef struct upe_t {
 typedef struct pgtblentry_t  {
 	unsigned int entryHi,
 	unsigned int entryLo
-}
+} pgtblentry_t;
 
 /* page table entry */
 typedef struct pte_t {
@@ -131,7 +131,7 @@ typedef struct pte_t {
 	int segmentNumber,
 	int pageNumber,
 	pte_t* pageTableEntry
-} pte_t
+} pte_t;
 
 /* frame pool entry */
 typedef struct fp_t {
