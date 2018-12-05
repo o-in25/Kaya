@@ -108,6 +108,10 @@ static void passeren(state_PTR state) {
     int* semaphore = (int*) state->s_a1;
     (*(semaphore))--;
     if((*(semaphore)) < 0) {
+        STCK(stopTOD);
+        /*Store elapsed time*/
+        elapsedTime = stopTOD - startTOD;
+        currentProcess->p_time = currentProcess->p_time + elapsedTime
         copyState(state, &(currentProcess->p_state));
         insertBlocked(semaphore, currentProcess);
         invokeScheduler();
@@ -115,33 +119,79 @@ static void passeren(state_PTR state) {
     contextSwitch(state);
 }
 
+/*
+* Function: Verhogen - Syscall 3
+* When this service is requested, it is interpreted by the kernel as a 
+* request to perform a V operation on a syncronization semaphore. The SYS3 service 
+* is requested by the calling process by placing the value 3 in a0, 
+* the physical address of the semaphore to be V’ed in a1, and then 
+* executing a SYSCALL instruction.
+*/
 static void verhogen(state_PTR state) {
+    /* the semaphore is placed in the a1 register of the 
+    passed in state_t */
     int* semaphore = (int*) state->s_a1;
+    /* increment the semaphore - the V operation on 
+    the semaphore */
     (*(semaphore))++;
+    /* if the synchronization semaphore description is <= 0, 
+    then it will remove the process from the blocked processes 
+    and place it in the ready queue - which synchronizes the processes */
     if(*(semaphore) <= 0) {
+        /* unblock the next process */
         pcb_PTR newProcess = removeBlocked(semaphore);
+        /* the current process is then placed in the ready 
+        queue - baring its not null */
         if(newProcess != NULL) {
+            /* place it in the ready queue */
             insertProcQ(&(readyQueue), newProcess);
         }
     }
+    /* perform a context switch on the requested process */
     contextSwitch(state);
 }
 
+/* Function: Terminate Process - Syscall 2
+* This services causes the executing process to cease to exist.
+*  In addition, recurively, all progeny of this process
+*  are terminated as well. Execution of this intruction does not 
+* complete until all progeny are terminated.
+*/
 static void terminateProcess() {
-    if(!emptyChild(currentProcess)) {
-        terminateProgeny(currentProcess);
-    } else {
+    /* if there are no children, simply decrement 
+    the process count, remove the current process, and 
+    free up a pcb_t */
+    if(emptyChild(currentProcess)) {
+        /* n-1 processes remaining */
         processCount--;
         outChild(currentProcess);
+        /* free the process */
         freePcb(currentProcess);
+    } else {
+        /* calls the terminate progeny helper function */
+        terminateProgeny(currentProcess);
     }
+    /* in either case, we have no current processes, and 
+    the scheduler needs to be called in order to get a new
+    processes */
     currentProcess = NULL;
+    /* reschedule a new process */
     invokeScheduler();
 }
 
 /*
 * Function: Create Process - Syscall 1
-* C
+* When requested, this service causes a new process, 
+* said to be a progeny of the caller, to be created. 
+* a1 should contain the physical address of a processor state 
+* area at the time this instruction is executed. 
+* This processor state is used as the initial state for 
+* the newly created process. The process requesting 
+* the SYS1 service continues to exist and to execute. 
+* If the new process cannot be created due to lack of 
+* resources (for example no more free ProcBlk’s), an error code 
+* of -1 is placed in the caller’s v0, otherwise, the value 0 is 
+* placed the caller’s v0.
 */
 static void createProcess(state_PTR state) {
     /* grab a new process */
