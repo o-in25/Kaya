@@ -110,28 +110,28 @@ typedef struct state_t {
 
 
 typedef struct upe_t {
-	int semaphore,
-	fp_t* pageTable,
-	int backingStoreAddr,
-	state_t[3] newAreas,
-	state_t[3] oldAreas
-} upe_t;
+	int semaphore;
+	fp_t* pageTable;
+	int backingStoreAddr;
+	state_t[3] newAreas;
+	state_t[3] oldAreas;
+} upe_t, *upe_PTR;
 
 
 
 /* page table entry */
 typedef struct pgtblentry_t  {
-	unsigned int entryHi,
-	unsigned int entryLo
-} pgtblentry_t;
+	unsigned int entryHi;
+	unsigned int entryLo;
+} pgtblentry_t, *pgtblentry_PTR;
 
 /* page table entry */
 typedef struct pte_t {
-	int processID,
-	int segmentNumber,
-	int pageNumber,
-	pte_t* pageTableEntry
-} pte_t;
+	int processID;
+	int segmentNumber;
+	int pageNumber;
+	pte_t* pageTableEntry;
+} pte_t, *pte_PTR;
 
 /* frame pool entry */
 typedef struct fp_t {
