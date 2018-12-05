@@ -111,7 +111,7 @@ static void passeren(state_PTR state) {
         STCK(stopTOD);
         /*Store elapsed time*/
         int elapsedTime = stopTOD - startTOD;
-        currentProcess->p_time = currentProcess->p_time + elapsedTime
+        currentProcess->p_time = currentProcess->p_time + elapsedTime;
         copyState(state, &(currentProcess->p_state));
         insertBlocked(semaphore, currentProcess);
         invokeScheduler();
