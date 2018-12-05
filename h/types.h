@@ -139,7 +139,7 @@ typedef struct fp_t {
 	int segmentNumber,
 	int pageNumber,
 	
-} fp_t, *fp_PTR
+} fp_t, *fp_PTR;
 
 
 /* process table entry type */
