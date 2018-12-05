@@ -107,7 +107,6 @@ typedef struct state_t {
 
 typedef struct upe_t {
 	int semaphore;
-	fp_t* pageTable;
 	int backingStoreAddr;
 	state_t[3] newAreas;
 	state_t[3] oldAreas;
