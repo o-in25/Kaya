@@ -110,7 +110,7 @@ static void passeren(state_PTR state) {
     if((*(semaphore)) < 0) {
         STCK(stopTOD);
         /*Store elapsed time*/
-        elapsedTime = stopTOD - startTOD;
+        int elapsedTime = stopTOD - startTOD;
         currentProcess->p_time = currentProcess->p_time + elapsedTime
         copyState(state, &(currentProcess->p_state));
         insertBlocked(semaphore, currentProcess);
