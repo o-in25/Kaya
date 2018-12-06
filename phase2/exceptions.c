@@ -77,47 +77,89 @@ static void getCpuTime(state_PTR state) {
     contextSwitch(&(currentProcess->p_state));
 }
 
+/*
+* Function: Specify the Exceptions State Vector
+* when this service is requested, will save the contents of a2 and a3 (in the invoking process’es ProcBlk) 
+* to facilitate “passing up” handling of the respective exception when (and if) one occurs while this
+*  process is executing. When an exception occurs for which an Exception State Vector has been 
+* specified for, the nucleus stores the processor state at the time of the exception in the area 
+* pointed to by the address in a2, and loads the new processor state from the area pointed to by the address given in a3.
+* Each process may request a SYS5 service at most once for each of the three exception types.
+* An attempt to request a SYS5 service more than once per exceptpion it is construed as an error and treated as a SYS2.
+* If an exception occurs while running a process which has not specified an Exception State Vector for that exception type, 
+* then the nucleus should treat the exception as a SYS2 as well.
+*/
 static void specifyExceptionsStateVector(state_PTR state) {
+    /* get the exception from the a1 register */
     switch(state->s_a1) {
+        /* check if the specified exception is a translation 
+        look aside buffer exception */
         case TLBTRAP:
+            /* if the new tlb has already been set up,
+            kill the process */
             if(currentProcess->newTlb != NULL) {
                 terminateProcess();
             }
+            /* store the syscall area state in the new tlb */
             currentProcess->newTlb = (state_PTR) state->s_a3;
+            /* store the syscall area state in the old tlb*/
             currentProcess->oldTlb = (state_PTR) state->s_a2;
             break;
         case PROGTRAP:
+            /* if the new pgm has already been set up,
+            kill the process */
             if(currentProcess->newPgm != NULL) {
                 terminateProcess();
             }
+            /* store the syscall area state in the new pgm */
             currentProcess->newPgm = (state_PTR) state->s_a3;
             currentProcess->oldPgm = (state_PTR) state->s_a2;
             break;
         case SYSTRAP:
-          if(currentProcess->newSys != NULL) {
+            /* if the new systrap has already been set up,
+            kill the process */
+            if(currentProcess->newSys != NULL) {
                 terminateProcess();
             }
+            /* store the syscall area state in the new pgm */
             currentProcess->newSys = (state_PTR) state->s_a3;
+            /* store the syscall area state in the old pgm*/
             currentProcess->oldSys = (state_PTR) state->s_a2;
             break;
     }
     contextSwitch(state);
 }
 
-static void passeren(state_PTR state) {
-    int* semaphore = (int*) state->s_a1;
-    (*(semaphore))--;
-    if((*(semaphore)) < 0) {
-        cpu_t stopTOD;
-        STCK(stopTOD);
-        /*Store elapsed time*/
-        int elapsedTime = stopTOD - startTOD;
-        currentProcess->p_time = currentProcess->p_time + elapsedTime;
-        copyState(state, &(currentProcess->p_state));
-        insertBlocked(semaphore, currentProcess);
-        invokeScheduler();
-    }
-    contextSwitch(state);
+/*
+* Function: Verhogen - Syscall 4
+* When this service is requested, it is interpreted by the kernel as a 
+* request to perform a V operation on a syncronization semaphore. The SYS3 service 
+* is requested by the calling process by placing the value 3 in a0, 
+* the physical address of the semaphore to be V’ed in a1, and then 
+* executing a SYSCALL instruction.
+*/
+            static void passeren(state_PTR state)
+            {
+                int *semaphore = (int *)state->s_a1;
+                (*(semaphore))--;
+                if ((*(semaphore)) < 0)
+                {
+                    cpu_t stopTOD;
+                    STCK(stopTOD);
+                    /*Store elapsed time*/
+                    int elapsedTime = stopTOD - startTOD;
+                    /* add the elapsed time to the current process */
+                    currentProcess->p_time = currentProcess->p_time + elapsedTime;
+                    /* copy from the old syscall area to the new process's state */
+                    copyState(state, &(currentProcess->p_state));
+                    /* the process now must wait */
+                    insertBlocked(semaphore, currentProcess);
+                    /* get a new job */
+                    invokeScheduler();
+                }
+                /* if the semaphore is not less than zero, do not 
+    block the process, just load the new state */
+                contextSwitch(state);
 }
 
 /*
