@@ -5,6 +5,7 @@
 #include "../e/initial.e"
 #include "../e/scheduler.e"
 #include "../e/interrupts.e"
+#include "../e/scheduler.e"
 #include "../e/pcb.e"
 #include "../e/asl.e"
 /* include the µmps2 library */
@@ -66,13 +67,25 @@ static void waitForClock(state_PTR state) {
     invokeScheduler();
 }
 
+/* 
+* Function: Get CPU Time
+* When this service is requested, it causes the processor time (in microseconds) used by the 
+* requesting process to be placed/returned in the caller’s v0. The kernel records (in the ProcBlk) the amount
+* of processor time used by each process.
+*/
 static void getCpuTime(state_PTR state) {
+    /* copy the state from the old syscall into the pcb_t's state */
     copyState(state, &(currentProcess->p_state));
-    cpu_t stopTOD;
+    /* the clock can be started by placing a new value in the 
+    STCK ROM function */
+    /* start the clock  for the stop */
     STCK(stopTOD);
+    /* get the time that has passed */
     cpu_t elapsedTime = stopTOD - startTOD;
     currentProcess->p_time = (currentProcess->p_time) + elapsedTime;
+    /* store the state in the pcb_t's v0 register */
     currentProcess->p_state.s_v0 = currentProcess->p_time;
+    /* start the clock for the start TOD */
     STCK(startTOD);
     contextSwitch(&(currentProcess->p_state));
 }
@@ -81,7 +94,7 @@ static void getCpuTime(state_PTR state) {
 * Function: Specify the Exceptions State Vector
 * when this service is requested, will save the contents of a2 and a3 (in the invoking process’es ProcBlk) 
 * to facilitate “passing up” handling of the respective exception when (and if) one occurs while this
-*  process is executing. When an exception occurs for which an Exception State Vector has been 
+* process is executing. When an exception occurs for which an Exception State Vector has been 
 * specified for, the nucleus stores the processor state at the time of the exception in the area 
 * pointed to by the address in a2, and loads the new processor state from the area pointed to by the address given in a3.
 * Each process may request a SYS5 service at most once for each of the three exception types.
@@ -138,28 +151,28 @@ static void specifyExceptionsStateVector(state_PTR state) {
 * the physical address of the semaphore to be V’ed in a1, and then 
 * executing a SYSCALL instruction.
 */
-            static void passeren(state_PTR state)
-            {
-                int *semaphore = (int *)state->s_a1;
-                (*(semaphore))--;
-                if ((*(semaphore)) < 0)
-                {
-                    cpu_t stopTOD;
-                    STCK(stopTOD);
-                    /*Store elapsed time*/
-                    int elapsedTime = stopTOD - startTOD;
-                    /* add the elapsed time to the current process */
-                    currentProcess->p_time = currentProcess->p_time + elapsedTime;
-                    /* copy from the old syscall area to the new process's state */
-                    copyState(state, &(currentProcess->p_state));
-                    /* the process now must wait */
-                    insertBlocked(semaphore, currentProcess);
-                    /* get a new job */
-                    invokeScheduler();
-                }
-                /* if the semaphore is not less than zero, do not 
+static void passeren(state_PTR state)
+{
+    int *semaphore = (int *)state->s_a1;
+    (*(semaphore))--;
+    if ((*(semaphore)) < 0)
+    {
+        cpu_t stopTOD;
+        STCK(stopTOD);
+        /*Store elapsed time*/
+        int elapsedTime = stopTOD - startTOD;
+        /* add the elapsed time to the current process */
+        currentProcess->p_time = currentProcess->p_time + elapsedTime;
+        /* copy from the old syscall area to the new process's state */
+        copyState(state, &(currentProcess->p_state));
+        /* the process now must wait */
+        insertBlocked(semaphore, currentProcess);
+        /* get a new job */
+        invokeScheduler();
+    }
+    /* if the semaphore is not less than zero, do not 
     block the process, just load the new state */
-                contextSwitch(state);
+    contextSwitch(state);
 }
 
 /*
