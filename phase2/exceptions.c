@@ -26,6 +26,7 @@ void copyState(state_PTR from, state_PTR to) {
     }
 }
 
+
 static int findSemaphoreIndex(int lineNumber, int deviceNumber, int flag) {
     int offset;
     if(flag == TRUE) {
@@ -36,6 +37,74 @@ static int findSemaphoreIndex(int lineNumber, int deviceNumber, int flag) {
     int calculation = (DEVPERINT * offset) + deviceNumber;
     return calculation;
 }
+
+static void passUpOrDie(int callNumber, state_PTR old) {
+    switch(callNumber) {
+    case SYSTRAP:
+        if(currentProcess->newSys != NULL) {
+            copyState(old, currentProcess->oldSys);
+            contextSwitch(currentProcess->newSys);
+        }
+        break;
+    case TLBTRAP:
+        if(currentProcess->newTlb != NULL){
+            copyState(old, currentProcess->oldTlb);
+            contextSwitch(currentProcess->newTlb);
+        }
+        break;
+    case PROGTRAP:
+        if(currentProcess->newPgm != NULL){
+            copyState(old, currentProcess->oldPgm);
+            contextSwitch(currentProcess->newPgm);
+            break;
+        }
+    }
+    terminateProcess();
+}
+
+
+ static void terminateProgeny(pcb_PTR p) {
+     while (!emptyChild(p)) {
+         terminateProgeny(removeChild(p));
+     }
+     if (p->p_semAdd != NULL) {
+         int* semaphore = p->p_semAdd;
+         outBlocked(p);
+        if(semaphore >= &(semdTable[0]) && semaphore <= &(semdTable[MAXSEMALLOC - 1])) {
+            softBlockedCount--;
+        } else {
+            (*semaphore)++;
+        }
+     } else if(p == currentProcess){
+         outChild(currentProcess);
+     } else {
+         outProcQ(&(readyQueue), p);
+     }
+     freePcb(p);
+     processCount--;
+ }
+
+static void terminateProgeny(pcb_PTR p) {
+     while (!emptyChild(p)) {
+         terminateProgeny(removeChild(p));
+     }
+     if (p->p_semAdd != NULL) {
+         int* semaphore = p->p_semAdd;
+         outBlocked(p);
+        if(semaphore >= &(semdTable[0]) && semaphore <= &(semdTable[MAXSEMALLOC - 1])) {
+            softBlockedCount--;
+        } else {
+            (*semaphore)++;
+        }
+     } else if(p == currentProcess){
+         outChild(currentProcess);
+     } else {
+         outProcQ(&(readyQueue), p);
+     }
+     freePcb(p);
+     processCount--;
+}
+
 
 static void waitForIODevice(state_PTR state) {
     int lineNumber = state->s_a1;
@@ -58,8 +127,8 @@ static void waitForIODevice(state_PTR state) {
 
 /* 
 * Function: Wait For Clock
-* This instruction performs a P operation on the nucleus maintained pseudo-clock timer semaphore. 
-* This semaphore is V’ed every 100 milliseconds automatically by the nucleus.
+* This instruction performs a P operation on the kernel maintained pseudo-clock timer semaphore. 
+* This semaphore is V’ed every 100 milliseconds automatically by the kernel.
 */
 static void waitForClock(state_PTR state) {
     /* get the semaphore index of the clock timer */
@@ -69,7 +138,7 @@ static void waitForClock(state_PTR state) {
     if((*semaphore) < 0) {
         /* block the process */
         insertBlocked(semaphore, currentProcess);
-        /* copy from the old syscall area into the new pcb_state */
+        /* copy from the old syscall area into the new pcb_state
         copyState(state, &(currentProcess->p_state));
         /* increment the number of waiting processes */
         softBlockedCount++;
@@ -83,22 +152,22 @@ static void waitForClock(state_PTR state) {
 * requesting process to be placed/returned in the caller’s v0. The kernel records (in the ProcBlk) the amount
 * of processor time used by each process.
 */
-        static void getCpuTime(state_PTR state)
-        {
-            /* copy the state from the old syscall into the pcb_t's state */
-            /* the clock can be started by placing a new value in the 
-            STCK ROM function */
-            cpu_t stopTOD;
-            /* start the clock  for the stop */
-            STCK(stopTOD);
-            /* get the time that has passed */
-            cpu_t elapsedTime = stopTOD - startTOD;
-            currentProcess->p_time = (currentProcess->p_time) + elapsedTime;
-            /* store the state in the pcb_t's v0 register */
-            state->s_v0 = currentProcess->p_time;
-            /* start the clock for the start TOD */
-            STCK(startTOD);
-            contextSwitch(state);
+ static void getCpuTime(state_PTR state) {
+        /* copy the state from the old syscall into the pcb_t's state */
+        copyState(state, &(currentProcess->p_state));
+        /* the clock can be started by placing a new value in the 
+        STCK ROM function */
+        cpu_t stopTOD;
+        /* start the clock  for the stop */ 
+        STCK(stopTOD);
+        /* get the time that has passed */
+        cpu_t elapsedTime = stopTOD - startTOD;
+        currentProcess->p_time = (currentProcess->p_time) + elapsedTime;
+        /* store the state in the pcb_t's v0 register */
+        currentProcess->p_state.s_v0 = currentProcess->p_time;
+        /* start the clock for the start TOD */
+        STCK(startTOD);
+        contextSwitch(&(currentProcess->p_state));
 }
 
 /*
@@ -288,6 +357,14 @@ static void createProcess(state_PTR state) {
     contextSwitch(state);
 }
 
+static void userModeHandler(state_PTR state) {
+    state_PTR programTrapOldArea = (state_PTR)PRGMTRAPOLDAREA;
+    copyState(state, programTrapOldArea);
+    unsigned int placeholder = (programTrapOldArea->s_cause) & ~(FULLBYTE);
+    (programTrapOldArea->s_cause) = (placeholder | RESERVED);
+    programTrapHandler();
+}
+
 static void syscallDispatch(int callNumber, state_PTR caller) {
     switch (callNumber) {
         case WAITFORIODEVICE: /* SYSCALL 8 */
@@ -319,13 +396,15 @@ static void syscallDispatch(int callNumber, state_PTR caller) {
     }
 }
 
-static void userModeHandler(state_PTR state) {
-    state_PTR programTrapOldArea = (state_PTR)PRGMTRAPOLDAREA;
-    copyState(state, programTrapOldArea);
-    unsigned int placeholder = (programTrapOldArea->s_cause) & ~(FULLBYTE);
-    (programTrapOldArea->s_cause) = (placeholder | RESERVED);
-    programTrapHandler();
-}
+ void programTrapHandler() {
+    state_PTR oldState = (state_PTR) PRGMTRAPOLDAREA;
+    passUpOrDie(PROGTRAP, oldState);
+ }
+
+ void translationLookasideBufferHandler() { 
+    state_PTR oldState = (state_PTR) TBLMGMTOLDAREA;
+    passUpOrDie(TLBTRAP, oldState);
+ }
 
  /*
  * Function: The Syscall Handler
@@ -347,57 +426,6 @@ static void userModeHandler(state_PTR state) {
     }
  }
 
- void programTrapHandler() {
-     state_PTR oldState = (state_PTR) PRGMTRAPOLDAREA;
-     passUpOrDie(PROGTRAP, oldState);
- }
 
- void translationLookasideBufferHandler() { 
-     state_PTR oldState = (state_PTR) TBLMGMTOLDAREA;
-     passUpOrDie(TLBTRAP, oldState);
- }
 
- static void terminateProgeny(pcb_PTR p) {
-     while (!emptyChild(p)) {
-         terminateProgeny(removeChild(p));
-     }
-     if (p->p_semAdd != NULL) {
-         int* semaphore = p->p_semAdd;
-         outBlocked(p);
-        if(semaphore >= &(semdTable[0]) && semaphore <= &(semdTable[MAXSEMALLOC - 1])) {
-            softBlockedCount--;
-        } else {
-            (*semaphore)++;
-        }
-     } else if(p == currentProcess){
-         outChild(currentProcess);
-     } else {
-         outProcQ(&(readyQueue), p);
-     }
-     freePcb(p);
-     processCount--;
- }
 
- static void passUpOrDie(int callNumber, state_PTR old) {
-     switch(callNumber) {
-        case SYSTRAP:
-            if(currentProcess->newSys != NULL) {
-                copyState(old, currentProcess->oldSys);
-                contextSwitch(currentProcess->newSys);
-            }
-            break;
-        case TLBTRAP:
-            if(currentProcess->newTlb != NULL) {
-                copyState(old, currentProcess->oldTlb);
-                contextSwitch(currentProcess->newTlb);
-            }
-            break;
-        case PROGTRAP: 
-            if(currentProcess->newPgm != NULL) {
-                copyState(old, currentProcess->oldPgm);
-                contextSwitch(currentProcess->newPgm);
-            break;
-        }
-    }
-    terminateProcess();
- }

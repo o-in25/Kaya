@@ -70,7 +70,8 @@ static void exitInterruptHandler(cpu_t startTime) {
         the ROM supported STCK function */
         STCK(endTime);
         /* find the startedTOD */
-        startTOD = startTOD + (endTime - startTime);
+        cpu_t elapsedTime = endTime - startTime)
+        startTOD = startTOD + elapsedTime;
         /* copy the state from the old interrupt area to the current state */
         copyState(oldInterrupt, &(currentProcess->p_state));
         /* insert the new pricess in the ready queue */
@@ -122,8 +123,8 @@ static void intervalTimerHandler(cpu_t startTime, cpu_t endTime) {
     (*semaphore) = 0;
     /* get all of the blocked devices*/
     while(headBlocked(semaphore) != NULL) {
-        STCK(endTime);
         pcb_PTR p = removeBlocked(semaphore);
+        STCK(endTime);
         if (p != NULL) {
             /* the elapsed time is the start minus the end */
             cpu_t elapsedTime = (endTime - startTime);
