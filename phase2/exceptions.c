@@ -5,7 +5,7 @@
 #include "../e/initial.e"
 #include "../e/scheduler.e"
 #include "../e/interrupts.e"
-#include "../e/scheduler .e"
+#include "../e/scheduler.e"
 #include "../e/pcb.e"
 #include "../e/asl.e"
 /* include the µmps2 library */
