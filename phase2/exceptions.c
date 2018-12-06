@@ -5,7 +5,7 @@
 #include "../e/initial.e"
 #include "../e/scheduler.e"
 #include "../e/interrupts.e"
-#include "../e/scheduler.e"
+#include "../e/scheduler .e"
 #include "../e/pcb.e"
 #include "../e/asl.e"
 /* include the µmps2 library */
@@ -56,13 +56,23 @@ static void waitForIODevice(state_PTR state) {
     contextSwitch(state);
 }
 
+/* 
+* Function: Wait For Clock
+* This instruction performs a P operation on the nucleus maintained pseudo-clock timer semaphore. 
+* This semaphore is V’ed every 100 milliseconds automatically by the nucleus.
+*/
 static void waitForClock(state_PTR state) {
+    /* get the semaphore index of the clock timer */
     int* semaphore = (int*) &(semdTable[(MAXSEMALLOC - 1)]);
+    /* perform a passeren operation */
     (*semaphore)--;
     if((*semaphore) < 0) {
-        softBlockedCount++;
+        /* block the process */
         insertBlocked(semaphore, currentProcess);
+        /* copy from the old syscall area into the new pcb_state */
         copyState(state, &(currentProcess->p_state));
+        /* increment the number of waiting processes */
+        softBlockedCount++;
     }
     invokeScheduler();
 }
@@ -73,21 +83,22 @@ static void waitForClock(state_PTR state) {
 * requesting process to be placed/returned in the caller’s v0. The kernel records (in the ProcBlk) the amount
 * of processor time used by each process.
 */
-static void getCpuTime(state_PTR state) {
-    /* copy the state from the old syscall into the pcb_t's state */
-    copyState(state, &(currentProcess->p_state));
-    /* the clock can be started by placing a new value in the 
-    STCK ROM function */
-    /* start the clock  for the stop */
-    STCK(stopTOD);
-    /* get the time that has passed */
-    cpu_t elapsedTime = stopTOD - startTOD;
-    currentProcess->p_time = (currentProcess->p_time) + elapsedTime;
-    /* store the state in the pcb_t's v0 register */
-    currentProcess->p_state.s_v0 = currentProcess->p_time;
-    /* start the clock for the start TOD */
-    STCK(startTOD);
-    contextSwitch(&(currentProcess->p_state));
+        static void getCpuTime(state_PTR state)
+        {
+            /* copy the state from the old syscall into the pcb_t's state */
+            /* the clock can be started by placing a new value in the 
+            STCK ROM function */
+            cpu_t stopTOD;
+            /* start the clock  for the stop */
+            STCK(stopTOD);
+            /* get the time that has passed */
+            cpu_t elapsedTime = stopTOD - startTOD;
+            currentProcess->p_time = (currentProcess->p_time) + elapsedTime;
+            /* store the state in the pcb_t's v0 register */
+            state->s_v0 = currentProcess->p_time;
+            /* start the clock for the start TOD */
+            STCK(startTOD);
+            contextSwitch(state);
 }
 
 /*
