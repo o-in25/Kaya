@@ -19,6 +19,7 @@
 #include "../e/interrupts.e"
 #include "../e/exceptions.e"
 #include "../e/scheduler.e"
+#include "../e/p2test.e"
 #include "/usr/local/include/umps2/umps/libumps.e"
 
 /* globals */
