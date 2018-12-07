@@ -84,27 +84,6 @@ static void passUpOrDie(int callNumber, state_PTR old) {
      processCount--;
  }
 
-static void terminateProgeny(pcb_PTR p) {
-     while (!emptyChild(p)) {
-         terminateProgeny(removeChild(p));
-     }
-     if (p->p_semAdd != NULL) {
-         int* semaphore = p->p_semAdd;
-         outBlocked(p);
-        if(semaphore >= &(semdTable[0]) && semaphore <= &(semdTable[MAXSEMALLOC - 1])) {
-            softBlockedCount--;
-        } else {
-            (*semaphore)++;
-        }
-     } else if(p == currentProcess){
-         outChild(currentProcess);
-     } else {
-         outProcQ(&(readyQueue), p);
-     }
-     freePcb(p);
-     processCount--;
-}
-
 
 static void waitForIODevice(state_PTR state) {
     int lineNumber = state->s_a1;
@@ -138,8 +117,8 @@ static void waitForClock(state_PTR state) {
     if((*semaphore) < 0) {
         /* block the process */
         insertBlocked(semaphore, currentProcess);
-        /* copy from the old syscall area into the new pcb_state
-        copyState(state, &(currentProcess->p_state));
+        /* copy from the old syscall area into the new pcb_state */
+        copyState(state, &(currentProcess->p_state)); 
         /* increment the number of waiting processes */
         softBlockedCount++;
     }
