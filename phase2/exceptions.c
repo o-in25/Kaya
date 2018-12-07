@@ -11,122 +11,230 @@
 /* include the µmps2 library */
 #include "/usr/local/include/umps2/umps/libumps.e"
 
+
+/* 
+* Function: Context Switch 
+* A simple wrapper function that will place the 
+* passed in state_t pointer into the ROM-issued 
+* Load State (LDST) function
+*/
 void contextSwitch(state_PTR s) {
+    /* load the new processor state */
     LDST(s);
 }
 
+/* 
+* Function: Copy State
+* Simple helper function that will take the contents
+* of the state_t pointer from the first argument 
+* and will copy it to the second state_t pointer 
+* argument
+*/
 void copyState(state_PTR from, state_PTR to) {
+    /* copy id */
     to->s_asid = from->s_asid;
+    /* copy cause register */
     to->s_cause = from->s_cause;
+    /* copy program counter */
     to->s_pc = from->s_pc;
+    /* copy status register */
     to->s_status = from->s_status;
     int i;  
+    /* copy each register */
     for(i = 0; i < STATEREGNUM; i++) {
+        /* copy the register */
         to->s_reg[i] = from->s_reg[i];
     }
 }
 
-
+/*
+* Function: Find Semaphore Index 
+* Will compute the index of a the device semaphore given
+* the line number and the device number. An additional flag 
+* is provided that signifies a terminal read. If so, the device 
+* number will be the n+1th device. 
+*/
 static int findSemaphoreIndex(int lineNumber, int deviceNumber, int flag) {
     int offset;
+    /* is it a terminal read? */
     if(flag == TRUE) {
+        /* compute the index with the flag offset */
         offset = (lineNumber - NOSEM + flag); 
     } else {
+        /* compute the index without the flag offset */
         offset = (lineNumber - NOSEM);
     }
+    /* get the index from the offset and the deice number */
     int calculation = (DEVPERINT * offset) + deviceNumber;
+    /* found the calculation, now return it */
     return calculation;
 }
 
+/*
+* Function: Pass Up Or Die 
+* The syscall 5 (specify state exceptions vector) helper will
+* check if a new exception vector has been set up for that particular
+* exception. If so, that processes is "passed up" to the appropriate 
+* handler, copys into the processor's state the old exception, and 
+* performs a contetx switch. Otherwise, the process dies
+*/
 static void passUpOrDie(int callNumber, state_PTR old) {
+    /* get the call number */
     switch(callNumber) {
-    case SYSTRAP:
-        if(currentProcess->newSys != NULL) {
-            copyState(old, currentProcess->oldSys);
-            contextSwitch(currentProcess->newSys);
-        }
-        break;
-    case TLBTRAP:
-        if(currentProcess->newTlb != NULL){
-            copyState(old, currentProcess->oldTlb);
-            contextSwitch(currentProcess->newTlb);
-        }
-        break;
-    case PROGTRAP:
-        if(currentProcess->newPgm != NULL){
-            copyState(old, currentProcess->oldPgm);
-            contextSwitch(currentProcess->newPgm);
+        /* System trap exception */
+        case SYSTRAP:
+            /* has the systrap handler been set up? */
+            if(currentProcess->newSys == NULL) {
+                /* no - it dies */
+                terminateProcess();
+            } else {
+                /* pass it up to the appropriate handler */
+                copyState(old, currentProcess->oldSys);
+                /* context switch */
+                contextSwitch(currentProcess->newSys);
+            }
+            break;
+        /* Translation Lookaside Buffer Exception */
+        case TLBTRAP:
+            if(currentProcess->newTlb == NULL) {
+                /* no - it dies */
+                terminateProcess();
+            } else {
+                /* pass it up to the appropriate handler */
+                copyState(old, currentProcess->oldTlb);
+                /* context switch */
+                contextSwitch(currentProcess->newTlb);
+            }
+            break;
+        /* Program Trap Exception */
+        case PROGTRAP:
+            if(currentProcess->newPgm == NULL) { 
+                /* no - it dies */
+                terminateProcess();
+            } else {
+                /* pass it up to the appropriate handler */
+                copyState(old, currentProcess->oldPgm);
+                /* context switch */
+                contextSwitch(currentProcess->newPgm);
+            }
             break;
         }
-    }
-    terminateProcess();
 }
 
-
- static void terminateProgeny(pcb_PTR p) {
+/* 
+* Function: Terminate Progeny
+* The syscall 2 - terminate process - helper function.
+* Will beform tail recursion on the current process, killing 
+* all of it's progeny until there are none remaining. Then, it wil
+* check if the process is in a semaphore, is the curren process,
+* or is in the ready queue. 
+*/
+static void terminateProgeny(pcb_PTR p) {
+    /* kill each progeny */
      while (!emptyChild(p)) {
-         terminateProgeny(removeChild(p));
+        /* perform tail recursion */
+        terminateProgeny(removeChild(p));
      }
+     /* n-1 processes left */
+     processCount--;
+     /* check of the pcb_t has a semaphore address */
      if (p->p_semAdd != NULL) {
-         int* semaphore = p->p_semAdd;
-         outBlocked(p);
+        /* get the semaphore */
+        int* semaphore = p->p_semAdd;
+        /* call outblocked on the pcb_t */
+        outBlocked(p);
+        /* if the semaphore greater than 0 and less than 48, then
+        it is a device semapore */
         if(semaphore >= &(semdTable[0]) && semaphore <= &(semdTable[MAXSEMALLOC - 1])) {
+            /* we have 1 less waiting process */
             softBlockedCount--;
         } else {
+            /* not a device semaphore */
             (*semaphore)++;
         }
      } else if(p == currentProcess){
+         /* yank the process from the parent */
          outChild(currentProcess);
      } else {
+         /* yank the process from the ready queue */
          outProcQ(&(readyQueue), p);
      }
+     /* there are no mo children, so the process itself is free */
      freePcb(p);
-     processCount--;
  }
 
-
+/*
+* This service performs a P operation on the semaphore that the kernel 
+* maintains for the I/O device indicated by the values in a1, a2, and optionally a3.
+* Each terminal device has two kernel maintained semaphores for it; one for character 
+* receipt and one for character transmission.
+* The kernel performs a V operation on the kernel maintained semaphore whenever 
+* that (sub)device generates an interrupt.
+* Once the process resumes after the occurrence of the anticipated interrupt, 
+* the (sub)device’s status word is returned in v0. For character transmission and receipt,
+* the status word, in addition to containing a device completion code, will also contain the character
+*  transmitted or received. It is possible that the interrupt can occur prior to the request 
+* for the SYS8 service. In this case the requesting process will not block as a result of 
+* the P operation and the interrupting device’s status word, which was stored off,
+* is placed in v0 prior to resuming execution
+*/
 static void waitForIODevice(state_PTR state) {
+    /* get the line number in the a1 register */
     int lineNumber = state->s_a1;
+    /* get the device number in the a2 register */
     int deviceNumber = state->s_a2; 
+    /* set the terminal read/write flag to be the contents of a3 */
     int terminalReadFlag = (state->s_a3 == TRUE);
+    /* if the requesting device is not in the 3-8 device range,
+    the process is simply terminated */
     if(lineNumber < DISKINT || lineNumber > TERMINT) {
+        /* kill the process */
         terminateProcess();
     }
+    /* get the index of the device semaphore */
     int i = findSemaphoreIndex(lineNumber, deviceNumber, terminalReadFlag);
     int* semaphore = &(semdTable[i]);
+    /* perform a P operation */
     (*semaphore)--;
     if((*semaphore) < 0) {
+        /* block the current process */
         insertBlocked(semaphore, currentProcess);
+        /* we have 1 more waiting process */
         softBlockedCount++;
+        /* copy the old syscall area to the new pcb_t state_t */
         copyState(state, &(currentProcess->p_state));
+        /* get a new process */
         invokeScheduler();
     }
+    /* if no P operation can be done, simply context switch */
     contextSwitch(state);
 }
 
 /* 
-* Function: Wait For Clock
+* Function: Wait For Clock - Syscall 7
 * This instruction performs a P operation on the kernel maintained pseudo-clock timer semaphore. 
 * This semaphore is V’ed every 100 milliseconds automatically by the kernel.
 */
-static void waitForClock(state_PTR state) {
-    /* get the semaphore index of the clock timer */
-    int* semaphore = (int*) &(semdTable[(MAXSEMALLOC - 1)]);
-    /* perform a passeren operation */
-    (*semaphore)--;
-    if((*semaphore) < 0) {
-        /* block the process */
-        insertBlocked(semaphore, currentProcess);
-        /* copy from the old syscall area into the new pcb_state */
-        copyState(state, &(currentProcess->p_state)); 
-        /* increment the number of waiting processes */
-        softBlockedCount++;
-    }
-    invokeScheduler();
+ static void waitForClock(state_PTR state)
+ {
+     /* get the semaphore index of the clock timer */
+     int *semaphore = (int *)&(semdTable[(MAXSEMALLOC - 1)]);
+     /* perform a passeren operation */
+     (*semaphore)--;
+     if ((*semaphore) < 0)
+     {
+         /* block the process */
+         insertBlocked(semaphore, currentProcess);
+         /* copy from the old syscall area into the new pcb_state */
+         copyState(state, &(currentProcess->p_state));
+         /* increment the number of waiting processes */
+         softBlockedCount++;
+     }
+     invokeScheduler();
 }
 
 /* 
-* Function: Get CPU Time
+* Function: Get CPU Time - Syscall 6
 * When this service is requested, it causes the processor time (in microseconds) used by the 
 * requesting process to be placed/returned in the caller’s v0. The kernel records (in the ProcBlk) the amount
 * of processor time used by each process.
@@ -150,15 +258,23 @@ static void waitForClock(state_PTR state) {
 }
 
 /*
-* Function: Specify the Exceptions State Vector
-* when this service is requested, will save the contents of a2 and a3 (in the invoking process’es ProcBlk) 
-* to facilitate “passing up” handling of the respective exception when (and if) one occurs while this
-* process is executing. When an exception occurs for which an Exception State Vector has been 
-* specified for, the nucleus stores the processor state at the time of the exception in the area 
-* pointed to by the address in a2, and loads the new processor state from the area pointed to by the address given in a3.
-* Each process may request a SYS5 service at most once for each of the three exception types.
-* An attempt to request a SYS5 service more than once per exceptpion it is construed as an error and treated as a SYS2.
-* If an exception occurs while running a process which has not specified an Exception State Vector for that exception type, 
+* Function: Specify the Exceptions State Vector - Syscall 5
+* when this service is requested, will save the contents of a2 and a3 
+* (in the invoking process’es ProcBlk) 
+* to facilitate “passing up” handling of the respective exception 
+* when (and if) one occurs while this
+* process is executing. When an exception occurs for which an
+8  Exception State Vector has been 
+* specified for, the nucleus stores the processor state at the time of 
+* the exception in the area 
+* pointed to by the address in a2, and loads the new processor state from 
+* the area pointed to by the address given in a3.
+* Each process may request a SYS5 service at most once for each of the 
+* three exception types.
+* An attempt to request a SYS5 service more than once per exceptpion 
+* it is construed as an error and treated as a SYS2.
+* If an exception occurs while running a process which has not specified an 
+* Exception State Vector for that exception type, 
 * then the nucleus should treat the exception as a SYS2 as well.
 */
 static void specifyExceptionsStateVector(state_PTR state) {
