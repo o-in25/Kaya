@@ -76,7 +76,7 @@ static int findSemaphoreIndex(int lineNumber, int deviceNumber, int flag) {
 * check if a new exception vector has been set up for that particular
 * exception. If so, that processes is "passed up" to the appropriate 
 * handler, copys into the processor's state the old exception, and 
-* performs a contetx switch. Otherwise, the process dies
+* performs a context switch. Otherwise, the process dies
 */
 static void passUpOrDie(int callNumber, state_PTR old) {
     /* get the call number */
