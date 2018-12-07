@@ -21,8 +21,6 @@
 #include "../e/scheduler.e"
 #include "/usr/local/include/umps2/umps/libumps.e"
 
-#include "../e/p2test.e"
-
 /* globals */
 /* the current process count */
 int processCount;
