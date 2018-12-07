@@ -43,13 +43,31 @@ typedef struct {
 	device_t   devreg[DEVINTNUM * DEVPERINT];
 } devregarea_t, *devregarea_PTR;
 
-/*frame struct, INCOMPLETE */
-typedef struct frame_t {
-	unsigned int ASID;
+/*frame struct*/
+typedef struct frame_t{
+	int ASID;
 	unsigned int segment;
 	unsigned int pageNum;
-	/*this is a placeholder value */
+	pte_PTR page;
 } frame_t, *frame_PTR;
+
+/* page table entry struct */
+typedef struct pte_t {
+	unsigned int entryHI;
+	unsigned int entryLO;
+} pte_t, pte_PTR;
+
+/* page table struct */
+typedef struct pt_t {
+	int header;
+	pte_t entries[32];
+} pt_t, pt_PTR;
+
+/*page table for OS, I think its easier for it to be its own struct */
+typedef struct ptOS_t {
+	int header;
+	pte_t entries [64];
+} ptOS_t, ptOS_PTR;
 
 /* user process storage struct */
 typedef struct user_t {
@@ -57,7 +75,16 @@ typedef struct user_t {
 	/*backing store address */
 	unsigned int backStrAddr;
 	/* can be split into individuals for easier naming but for now they are joined */
+	state_t new [3];
+	state_t old [3];
 } user_t, *user_PTR;
+
+/* for use as a stencil, st stands for segment table */
+typedef struct st_t {
+    ptOS_PTR ksegOS;
+    pt_PTR kUseg2;
+    pt_PTR kUseg3;
+} st_t, st_PTR;
 
 #define STATEREGNUM	31
 
@@ -113,20 +140,22 @@ typedef struct upe_t {
 } upe_t, *upe_PTR;
 
 
-
+/* these three are redundant (see above) ************************************************************/
 /* page table entry */
 typedef struct pgtblentry_t  {
 	unsigned int entryHi;
 	unsigned int entryLo;
 } pgtblentry_t, *pgtblentry_PTR;
 
+/* I am commenting this out because it is either mislabeled or incorrect, it also conflicts with the correct version above by sharing a name so it will mess with runtime capabilities */
 /* page table entry */
+/*
 typedef struct pte_t {
 	int processID;
 	int segmentNumber;
 	int pageNumber;
 } pte_t, *pte_PTR;
-
+*/
 /* frame pool entry */
 typedef struct fp_t {
 	int processID;
@@ -134,7 +163,7 @@ typedef struct fp_t {
 	int pageNumber;
 	
 } fp_t, *fp_PTR;
-
+/***************************************************************************************************/
 
 /* process table entry type */
 typedef struct pcb_t {
