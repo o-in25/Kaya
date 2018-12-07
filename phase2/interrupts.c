@@ -70,7 +70,7 @@ static void exitInterruptHandler(cpu_t startTime) {
         the ROM supported STCK function */
         STCK(endTime);
         /* find the startedTOD */
-        cpu_t elapsedTime = (endTime - startTime)
+        cpu_t elapsedTime = (endTime - startTime);
         startTOD = startTOD + elapsedTime;
         /* copy the state from the old interrupt area to the current state */
         copyState(oldInterrupt, &(currentProcess->p_state));
