@@ -33,7 +33,7 @@ user userProcess[MAXPROCESS];
 void test() {
 
 	/*initialization for elements to be put into where we start */
-	for (int i = 0; i < MAXSEMALLOC; i++){
+	for (int i = 0; i < MAXSEMALLOC; i++) {
         	mutexSemaphores[i] = 1;
 	}
 	masterSemaphore = 0;
@@ -45,8 +45,8 @@ void test() {
 
         	/*set entryLO to 0x20000+i w/Dirt, Global, Valid */
 		kSegOS.entries[i].entryLO = ((0x20000 + i) << 12) | DIRTY | VALID | GLOBAL;
-		
 	}
+
 	/* initialization for KUseg3 */
 	for (int i = 0; i < 32; i++){
         	/* set entryHI = 0xC0000+i */

@@ -11,7 +11,7 @@
 typedef signed int cpu_t;
 typedef unsigned int memaddr;
 
-/* structs */
+/* device type */
 typedef struct {
 	unsigned int d_status;
 	unsigned int d_command;
@@ -27,6 +27,7 @@ typedef struct {
 #define DEVINTNUM 5
 #define DEVPERINT 8
 
+/* device register area */
 typedef struct {
 	unsigned int rambase;
 	unsigned int ramsize;
@@ -43,50 +44,9 @@ typedef struct {
 	device_t   devreg[DEVINTNUM * DEVPERINT];
 } devregarea_t, *devregarea_PTR;
 
-/*frame struct*/
-typedef struct frame_t{
-	int ASID;
-	unsigned int segment;
-	unsigned int pageNum;
-	pte_PTR page;
-} frame_t, *frame_PTR;
-
-/* page table entry struct */
-typedef struct pte_t {
-	unsigned int entryHI;
-	unsigned int entryLO;
-} pte_t, pte_PTR;
-
-/* page table struct */
-typedef struct pt_t {
-	int header;
-	pte_t entries[32];
-} pt_t, pt_PTR;
-
-/*page table for OS, I think its easier for it to be its own struct */
-typedef struct ptOS_t {
-	int header;
-	pte_t entries [64];
-} ptOS_t, ptOS_PTR;
-
-/* user process storage struct */
-typedef struct user_t {
-	unsigned int semaphore;
-	/*backing store address */
-	unsigned int backStrAddr;
-	/* can be split into individuals for easier naming but for now they are joined */
-	state_t new [3];
-	state_t old [3];
-} user_t, *user_PTR;
-
-/* for use as a stencil, st stands for segment table */
-typedef struct st_t {
-    ptOS_PTR ksegOS;
-    pt_PTR kUseg2;
-    pt_PTR kUseg3;
-} st_t, st_PTR;
-
 #define STATEREGNUM	31
+
+
 
 /* state */
 typedef struct state_t {
@@ -131,40 +91,6 @@ typedef struct state_t {
 #define s_LO	s_reg[30]
 
 
-
-typedef struct upe_t {
-	int semaphore;
-	int backingStoreAddr;
-	state_t newAreas;
-	state_t oldAreas;
-} upe_t, *upe_PTR;
-
-
-/* these three are redundant (see above) ************************************************************/
-/* page table entry */
-typedef struct pgtblentry_t  {
-	unsigned int entryHi;
-	unsigned int entryLo;
-} pgtblentry_t, *pgtblentry_PTR;
-
-/* I am commenting this out because it is either mislabeled or incorrect, it also conflicts with the correct version above by sharing a name so it will mess with runtime capabilities */
-/* page table entry */
-/*
-typedef struct pte_t {
-	int processID;
-	int segmentNumber;
-	int pageNumber;
-} pte_t, *pte_PTR;
-*/
-/* frame pool entry */
-typedef struct fp_t {
-	int processID;
-	int segmentNumber;
-	int pageNumber;
-	
-} fp_t, *fp_PTR;
-/***************************************************************************************************/
-
 /* process table entry type */
 typedef struct pcb_t {
 	/* queue relationship */
@@ -201,7 +127,6 @@ typedef struct pcb_t {
 	/* * */
 }  pcb_t, *pcb_PTR;
 
-
 /* semaphore table entry type */
 typedef struct semd_t {
 	/* the next semaphore address */
@@ -212,6 +137,48 @@ typedef struct semd_t {
 	int* s_semAdd;
 	/* the associated process queue */
 	pcb_t* s_procQ;
+	/* * */
 }  semd_t, *semd_PTR;
 
+/* page table entry type */
+typedef struct pteEntry_t {
+	unsigned int entryHI;
+	unsigned int entryLO;
+} pteEntry_t;
+
+/* page table type */
+typedef pte_t {
+	int header;
+	pteEntry_t pteTable[32];	
+} pte_t;
+
+/* the page table entry reserved for the OS */
+typedef struct pteOS_t {
+	int header;
+	pteEntry_t pteTable[64];
+} pteOS_t;
+
+/* the segment table for support of three segments */
+typedef struct segt_t {
+	pte_t* kUseg2;
+	pte_t* kUseg3;
+	pteOS_t* kSegOS;
+} segt_t;
+
+/* type for the swap poo; */
+typedef struct swapPool_t {
+	int ASID;
+	int segmentNumber;
+	int pageNumber;
+	pteEntry_t* pageTableEntry;
+} swapPool_t;
+
+/* tproc type */
+typedef struct Tproc_t {
+	int Tp_sem;
+	int diskAddr;
+	pte_t Tp_pte;
+	state_t Tnew_trap[3];
+	state_t Told_trap[3];
+} Tproc_t, *Tproc_PTR;
 #endif

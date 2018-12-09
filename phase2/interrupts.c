@@ -126,12 +126,12 @@ static void intervalTimerHandler(cpu_t startTime, cpu_t endTime) {
         pcb_PTR p = removeBlocked(semaphore);
         STCK(endTime);
         if (p != NULL) {
+            /* a process has been freed up */
+            insertProcQ(&(readyQueue), p);
             /* the elapsed time is the start minus the end */
             cpu_t elapsedTime = (endTime - startTime);
             /* handle the charging of time */
             (p->p_time) = (p->p_time) + elapsedTime;
-            /* a process has been freed up */
-            insertProcQ(&(readyQueue), p);
             /* one less device waiting */
             softBlockedCount--;
         }

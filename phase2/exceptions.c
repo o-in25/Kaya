@@ -326,12 +326,12 @@ static void specifyExceptionsStateVector(state_PTR state) {
 * the physical address of the semaphore to be V’ed in a1, and then 
 * executing a SYSCALL instruction.
 */
-static void passeren(state_PTR state)
-{
-    int *semaphore = (int *)state->s_a1;
+static void passeren(state_PTR state) {
+    /* get the semaphore in the s_a1 */
+    int *semaphore = (int*) state->s_a1;
+    /* decrement teh semaphore */
     (*(semaphore))--;
-    if ((*(semaphore)) < 0)
-    {
+    if ((*(semaphore)) < 0) {
         cpu_t stopTOD;
         STCK(stopTOD);
         /*Store elapsed time*/
@@ -440,7 +440,7 @@ static void createProcess(state_PTR state) {
         state_PTR temp = (state_PTR) state->s_a1;
         copyState(temp, &(p->p_state));
         /* acknowledge the success of the new process
-        by placing 0 in the state's $v0 register */
+        by placing 0 in the state's $v0 register */ 
         state->s_v0 = SUCCESS;
     } else {
         /* if there are no free processes, acknowledge 
@@ -452,71 +452,138 @@ static void createProcess(state_PTR state) {
     contextSwitch(state);
 }
 
+/*
+* Function: User Mode Handler 
+* Gets called when the system is in user mode and 
+* attempts to make a syscall request 1-8. Here, the syscall 
+* old area is copied into the program trap old area, the
+* program state_t's cause register will contain the RESERVED
+* mask, and will then enter a program trap */
+*/
 static void userModeHandler(state_PTR state) {
-    state_PTR programTrapOldArea = (state_PTR)PRGMTRAPOLDAREA;
+    /* get the old program trap area */
+    state_PTR programTrapOldArea = (state_PTR) PRGMTRAPOLDAREA;
+    /* copy the old syscall area into the old program trap area */
     copyState(state, programTrapOldArea);
+    /* set teh cause register to contain the RESERVED MASK */
     unsigned int placeholder = (programTrapOldArea->s_cause) & ~(FULLBYTE);
     (programTrapOldArea->s_cause) = (placeholder | RESERVED);
+    /* enter a program trap */
     programTrapHandler();
 }
 
+/*
+* Function: Syscall Dispatch
+* Takes a state_t pointer, in this case the old syscall area, and 
+* a call number and dispatches the appropriate syscall. 
+*/
 static void syscallDispatch(int callNumber, state_PTR caller) {
     switch (callNumber) {
-        case WAITFORIODEVICE: /* SYSCALL 8 */
+        /* SYSCALL 8 */
+        case WAITFORIODEVICE:
             waitForIODevice(caller);
             break;
-        case WAITFORCLOCK: /* SYSCALL 7 */
+        /* SYSCALL 7 */
+        case WAITFORCLOCK: 
             waitForClock(caller);
             break;
-        case GETCPUTIME: /* SYSCALL 6 */
+        /* SYSCALL 6 */
+        case GETCPUTIME: 
             getCpuTime(caller);
             break;
-        case SPECIFYEXCEPTIONSTATEVECTOR: /* SYSCALL 5 */
+        /* SYSCALL 5 */
+        case SPECIFYEXCEPTIONSTATEVECTOR: 
             specifyExceptionsStateVector(caller);
             break;
-        case PASSEREN: /* SYSCALL 4 */
+        /* SYSCALL 4 */
+        case PASSEREN:
             passeren(caller);
             break;
-        case VERHOGEN: /* SYSCALL 3 */
+        /* SYSCALL 3 */
+        case VERHOGEN:
             verhogen(caller);
             break;
-        case TERMINATEPROCESS: /* SYSCALL 2 */
+        /* SYSCALL 2 */
+        case TERMINATEPROCESS:
             terminateProcess();
             break;
-        case CREATEPROCESS: /* SYSCALL 1 */
+        /* SYSCALL 1 */
+        case CREATEPROCESS:
             createProcess(caller);
             break;
+        /* no valid syscall - set a program trap */
         default:
-            passUpOrDie(SYSTRAP, caller);
+            passUpOrDie(SYSTRAP, caller); 
     }
 }
 
+/*
+* Function: Program Trap Handler 
+* Gets the old program trap area and memory and 
+* passes the exception number and the old program
+* trap area to pass up or die. There, pass up or
+* die will determine if an exception state vector has been
+* set up for that process 
+*/
  void programTrapHandler() {
+    /* get the area in memory */
     state_PTR oldState = (state_PTR) PRGMTRAPOLDAREA;
+    /* pass up the process to its appropriate handler
+    or kill it */
     passUpOrDie(PROGTRAP, oldState);
  }
 
- void translationLookasideBufferHandler() { 
-    state_PTR oldState = (state_PTR) TBLMGMTOLDAREA;
+ /*
+* Function: Translation Lookaside Buffer (TLB)  Handler 
+* Gets the old tlb trap area and memory and 
+* passes the exception number and the old program
+* trap area to pass up or die. There, pass up or
+* die will determine if an exception state vector has been
+* set up for that process 
+*/
+ void translationLookasideBufferHandler() {
+    /* get the area in memory */
+    state_PTR oldState = (state_PTR)TBLMGMTOLDAREA;
+    /* pass up the process to its appropriate handler
+    or kill it */
     passUpOrDie(TLBTRAP, oldState);
  }
 
  /*
  * Function: The Syscall Handler
- * 
+ * The handler for syscalls 1-8 when the user is
+ * in kernel mode. If the user is not in kernel mode, the
+ * program is set to be a reserved instruction and will 
+ * pass the responsibility to the user mode handler. 
+ * In the case that a syscall >9 is issued in kernel,
+ * mode, a program trap is set up
  */ 
  void syscallHandler() {
+    /* get the old syscall area in memory */
     state_PTR caller = (state_PTR) SYSCALLOLDAREA;
+    /* increment the program counter by 1 word */
     caller->s_pc = caller->s_pc + 4;
+    /* assume the system is in kernel mode */
     int userMode = FALSE;    
+    /* get the call number */
     unsigned int callNumber = caller->s_a0;
+    /* get the status regitser */
     unsigned int status = caller->s_status;
+    /* check if the system is in user or kernel mode */
     if((status & KUp) != ALLOFF) {
+        /* in user mode */
         userMode = TRUE;
     }
+    /* if the system is in user mode and makes a syscall 1-8 
+    request, it is then passed down to the user mode handler, 
+    where the cause register will be set to the reserved address; 
+    otherwise, if we are in kernel mode but a syscall >8 is made,
+    the syscall dispatch will account for this */
     if((callNumber < 9) && (callNumber > 0) && userMode) {
+        /* pass responsibility to the user mode handler */
         userModeHandler(caller);
     } else {
+        /* make the syscall */
         syscallDispatch(callNumber, caller);
     }
  }
