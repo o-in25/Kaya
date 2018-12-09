@@ -119,6 +119,18 @@
 #define SUCCESS 0
 #define FAILURE -1
 
+/* page tables and virtual memory */
+
+#define MAXUPROC 8
+#define SWAPSIZE 3 * MAXUPROC
+
+/* segment */
+#define SEGSTART 0x20000500
+#define SEGWIDTH 12
+
+#define KUSEGPTESIZE 32
+#define KSEGOSPTESIZE 64
+
 /* vectors number and type */
 #define VECTSNUM 4
 #define TLBTRAP	0
