@@ -5,12 +5,12 @@
 pteOS_t kSegOS;
 pte_t kUseg3;
 swapPool_t pool[100];
-Tproc_t uProcesses[8];
+Tproc_t uProcesses[MAXUPROC];
 int next;
 int disk1Semaphore;
 int disk0Semaphore;
 int swapSemaphore;
-int masterSemaphore;
+int masterSemaphore; 
 int mutexSemaphores[MAXSEMALLOC];
 /* END OF GLOBAL VARIABLES */
 
@@ -21,20 +21,40 @@ void test() {
 
 	/* initalize the page table */
 	for(i = 0; i < SWAPSIZE; i++) {
-
+		pool[i].pageTableEntry = NULL;
+		pool[i].segmentNumber = 0;
+		pool[i].pageNumber = 0;
+		/* -1 signifies */
+		pool[i].ASID = -1;
 	}
 
-	for(i = 0; i < KSEGOSPTESIZE; i++) {
-
+	/* initialize the semaphores */
+	for (i = 0; i < MAXSEMALLOC; i++){
+		mutexSemaphores[i] = 1;
 	}
+	/* initalize the page table entries for the kUsegOS */
+	for (i = 0; i < KUSEGPTESIZE; i++) {
+		/* occupy the EntryHI CP0 register */
+		kSegOS.pteTable[i].entryHI = (PADDRBASE + i) << VPN;
+		/* occupy the EntryLO CP0 register */
+		kSegOS.pteTable[i].entryLO = ((PADDRBASE + i) << VPN) | VALID | DIRTY | GLOBAL;
+	} 
 
-	for(i = 0; i < MAXSEMALLOC; i++) {
+}
 
+static void exceptionsStateVector() {
+	int i;
+	for(i = 0; i < 3; i++) {
+		if(i == 1) {
+
+		} else if(i == 2) {
+
+		} else if(i == 3) {
+
+		}
 	}
-
-	for(i = 0; i < MAXUPROC; i++) {
-
-	}
+}
 
 	
-}
+
+	
