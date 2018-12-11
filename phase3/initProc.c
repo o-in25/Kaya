@@ -168,7 +168,7 @@ static void initializeExceptionsStateVector() {
 	/* for each trap type */
 	for(i = 0; i < TRAPTYPES; i++) {
 		/* get the state by the asid */
-		state_PTR state = &(uProcesses[extractASID()].Tnew_trap[i]);
+		state_PTR state = &(uProcesses[extractASID() -1].Tnew_trap[i]);
 		if(i == TLBTRAP){
 			/* TODO: set up the proper exception handler */
 			state->s_t9 = NULL;
@@ -182,9 +182,8 @@ static void initializeExceptionsStateVector() {
 			state->s_t9 = NULL;
 			state->s_pc = NULL;
 		}
+		SYSCALL(SPECTRAPVEC, i, (int) &(uProcesses[extractASID() - 1].Told_trap[i]), (int) state);
 	}
-	/* perform a sys5 - specify state exceptions vector */
-	/* SYSCALL() */
 }
 
 
