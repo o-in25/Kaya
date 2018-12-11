@@ -14,6 +14,7 @@ int masterSemaphore;
 int mutexSemaphores[MAXSEMALLOC];
 /* END OF GLOBAL VARIABLES */
 
+/* wrapper function for our phase 3 */
 void test() {
 	/* some variables for indexing */
 	int i;
@@ -42,12 +43,17 @@ void test() {
 
 }
 
-static void exceptionsStateVector() {
+static void initProc() {
+
+}
+
+static void exceptionsStateVector(unsigned int asid) {
 	int i;
 	/* for each trap type */
 	for(i = 0; i < TRAPTYPES; i++) {
-		if(i == TLBTRAP) {
-
+		state_PTR state = &(uProcesses[asid].Tnew_trap[])
+		if (i == TLBTRAP){
+			
 		} else if(i == PROGTRAP) {
 
 		} else if(i == TLBTRAP) {
