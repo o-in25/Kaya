@@ -138,16 +138,16 @@ typedef struct semd_t {
 	/* the associated process queue */
 	pcb_t* s_procQ;
 	/* * */
-}  semd_t, *semd_PTR;
+} semd_t, *semd_PTR;
 
 /* page table entry type */
 typedef struct pteEntry_t {
 	unsigned int entryHI;
 	unsigned int entryLO;
-} pteEntry_t;
+} pteEntry_t, *pteEntry_PTR;
 
 /* page table type */
-typedef pte_t {
+typedef struct pte_t {
 	int header;
 	pteEntry_t pteTable[32];	
 } pte_t;
