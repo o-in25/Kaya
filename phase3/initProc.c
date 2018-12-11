@@ -152,6 +152,8 @@ static void initUProc() {
 		diskInformation[DISKNUM] = EMPTY;
 		diskInformation[PAGELOCATION] = memoryBuffer;
 		diskInformation[READWRITE] = WRITE;
+		/* perform a disk I/O now that we have all of the 
+		information we need */
 		diskOperation(diskInformation, &(disk0Semaphore));
 		/* keep track of the pages */
 		pageNumber++;
