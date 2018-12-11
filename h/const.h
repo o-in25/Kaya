@@ -166,6 +166,7 @@
 #define KSEGOSPTESIZE 64
 
 
+
 /* vectors number and type */
 #define VECTSNUM 4
 #define TLBTRAP	0
@@ -189,6 +190,15 @@
 #define TAPEDEV (((TAPEINT - 3) * DEVREGSIZE * DEVPERINT) + INTDEVREG)
 #define DISKDEV (((DISKINT - 3) * DEVREGSIZE * DEVPERINT) + INTDEVREG)
 #define BUFFER (KSEGOSARA - (DISKCOUNT * PAGESIZE))
+
+/* disk parameters */
+#define DISKPARAMS 6
+#define SECTOR 0
+#define CYLINDER 1
+#define HEAD 2
+#define DISKNUM 3
+#define PAGELOCATION 4
+#define READWRITE 5
 
 /* device register field number for non-terminal devices */
 #define STATUS 0

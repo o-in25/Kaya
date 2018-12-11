@@ -139,10 +139,12 @@ static void initUProc() {
 	int pageNumber = 0;
 	/* read until we reach the end of line character or the 
 	end of tape marker */
+	int diskInformation[DISKPARAMS];
 	while((tapeDevice->d_data1 != EOF) && (tape->d_data1 != EOT)) {
 		/* while there are things to do... */
 		tapeDevice->d_data0 = buffer;
 		tapeDevice->d_command = READ;
+		
 
 		diskOperation();
 		/* keep track of the pages */
