@@ -121,6 +121,17 @@ static void extractASID() {
 }
 
 static void initUProc() {
+
+	int asid = extractASID();
+	device_PTR tapeDevice;
+	device_PTR diskDevice; 
+
+	while((tapeDevice->d_data1 != EOF)) {
+		diskOperation();
+	}
+
+	/* set up the exception state vectors for the sys-5 pass up 
+	or die helper method */
 	initializeExceptionsStateVector();
 	/* prepare a new processor state */
 	state_PTR processorState = prepareProcessorState(TRUE, 0);
@@ -128,6 +139,13 @@ static void initUProc() {
 	contextSwitch(processorState);
 }
 
+
+static void diskOperation() {
+	/* TODO: build this */
+}
+
+
+/* sets up pass up or die stuff */
 static void initializeExceptionsStateVector() {
 	state_PTR state;
 	int i;
@@ -156,6 +174,5 @@ static void initializeExceptionsStateVector() {
 }
 
 
-	
 
 	

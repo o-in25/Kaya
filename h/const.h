@@ -195,7 +195,8 @@
 #define RESET 0
 #define ACK	1
 #define EMPTY 0
-
+#define EOT 0
+#define EOF 1
 
 /* syscalls */
 #define CREATEPROCESS 1
