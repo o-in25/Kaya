@@ -19,6 +19,8 @@
 #define TIME 100000
 
 #define ROMPAGESTART 0x20000000	 /* ROM Reserved Page */
+
+/* miscellaneous */
 #define RESERVED 0x00000028
 #define FULLBYTE 0x000000FF
 
@@ -62,6 +64,7 @@
 #define ALLOFF 0x00000000
 /************************* INTERRUPTS *************************/
 
+/* status codes */
  #define IEc 0x00000001
  #define KUc 0x00000002
  #define IEp 0x00000004
@@ -76,6 +79,7 @@
  #define TE  0x08000000
  #define CU  0x10000000
 
+/* devices */
 #define FIRST 0x00000001
 #define SECOND 0x00000002
 #define THIRD 0x0000004
@@ -84,9 +88,9 @@
 #define SIXTH 0x00000020
 #define SEVENTH 0x00000040
 #define EIGHTH 0x00000080
-
 #define STARTDEVICE 0x00000001
 
+/* device register area */
 #define DEVREG 0x10000050
 #define DEVREGAREA 0x000002D0
 #define TRANSREADY 0x0000000F
@@ -98,6 +102,7 @@
 /* initial bit map address */
 #define INTBITMAP 0x1000003C
 #define INTDEVREG 0x10000050
+
 /* syscalls */
 #define CREATEPROCESS 1
 #define TERMINATEPROCESS 2
@@ -134,17 +139,22 @@
 #define VALID 0x00000200
 #define GLOBAL 0x00000100
 
+/* bits 6-11 are the ASID in the CP0 register */
+#define ENTRYHIASID 0x00000FC0
+
+/* virtual memory & swap pool */
 #define SWAPPOOLSIZE 
 #define VPN 12
 #define KUSEGPTESIZE 32
 #define KSEGOSPTESIZE 64
+
 
 /* vectors number and type */
 #define VECTSNUM 4
 #define TLBTRAP	0
 #define PROGTRAP 1
 #define SYSTRAP	2
-#define TRAPTYPES 3
+#define TRAPTYPES 
 
 /* device interrupts */
 #define NOSEM 3

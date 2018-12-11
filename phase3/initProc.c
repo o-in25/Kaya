@@ -44,9 +44,16 @@ void test() {
 
 }
 
+/* 
+* Function: extract ASID
+* Extracts the entryLO register. The register will have the bits 0-5 to be unused,
+* and thus a bitwise shift to the 6th bit is where we begin. Then,
+* since the ASID is bits 6-11, the ENTRYHIASID constant will determine
+* which buts signify the ASID
+*/
 static void extractASID() {
 	/* extracts the asid from the entryHi cp0 register */
-	return getENTRYHI() >> 6;
+	return ((getENTRYHI() & ENTRYHIASID) >> 6);
 }
 
 static void initProc() {
@@ -59,7 +66,7 @@ static void exceptionsStateVector() {
 	state_PTR state = NULL;
 	/* for each trap type */
 	for(i = 0; i < TRAPTYPES; i++) {
-		state_PTR state = &(uProcesses[asid].Tnew_trap[i]);
+		state_PTR state = &(uProcesses[extractASID()].Tnew_trap[i]);
 		state->s_asid = getENTRYHI();
 
 		if(i == TLBTRAP){
