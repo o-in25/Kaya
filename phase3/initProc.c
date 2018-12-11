@@ -121,14 +121,14 @@ static void extractASID() {
 }
 
 static void initUProc() {
-	initializeStateExceptionsStateVector();
+	initializeExceptionsStateVector();
 	/* prepare a new processor state */
 	state_PTR processorState = prepareProcessorState(TRUE, 0);
 	/* perform a context switch for the prepared state */
 	contextSwitch(processorState);
 }
 
-static void initializeStateExceptionsStateVector() {
+static void initializeExceptionsStateVector() {
 	state_PTR state;
 	int i;
 	/* initialize an new state */
