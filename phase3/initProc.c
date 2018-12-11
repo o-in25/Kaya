@@ -41,7 +41,6 @@ void test() {
 		/* occupy the EntryLO CP0 register */
 		kSegOS.pteTable[i].entryLO = ((PADDRBASE + i) << VPN) | VALID | DIRTY | GLOBAL;
 	} 
-
 }
 
 /* 
