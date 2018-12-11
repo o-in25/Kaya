@@ -88,8 +88,9 @@ static void initializeStateExceptionsStateVector() {
 	processorState->s_pc = (memaddr) TEXTAREASEGMENTMASK;
 	processorState->s_t9 = (memaddr) TEXTAREASEGMENTMASK;
 	processorState->s_pc = TEXTAREASEGMENTMASK;
-
 	
+
+
 	/* perform a sys5 - specify state exceptions vector */
 	/* SYSCALL() */
 }
