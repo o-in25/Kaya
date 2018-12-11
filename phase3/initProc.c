@@ -125,25 +125,22 @@ static void extractASID() {
 static void initUProc() {
 
 	int asid = extractASID();
+	/* set up the tape */
 	device_PTR tapeDevice;
-	device_PTR diskDevice; 
-
-	int index = 0;
-	while((tapeDevice->d_data1 != EOF)) {
-		int[7] diskInformation = {
-			&(asid - 1),
-			&i,
-			&disk0Semaphore,
-			&EMPTY,
-			&EMPTY,
-			&EMPTY
-		};
-		diskOperation(&(diskInformation));
-	}
-
+	/* set up the disk */
+	device_PTR diskDevice;
 	/* set up the exception state vectors for the sys-5 pass up 
 	or die helper method */
 	initializeExceptionsStateVector();
+	int index = 0;
+	/* read until we reach the end of line character or the 
+	end of tape marker */
+	while((tapeDevice->d_data1 != EOF) && (tape->d_data1 != EOT)) {
+		/* while there are things to do... */
+		
+		diskOperation();
+	}
+
 	/* prepare a new processor state */
 	state_PTR processorState = prepareProcessorState(TRUE, 0);
 	/* perform a context switch for the prepared state */
@@ -151,7 +148,8 @@ static void initUProc() {
 }
 
 
-static void diskOperation(int[]* diskInformation) {
+static void diskOperation() {
+
 	/* TODO: build this */
 }
 
