@@ -167,9 +167,8 @@ static void initUProc() {
 
 
 static void diskOperation(int[] subdivisions, int* semaphore) {
-
 	/* TODO: build this */
-
+	
 }
 
 
