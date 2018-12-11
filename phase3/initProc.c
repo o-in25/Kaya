@@ -21,6 +21,33 @@ static void initUProcs() {
 	
 }
 
+/* prepare a new processor state */
+static state_PTR prepareProcessorState(int flag, int index) {
+	/* preparing a processor state appropriate for the 
+	execution of uprocs */
+	state_PTR processorState;
+	/* is this being prepared in the segment table? */
+	if(flag) {
+		/* the new processor state dictates that interupts are enabled,
+		user mode is on, status.te is 1 and statis vmc = 1 */
+		processState->s_status = ALLOFF | INTERRUPTSON | IM | TE | VMc | KUo;
+		/* set the text area masks */
+		processorState->s_pc = (memaddr) TEXTAREASEGMENTMASK;
+		processorState->s_t9 = (memaddr) TEXTAREASEGMENTMASK;
+		processorState->s_sp = TEXTAREASEGMENTMASK;
+		/* set the asid */
+		processorState->s_asid = getENTRYHI();
+	} else {
+		processorState->s_asid = (index << ASIDMASK);
+		processorState->s_status = ALLOFF | IEc | IM | TE;
+		/* TODO: set up the handler */
+		processorState->s_t9 = NULL;
+		processorState->s_status = NULL;
+
+	}
+	return processorState;
+}
+
 /* wrapper function for our phase 3 */
 void test() {
 	/* some variables for indexing */
@@ -51,7 +78,7 @@ void test() {
 	kSegOS.header = MAGICNO << PGTBLHEADERWORD | KSEGOSPTESIZE;
 	for(i = 0; i < MAXUPROC; i++) {
 		/* get the ith uProc */
-		Tproc_PTR userProc = &(uProcesses[i]);
+		Tproc_PTR userProc = &(uProcesses[i - 1]);
 		/* initialize the header */
 		userProc->Tp_pte.header = (MAGICNO << PGTBLHEADERWORD | KUSEGPTESIZE);
 
@@ -63,10 +90,10 @@ void test() {
 		}
 		/* get the address of ith entry the segment table */
 		segt_PTR segmentTable = (segt_PTR) SEGSTART + (i * SEGWIDTH);
-		/* initalize the page tables */
+		/* point to the kSegOS segment */
 		segmentTable->kSegOS = &kSegOS;
 		segmentTable->kUseg2 = &(userProc->Tp_pte);
-
+		prepareProcessorState(TRUE, i);
 	}
 }
 
@@ -79,33 +106,18 @@ void test() {
 */
 static void extractASID() {
 	/* extracts the asid from the entryHi cp0 register */
-	return ((getENTRYHI() & ENTRYHIASID) >> 6);
+	return ((getENTRYHI() & ENTRYHIASID) >> ASIDMASK);
 }
+
 
 static void initUProc() {
 	initializeStateExceptionsStateVector();
 	/* prepare a new processor state */
-	state_PTR processorState = prepareProcessorState();
+	state_PTR processorState = prepareProcessorState(TRUE, 0);
 	/* perform a context switch for the prepared state */
 	contextSwitch(processorState);
 }
 
-/* prepare a new processor state */
-static state_PTR prepareProcessorState() {
-	/* preparing a processor state appropriate for the 
-	execution of uprocs */
-	state_PTR processorState;
-	/* the new processor state dictates that interupts are enabled,
-	user mode is on, status.te is 1 and statis vmc = 1 */
-	processState->s_status = ALLOFF | INTERRUPTSON | IM | TE | VMc | KUo;
-	/* set the text area masks */
-	processorState->s_pc = (memaddr) TEXTAREASEGMENTMASK;
-	processorState->s_t9 = (memaddr) TEXTAREASEGMENTMASK;
-	processorState->s_sp = TEXTAREASEGMENTMASK;
-	/* set the asid */
-	processorState->s_asid = getENTRYHI();
-	return processorState;
-}
 
 static void initializeStateExceptionsStateVector() {
 	state_PTR state;

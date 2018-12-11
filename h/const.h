@@ -139,6 +139,8 @@
 #define VALID 0x00000200
 #define GLOBAL 0x00000100
 
+#define ASIDMASK 6
+
 /* bits 6-11 are the ASID in the CP0 register */
 #define ENTRYHIASID 0x00000FC0
 #define BASEADDR 0x8000
