@@ -160,7 +160,7 @@ static void initUProc() {
 	}
 
 	/* prepare a new processor state */
-	state_PTR processorState = prepareProcessorState(TRUE, 0);
+	state_PTR processorState = prepareProcessorState(FALSE, 0);
 	/* perform a context switch for the prepared state */
 	contextSwitch(processorState);
 }
