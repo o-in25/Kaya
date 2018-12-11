@@ -67,18 +67,22 @@ static void initializeStateExceptionsStateVector() {
 	/* for each trap type */
 	for(i = 0; i < TRAPTYPES; i++) {
 		state_PTR state = &(uProcesses[extractASID()].Tnew_trap[i]);
-		state->s_asid = getENTRYHI();
 		if(i == TLBTRAP){
-
+			/* TODO: set up the proper exception handler */
+			state->s_t9 = NULL;
+			state->s_pc = NULL;
 		} else if(i == PROGTRAP) {
-
+			/* TODO: set up the proper exception handler */
+			state->s_t9 = NULL;
+			state->s_pc = NULL;
 		} else if(i == TLBTRAP) {
-
+			/* TODO: set up the proper exception handler */
+			state->s_t9 = NULL;
+			state->s_pc = NULL;
 		}
-
 	}
 	/* perform a sys5 - specify state exceptions vector */
-	SYSCALL()
+	/* SYSCALL() */
 }
 
 	
