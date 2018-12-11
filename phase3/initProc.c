@@ -144,6 +144,8 @@ static void initUProc() {
 		/* while there are things to do... */
 		tapeDevice->d_data0 = buffer;
 		tapeDevice->d_command = READ;
+		/* set up the parameters for a disk 
+		operation */
 		
 
 		diskOperation();
