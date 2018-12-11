@@ -58,17 +58,27 @@ static void extractASID() {
 
 static void initProc() {
 	initializeStateExceptionsStateVector();
+	/* prepare a new processor state */
+	state_PTR processorState = prepareProcessorState();
+	/* perform a context switch for the prepared state */
+	contextSwitch(processorState);
 }
 
+/* prepare a new processor state */
 static state_PTR prepareProcessorState() {
 	/* preparing a processor state appropriate for the 
 	execution of uprocs */
 	state_PTR processorState;
-	processState->s_status = ALLOFF | INTERRUPTSON | IM | TE | VMo | KUo;
-	processorState->s_pc = (memaddr)TEXTAREASEGMENTMASK;
-	processorState->s_t9 = (memaddr)TEXTAREASEGMENTMASK;
+	/* the new processor state dictates that interupts are enabled,
+	user mode is on, status.te is 1 and statis vmc = 1 */
+	processState->s_status = ALLOFF | INTERRUPTSON | IM | TE | VMc | KUo;
+	/* set the text area masks */
+	processorState->s_pc = (memaddr) TEXTAREASEGMENTMASK;
+	processorState->s_t9 = (memaddr) TEXTAREASEGMENTMASK;
 	processorState->s_sp = TEXTAREASEGMENTMASK;
+	/* set the asid */
 	processorState->s_asid = getENTRYHI();
+	return processorState;
 }
 
 static void initializeStateExceptionsStateVector() {
@@ -78,6 +88,7 @@ static void initializeStateExceptionsStateVector() {
 	state_PTR state = NULL;
 	/* for each trap type */
 	for(i = 0; i < TRAPTYPES; i++) {
+		/* get the state by the asid */
 		state_PTR state = &(uProcesses[extractASID()].Tnew_trap[i]);
 		if(i == TLBTRAP){
 			/* TODO: set up the proper exception handler */
@@ -93,11 +104,6 @@ static void initializeStateExceptionsStateVector() {
 			state->s_pc = NULL;
 		}
 	}
-
-
-	/* perform a context switch for the prepared state */
-	contextSwitch(processorState);
-
 	/* perform a sys5 - specify state exceptions vector */
 	/* SYSCALL() */
 }
