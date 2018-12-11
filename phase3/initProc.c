@@ -49,7 +49,13 @@ void test() {
 		Tproc_PTR userProc = &(uProcesses[i]);
 		/* initialize the header */
 		userProc->Tp_pte.header = (MAGICNO << PGTBLHEADERWORD | KUSEGPTESIZE);
-		
+
+		/* set up the page table entry */
+		for(j = 0; j < KUSEGPTESIZE; j++) {
+			/* TODO: set up entryHI */
+			userProc->Tp_pte.pteTable[j].entryHI = NULL;
+			userProc->Tp_pte.pteTable[j].entryLO = ALLOFF | DIRTY;
+		}
 	}
 }
 
