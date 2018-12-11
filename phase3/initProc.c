@@ -136,13 +136,17 @@ static void initUProc() {
 	/* set up the exception state vectors for the sys-5 pass up 
 	or die helper method */
 	initializeExceptionsStateVector();
-	int index = 0;
+	int pageNumber = 0;
 	/* read until we reach the end of line character or the 
 	end of tape marker */
 	while((tapeDevice->d_data1 != EOF) && (tape->d_data1 != EOT)) {
 		/* while there are things to do... */
-		
+		tapeDevice->d_data0 = buffer;
+		tapeDevice->d_command = READ;
+
 		diskOperation();
+		/* keep track of the pages */
+		pageNumber++;
 	}
 
 	/* prepare a new processor state */
@@ -152,7 +156,7 @@ static void initUProc() {
 }
 
 
-static void diskOperation() {
+static void diskOperation(int[] subdivisions, int* semaphore) {
 
 	/* TODO: build this */
 

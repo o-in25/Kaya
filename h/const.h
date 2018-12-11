@@ -206,6 +206,7 @@
 #define UNINSTALLED	0
 #define READY 1
 #define BUSY 3
+#define READ 3
 
 /* device common COMMAND codes */
 #define RESET 0
