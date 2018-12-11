@@ -1,5 +1,6 @@
 #include "../h/const.h"
 #include "../h/types.h"
+#include "/usr/local/include/umps2/umps/libumps.e"
 
 /* GLOBAL VARIABLES */
 pteOS_t kSegOS;
@@ -43,22 +44,32 @@ void test() {
 
 }
 
+static void extractASID() {
+	/* extracts the asid from the entryHi cp0 register */
+	return getENTRYHI() >> 6;
+}
+
 static void initProc() {
 
 }
 
-static void exceptionsStateVector(unsigned int asid) {
+static void exceptionsStateVector() {
 	int i;
+	/* initialize an new state */
+	state_PTR state = NULL;
 	/* for each trap type */
 	for(i = 0; i < TRAPTYPES; i++) {
-		state_PTR state = &(uProcesses[asid].Tnew_trap[])
-		if (i == TLBTRAP){
-			
+		state_PTR state = &(uProcesses[asid].Tnew_trap[i]);
+		state->s_asid = getENTRYHI();
+
+		if(i == TLBTRAP){
+
 		} else if(i == PROGTRAP) {
 
 		} else if(i == TLBTRAP) {
 
 		}
+
 	}
 }
 
