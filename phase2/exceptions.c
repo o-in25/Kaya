@@ -458,7 +458,7 @@ static void createProcess(state_PTR state) {
 * attempts to make a syscall request 1-8. Here, the syscall 
 * old area is copied into the program trap old area, the
 * program state_t's cause register will contain the RESERVED
-* mask, and will then enter a program trap */
+* mask, and will then enter a program trap 
 */
 static void userModeHandler(state_PTR state) {
     /* get the old program trap area */
