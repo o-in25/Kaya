@@ -64,7 +64,7 @@ void test() {
 	}
 
 	/* initialize the semaphores */
-	for (i = 0; i < MAXSEMALLOC; i++){
+	for(i = 0; i < MAXSEMALLOC; i++){
 		mutexSemaphores[i] = 1;
 	}
 	/* initalize the page table entries for the kUsegOS */
@@ -94,10 +94,18 @@ void test() {
 		segmentTable->kSegOS = &kSegOS;
 		segmentTable->kUseg2 = &(userProc->Tp_pte);
 		/* prepare the processor state */
-		prepareProcessorState(TRUE, i);
+		state_PTR processorState = prepareProcessorState(TRUE, i);
 		userProc->Tp_sem = 0;
-		
+
+		if(SYSCALL(CREATEPROCESS, (int) processorState, EMPTY, EMPTY) != SUCCESS) {
+			SYSCALL(TERMINATEPROCESS, EMPTY, EMPTY, EMPTY);
+		}
+		if(i < MAXUPROC + 1) {
+			SYSCALL(PASSERN, (int) &masterSemaphore, EMPTY, EMPTY);
+		}
 	}
+	/* end the process */
+	SYSCALL(TERMINATEPROCESS, EMPTY, EMPTY, EMPTY);
 }
 
 /* 
@@ -112,7 +120,6 @@ static void extractASID() {
 	return ((getENTRYHI() & ENTRYHIASID) >> ASIDMASK);
 }
 
-
 static void initUProc() {
 	initializeStateExceptionsStateVector();
 	/* prepare a new processor state */
@@ -120,7 +127,6 @@ static void initUProc() {
 	/* perform a context switch for the prepared state */
 	contextSwitch(processorState);
 }
-
 
 static void initializeStateExceptionsStateVector() {
 	state_PTR state;

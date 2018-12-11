@@ -194,6 +194,29 @@
 /* device common COMMAND codes */
 #define RESET 0
 #define ACK	1
+#define EMPTY 0
+
+
+/* syscalls */
+#define CREATEPROCESS 1
+#define TERMINATEPROCESS 2
+#define VERHOGEN 3
+#define PASSEREN 4
+#define SPECTRAPVEC 5
+#define GETCPUTIME 6
+#define WAITCLOCK 7
+#define WAITIO 8
+#define READ_FROM_TERMINAL 9
+#define WRITE_TO_TERMINAL 10
+#define V_VIRTUAL_SEMAPHORE 11
+#define P_VIRTUAL_SEMAPHORE 12
+#define DELAY 13
+#define DISK_PUT 14
+#define DISK_GET 15
+#define WRITE_TO_PRINTER 16
+#define GET_TOD 17
+#define GETTIME 17
+#define TERMINATE 18
 
 /* operations */    
 #define	MIN(A,B)	((A) < (B) ? A : B)
