@@ -131,7 +131,7 @@ static void initUProc() {
 	/* set up the tape */
 	device_PTR tapeDevice = (device_PTR)TAPEDEV + ((asidIndex)*DEVREGSIZE);
 	/* set up a memory buffer */
-	device_PTR buffer = BUFFER + (asidIndex * PAGESIZE);
+	int memoryBuffer = BUFFER + (asidIndex * PAGESIZE);
 
 	/* set up the exception state vectors for the sys-5 pass up 
 	or die helper method */
@@ -142,13 +142,17 @@ static void initUProc() {
 	int diskInformation[DISKPARAMS];
 	while((tapeDevice->d_data1 != EOF) && (tape->d_data1 != EOT)) {
 		/* while there are things to do... */
-		tapeDevice->d_data0 = buffer;
+		tapeDevice->d_data0 = memoryBuffer;
 		tapeDevice->d_command = READ;
 		/* set up the parameters for a disk 
 		operation */
-		
-
-		diskOperation();
+		diskInformation[SECTOR] = asidIndex;
+		diskInformation[CYLINDER] = pageNumber;
+		diskInformation[HEAD] = EMPTY;
+		diskInformation[DISKNUM] = EMPTY;
+		diskInformation[PAGELOCATION] = memoryBuffer;
+		diskInformation[READWRITE] = WRITE;
+		diskOperation(diskInformation, &(disk0Semaphore));
 		/* keep track of the pages */
 		pageNumber++;
 	}
