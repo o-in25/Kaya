@@ -60,11 +60,18 @@ static void initProc() {
 	initializeStateExceptionsStateVector();
 }
 
-static void initializeStateExceptionsStateVector() {
-	state_PTR state;
+static state_PTR prepareProcessorState() {
 	/* preparing a processor state appropriate for the 
 	execution of uprocs */
 	state_PTR processorState;
+	processorState->s_pc = (memaddr)TEXTAREASEGMENTMASK;
+	processorState->s_t9 = (memaddr)TEXTAREASEGMENTMASK;
+	processorState->s_sp = TEXTAREASEGMENTMASK;
+	processorState->s_asid = getENTRYHI();
+}
+
+static void initializeStateExceptionsStateVector() {
+	state_PTR state;
 	int i;
 	/* initialize an new state */
 	state_PTR state = NULL;
@@ -85,15 +92,15 @@ static void initializeStateExceptionsStateVector() {
 			state->s_pc = NULL;
 		}
 	}
-	processorState->s_pc = (memaddr) TEXTAREASEGMENTMASK;
-	processorState->s_t9 = (memaddr) TEXTAREASEGMENTMASK;
-	processorState->s_pc = TEXTAREASEGMENTMASK;
-	
 
+
+	/* perform a context switch for the prepared state */
+	contextSwitch(processorState);
 
 	/* perform a sys5 - specify state exceptions vector */
 	/* SYSCALL() */
 }
+
 
 	
 
