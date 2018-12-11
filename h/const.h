@@ -120,14 +120,22 @@
 #define FAILURE -1
 
 /* page tables and virtual memory */
-
 #define MAXUPROC 8
 #define SWAPSIZE 3 * MAXUPROC
 
 /* segment */
 #define SEGSTART 0x20000500
 #define SEGWIDTH 12
+#define PADDRBASE 0x20000
+#define KUSEG3ADDRBASE 0xC0000
 
+/* Page Table Bit Locations */
+#define DIRTY 0x00000400
+#define VALID 0x00000200
+#define GLOBAL 0x00000100
+
+#define SWAPPOOLSIZE 
+#define VPN 12
 #define KUSEGPTESIZE 32
 #define KSEGOSPTESIZE 64
 

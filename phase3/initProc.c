@@ -44,12 +44,13 @@ void test() {
 
 static void exceptionsStateVector() {
 	int i;
-	for(i = 0; i < 3; i++) {
-		if(i == 1) {
+	/* for each trap type */
+	for(i = 0; i < TRAPTYPES; i++) {
+		if(i == TLBTRAP) {
 
-		} else if(i == 2) {
+		} else if(i == PROGTRAP) {
 
-		} else if(i == 3) {
+		} else if(i == TLBTRAP) {
 
 		}
 	}
