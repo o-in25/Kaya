@@ -125,11 +125,14 @@ static void extractASID() {
 static void initUProc() {
 
 	int asid = extractASID();
-	/* set up the tape */
-	device_PTR tapeDevice = NULL;
+	int asidIndex = asid - 1;
 	/* set up the disk */
-	device_PTR diskDevice = NULL;
-	
+	device_PTR diskDevice = DISKDEV;
+	/* set up the tape */
+	device_PTR tapeDevice = (device_PTR)TAPEDEV + ((asidIndex)*DEVREGSIZE);
+	/* set up a memory buffer */
+	device_PTR buffer = BUFFER + (asidIndex * PAGESIZE);
+
 	/* set up the exception state vectors for the sys-5 pass up 
 	or die helper method */
 	initializeExceptionsStateVector();
@@ -152,6 +155,7 @@ static void initUProc() {
 static void diskOperation() {
 
 	/* TODO: build this */
+
 }
 
 

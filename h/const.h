@@ -133,6 +133,7 @@
 #define SEGWIDTH 0x0000000C
 #define PADDRBASE 0x20000
 #define KUSEG3ADDRBASE 0xC0000
+#define DISKCOUNT 8
 
 /* Page Table Bit Locations */
 #define DIRTY 0x00000400
@@ -149,6 +150,10 @@
 #define ENTRYHIASID 0x00000FC0
 #define BASEADDR 0x8000
 #define TEXTAREASEGMENTMASK BASEADDR + 0x00B0
+
+#define OSAREA (PAGESIZE * KSEGOSPTESIZE)
+#define KSEGOSARA ROMPAGESTART + OSAREA
+
 
 /* verify that a page table address is found in the segment table */
 #define MAGICNO 0x0000002A
@@ -183,6 +188,8 @@
 /* devices */
 #define TAPEDEV (((TAPEINT - 3) * DEVREGSIZE * DEVPERINT) + INTDEVREG)
 #define DISKDEV (((DISKINT - 3) * DEVREGSIZE * DEVPERINT) + INTDEVREG)
+#define BUFFER (KSEGOSARA - (DISKCOUNT * PAGESIZE))
+
 /* device register field number for non-terminal devices */
 #define STATUS 0
 #define COMMAND	1
