@@ -141,6 +141,8 @@
 
 /* bits 6-11 are the ASID in the CP0 register */
 #define ENTRYHIASID 0x00000FC0
+#define BASEADDR 0x8000
+#define TEXTAREASEGMENTMASK BASEADDR + 0x00B0
 
 /* virtual memory & swap pool */
 #define SWAPPOOLSIZE 

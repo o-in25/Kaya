@@ -61,6 +61,10 @@ static void initProc() {
 }
 
 static void initializeStateExceptionsStateVector() {
+	state_PTR state;
+	/* preparing a processor state appropriate for the 
+	execution of uprocs */
+	state_PTR processorState;
 	int i;
 	/* initialize an new state */
 	state_PTR state = NULL;
@@ -81,7 +85,10 @@ static void initializeStateExceptionsStateVector() {
 			state->s_pc = NULL;
 		}
 	}
-	/* perform a sys5 - specify state exceptions vector */
+	processorState->s_pc = TEXTAREASEGMENTMASK;
+	processorState->s_t9 = TEXTAREASEGMENTMASK;
+
+		/* perform a sys5 - specify state exceptions vector */
 	/* SYSCALL() */
 }
 
