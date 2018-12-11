@@ -63,8 +63,10 @@ void test() {
 		}
 		/* get the address of ith entry the segment table */
 		segt_PTR segmentTable = (segt_PTR) SEGSTART + (i * SEGWIDTH);
+		/* initalize the page tables */
+		segmentTable->kSegOS = &kSegOS;
+		segmentTable->kUseg2 = &(userProc->Tp_pte);
 
-		
 	}
 }
 
