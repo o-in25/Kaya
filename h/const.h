@@ -139,7 +139,11 @@
 #define VALID 0x00000200
 #define GLOBAL 0x00000100
 
+/* masks */
 #define ASIDMASK 6
+
+
+
 
 /* bits 6-11 are the ASID in the CP0 register */
 #define ENTRYHIASID 0x00000FC0
@@ -173,7 +177,12 @@
 #define TERMINT	7
 #define DEVREGLEN 4	/* device register field length in bytes & regs per dev */
 #define DEVREGSIZE 16 	/* device register size in bytes */
+#define DEVINTNUM 5
+#define DEVPERINT 8
 
+/* devices */
+#define TAPEDEV (((TAPEINT - 3) * DEVREGSIZE * DEVPERINT) + INTDEVREG)
+#define DISKDEV (((DISKINT - 3) * DEVREGSIZE * DEVPERINT) + INTDEVREG)
 /* device register field number for non-terminal devices */
 #define STATUS 0
 #define COMMAND	1

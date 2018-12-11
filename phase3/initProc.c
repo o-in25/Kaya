@@ -126,9 +126,10 @@ static void initUProc() {
 
 	int asid = extractASID();
 	/* set up the tape */
-	device_PTR tapeDevice;
+	device_PTR tapeDevice = NULL;
 	/* set up the disk */
-	device_PTR diskDevice;
+	device_PTR diskDevice = NULL;
+	
 	/* set up the exception state vectors for the sys-5 pass up 
 	or die helper method */
 	initializeExceptionsStateVector();
