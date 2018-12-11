@@ -64,6 +64,7 @@ static state_PTR prepareProcessorState() {
 	/* preparing a processor state appropriate for the 
 	execution of uprocs */
 	state_PTR processorState;
+	processState->s_status = ALLOFF | INTERRUPTSON | IM | TE | VMo | KUo;
 	processorState->s_pc = (memaddr)TEXTAREASEGMENTMASK;
 	processorState->s_t9 = (memaddr)TEXTAREASEGMENTMASK;
 	processorState->s_sp = TEXTAREASEGMENTMASK;
