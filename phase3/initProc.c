@@ -120,14 +120,25 @@ static void extractASID() {
 	return ((getENTRYHI() & ENTRYHIASID) >> ASIDMASK);
 }
 
+
+/* gets the ball rolling */
 static void initUProc() {
 
 	int asid = extractASID();
 	device_PTR tapeDevice;
 	device_PTR diskDevice; 
 
+	int index = 0;
 	while((tapeDevice->d_data1 != EOF)) {
-		diskOperation();
+		int[7] diskInformation = {
+			&(asid - 1),
+			&i,
+			&disk0Semaphore,
+			&EMPTY,
+			&EMPTY,
+			&EMPTY
+		};
+		diskOperation(&(diskInformation));
 	}
 
 	/* set up the exception state vectors for the sys-5 pass up 
@@ -140,7 +151,7 @@ static void initUProc() {
 }
 
 
-static void diskOperation() {
+static void diskOperation(int[]* diskInformation) {
 	/* TODO: build this */
 }
 
