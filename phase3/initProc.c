@@ -57,10 +57,10 @@ static void extractASID() {
 }
 
 static void initProc() {
-
+	initializeStateExceptionsStateVector();
 }
 
-static void exceptionsStateVector() {
+static void initializeStateExceptionsStateVector() {
 	int i;
 	/* initialize an new state */
 	state_PTR state = NULL;
@@ -68,7 +68,6 @@ static void exceptionsStateVector() {
 	for(i = 0; i < TRAPTYPES; i++) {
 		state_PTR state = &(uProcesses[extractASID()].Tnew_trap[i]);
 		state->s_asid = getENTRYHI();
-
 		if(i == TLBTRAP){
 
 		} else if(i == PROGTRAP) {
@@ -78,6 +77,8 @@ static void exceptionsStateVector() {
 		}
 
 	}
+	/* perform a sys5 - specify state exceptions vector */
+	SYSCALL()
 }
 
 	
