@@ -47,6 +47,8 @@ void test() {
 	for(i = 0; i < MAXUPROC; i++) {
 		/* get the ith uProc */
 		Tproc_PTR userProc = &(uProcesses[i]);
+		/* initialize the header */
+		userProc->Tp_pte.header = (MAGICNO << PGTBLHEADERWORD | KUSEGPTESIZE);
 		
 	}
 }
