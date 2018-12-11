@@ -44,6 +44,11 @@ void test() {
 	/* initialize the header */
 	kSegOS.header = MAGICNO << PGTBLHEADERWORD | KSEGOSPTESIZE;
 
+	for(i = 0; i < MAXUPROC; i++) {
+		/* get the ith uProc */
+		Tproc_PTR userProc = &(uProcesses[i]);
+		
+	}
 }
 
 /* 
@@ -58,7 +63,7 @@ static void extractASID() {
 	return ((getENTRYHI() & ENTRYHIASID) >> 6);
 }
 
-static void initProc() {
+static void initUProc() {
 	initializeStateExceptionsStateVector();
 	/* prepare a new processor state */
 	state_PTR processorState = prepareProcessorState();
