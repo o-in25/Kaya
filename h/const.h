@@ -143,6 +143,9 @@
 #define ENTRYHIASID 0x00000FC0
 #define BASEADDR 0x8000
 #define TEXTAREASEGMENTMASK BASEADDR + 0x00B0
+/* verify that a page table address is found in the segment table */
+#define MAGICNO 0x0000002A
+#define PGTBLHEADERWORD 24
 
 /* virtual memory & swap pool */
 #define SWAPPOOLSIZE 
