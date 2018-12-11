@@ -15,6 +15,12 @@ int masterSemaphore;
 int mutexSemaphores[MAXSEMALLOC];
 /* END OF GLOBAL VARIABLES */
 
+static void initUProcs() {
+	int i;
+	int j;
+	
+}
+
 /* wrapper function for our phase 3 */
 void test() {
 	/* some variables for indexing */
@@ -43,7 +49,6 @@ void test() {
 	} 
 	/* initialize the header */
 	kSegOS.header = MAGICNO << PGTBLHEADERWORD | KSEGOSPTESIZE;
-
 	for(i = 0; i < MAXUPROC; i++) {
 		/* get the ith uProc */
 		Tproc_PTR userProc = &(uProcesses[i]);
@@ -56,6 +61,10 @@ void test() {
 			userProc->Tp_pte.pteTable[j].entryHI = NULL;
 			userProc->Tp_pte.pteTable[j].entryLO = ALLOFF | DIRTY;
 		}
+		/* get the address of ith entry the segment table */
+		segt_PTR segmentTable = (segt_PTR) SEGSTART + (i * SEGWIDTH);
+
+		
 	}
 }
 

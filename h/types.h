@@ -163,7 +163,7 @@ typedef struct segt_t {
 	pte_t* kUseg2;
 	pte_t* kUseg3;
 	pteOS_t* kSegOS;
-} segt_t;
+} segt_t, *segt_PTR;
 
 /* type for the swap poo; */
 typedef struct swapPool_t {

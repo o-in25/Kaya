@@ -130,7 +130,7 @@
 
 /* segment */
 #define SEGSTART 0x20000500
-#define SEGWIDTH 12
+#define SEGWIDTH 0x0000000C
 #define PADDRBASE 0x20000
 #define KUSEG3ADDRBASE 0xC0000
 
@@ -143,6 +143,7 @@
 #define ENTRYHIASID 0x00000FC0
 #define BASEADDR 0x8000
 #define TEXTAREASEGMENTMASK BASEADDR + 0x00B0
+
 /* verify that a page table address is found in the segment table */
 #define MAGICNO 0x0000002A
 #define PGTBLHEADERWORD 24
