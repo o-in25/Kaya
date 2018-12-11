@@ -93,7 +93,10 @@ void test() {
 		/* point to the kSegOS segment */
 		segmentTable->kSegOS = &kSegOS;
 		segmentTable->kUseg2 = &(userProc->Tp_pte);
+		/* prepare the processor state */
 		prepareProcessorState(TRUE, i);
+		userProc->Tp_sem = 0;
+		
 	}
 }
 
