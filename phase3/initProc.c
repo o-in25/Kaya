@@ -179,13 +179,19 @@ void mutex(int flag, int *semaphore) {
 	}
 }
 
-static void diskOperation(int[] params, int* semaphore, device_PTR disk) {
+static void diskOperation(int[] params, int* semaphore, device_PTR diskDevice) {
 	/* initialize the disk with the disk number */
-	*(disk) += (diskInformation[DISKNUM] * DEVREGSIZE);
+	*(diskDevice) += (diskInformation[DISKNUM] * DEVREGSIZE);
 	/* gain control */
 	mutex(TRUE, semaphore);
-	int status = getSTATUS();
-	
+	/* save the status before we turn everything off */
+	int preservedStatus = getSTATUS();
+	/* turn off interrupts */
+	setSTATUS(ALLOFF);
+	diskDevice->d_command = ALLOFF;
+	int done = SYSCALL(WAITIO, DISKINT, diskInformation[DISKNUM], EMPTY);
+	/* return to how we were */
+	setSTATUS(preservedStatus);
 }
 
 

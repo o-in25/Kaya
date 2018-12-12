@@ -133,6 +133,7 @@ static void intervalTimerHandler(cpu_t startTime, cpu_t endTime) {
         (p->p_time) = (p->p_time) + elapsedTime;
         /* one less device waiting */
         softBlockedCount--;
+        /* go again */
         p = headBlocked(semaphore);
     }
     /* exit the interrupt handler - from which this process had 
