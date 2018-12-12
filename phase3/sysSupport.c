@@ -1,6 +1,7 @@
 #include "../h/const.h"
 #include "../h/types.h"
 #include "../e/initProc.e"
+#include "../e/exceptions.e"
 
 void uSyscallHandler() {
     state_PTR state = (&((uProcesses[getASID()-1]).Told_trap[SYSTRAP]));
@@ -31,7 +32,7 @@ static void delegateUSyscall(state_PTR state) {
             diskGet();
             break;
         case WRITE_TO_PRINTER:
-            writeToPrinter();
+            writeToPrinter(state);
             break;
         case GET_TOD:
             getTOD();
@@ -68,7 +69,7 @@ static void diskPut() {
 }
 
 static void diskGet() {
-
+    diskOperation();
 }
 
 static void writeToPrinter(state_PTR state) {
@@ -90,6 +91,9 @@ static void writeToPrinter(state_PTR state) {
         /* the device is not ready, return the negative value */
         i = i - (2 * i);
     }
+    state->s_v0 = i;
+    contextSwitch(state);
+
 }
 
 static void getTOD() {
