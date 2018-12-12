@@ -22,12 +22,14 @@
 #include "../e/initial.e"
 #include "../e/exceptions.e"
 #include "../e/scheduler.e"
+/* include the µmps2 library */
 #include "/usr/local/include/umps2/umps/libumps.e"
 
 
 /************************************************************************************************************************/
 /******************************************** HELPER FUNCTIONS  *********************************************************/
 /************************************************************************************************************************/
+
 /*
 * Function: Get Device Number 
 * The interrupting devices bit map IDBM is a read-only 5 word 
