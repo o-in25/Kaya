@@ -11,7 +11,7 @@ void uSyscallHandler() {
 static void delegateUSyscall(state_PTR state) {
     switch(state->s_a0) {
         case READ_FROM_TERMINAL: 
-            readFromTerminal();
+            readFromTerminal(state);
             break;
         case WRITE_TO_TERMINAL:
             writeToTerminal(state);
@@ -44,7 +44,9 @@ static void delegateUSyscall(state_PTR state) {
 }
 
 
-static void readFromTerminal() {
+static void readFromTerminal(state_PTR state) {
+    int asidIndex = (getSTATUS() - 1);
+    device_PTR printerDevice = (device_PTR) PRINTERDEV + (asidIndex * DEVREGSIZE);
 
 }
 
@@ -69,7 +71,7 @@ static void diskPut() {
 }
 
 static void diskGet() {
-    diskOperation();
+
 }
 
 static void writeToPrinter(state_PTR state) {

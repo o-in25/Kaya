@@ -233,6 +233,7 @@
 #define EMPTY 0
 #define EOT 0
 #define EOF 1
+#define EOL '\0'
 
 /* syscalls */
 #define CREATEPROCESS 1
