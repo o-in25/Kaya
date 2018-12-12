@@ -8,6 +8,9 @@
     shandshake. Furthermore, for all devices, the interrupt handler will insure that running processes' will not be
     charged for time spent in the the interupt handler. 
 
+    This module contributes function definitions and a few sample fucntion implementations to the contributors put 
+    forth by the Kaya OS project.
+
 ***************************************************** interrupts.c ******************************************************/
 
 /* h files to include */

@@ -1,3 +1,18 @@
+/*************************************************** exceptions.c ********************************************************
+	Handles the interrupts that occur in the Kaya OS/ When an interrupt occurs, assuming that the interrupt bit is 
+    turned on (otherwise an interrupt cannot occur), the interval handler will be invoked to dermine the cause of 
+    the interrupt, as well as the appropriate actions to be taken henceforth. The cause of the interrupt can either 
+    be a device that requires to be acknowledged as part of umps2's handshake protocol, or for from a clock interrupt
+    caused by either a quantum ending or a psuedo clock timer. For semaphore devices, i.e. a disk, tape, network, printer 
+    or terminal device, causes an interupt, a V operation is performed on that device's semaphore and implements the 
+    shandshake. Furthermore, for all devices, the interrupt handler will insure that running processes' will not be
+    charged for time spent in the the interupt handler. 
+
+    This module contributes function definitions and a few sample fucntion implementations to the contributors put 
+    forth by the Kaya OS project.
+
+***************************************************** exceptions.c ******************************************************/
+
 /* h files to include */
 #include "../h/const.h"
 #include "../h/types.h"
@@ -6,46 +21,14 @@
 #include "../e/scheduler.e"
 #include "../e/interrupts.e"
 #include "../e/scheduler.e"
+#include "../e/exceptions.e"
 #include "../e/pcb.e"
 #include "../e/asl.e"
 /* include the µmps2 library */
 #include "/usr/local/include/umps2/umps/libumps.e"
 
 
-/* 
-* Function: Context Switch 
-* A simple wrapper function that will place the 
-* passed in state_t pointer into the ROM-issued 
-* Load State (LDST) function
-*/
-void contextSwitch(state_PTR s) {
-    /* load the new processor state */
-    LDST(s);
-}
 
-/* 
-* Function: Copy State
-* Simple helper function that will take the contents
-* of the state_t pointer from the first argument 
-* and will copy it to the second state_t pointer 
-* argument
-*/
-void copyState(state_PTR from, state_PTR to) {
-    /* copy id */
-    to->s_asid = from->s_asid;
-    /* copy cause register */
-    to->s_cause = from->s_cause;
-    /* copy program counter */
-    to->s_pc = from->s_pc;
-    /* copy status register */
-    to->s_status = from->s_status;
-    int i;  
-    /* copy each register */
-    for(i = 0; i < STATEREGNUM; i++) {
-        /* copy the register */
-        to->s_reg[i] = from->s_reg[i];
-    }
-}
 
 /*
 * Function: Find Semaphore Index 
@@ -516,6 +499,40 @@ static void syscallDispatch(int callNumber, state_PTR caller) {
     }
 }
 
+/* 
+* Function: Context Switch 
+* A simple wrapper function that will place the 
+* passed in state_t pointer into the ROM-issued 
+* Load State (LDST) function
+*/
+void contextSwitch(state_PTR s) {
+    /* load the new processor state */
+    LDST(s);
+}
+
+/* 
+* Function: Copy State
+* Simple helper function that will take the contents
+* of the state_t pointer from the first argument 
+* and will copy it to the second state_t pointer 
+* argument
+*/
+void copyState(state_PTR from, state_PTR to) {
+    /* copy id */
+    to->s_asid = from->s_asid;
+    /* copy cause register */
+    to->s_cause = from->s_cause;
+    /* copy program counter */
+    to->s_pc = from->s_pc;
+    /* copy status register */
+    to->s_status = from->s_status;
+    int i;
+    /* copy each register */
+    for (i = 0; i < STATEREGNUM; i++) {
+        /* copy the register */
+        to->s_reg[i] = from->s_reg[i];
+    }
+}
 /*
 * Function: Program Trap Handler 
 * Gets the old program trap area and memory and 
