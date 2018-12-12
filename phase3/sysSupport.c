@@ -13,7 +13,7 @@ static void delegateUSyscall(state_PTR state) {
             readFromTerminal();
             break;
         case WRITE_TO_TERMINAL:
-            writeToTerminal();
+            writeToTerminal(state);
             break;
         case V_VIRTUAL_SEMAPHORE:
             vVerhogen();
@@ -47,7 +47,7 @@ static void readFromTerminal() {
 
 }
 
-static void writeToTerminal() {
+static void writeToTerminal(state_PTR state) {
 
 }
 
@@ -71,8 +71,11 @@ static void diskGet() {
 
 }
 
-static void writeToPrinter() {
-
+static void writeToPrinter(state_PTR state) {
+    int nextChar = (char*) state->s_a1;
+    int stringLength = (int) state->s_a2;
+    device_PTR printerDevice = (device_PTR) PRINTERDEV + ((getASID() - 1) * DEVREGSIZE);
+    int i = 0;
 }
 
 static void getTOD() {
