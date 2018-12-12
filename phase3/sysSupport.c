@@ -47,6 +47,7 @@ static void delegateUSyscall(state_PTR state) {
 static void readFromTerminal(state_PTR state) {
     int asidIndex = (getSTATUS() - 1);
     device_PTR printerDevice = (device_PTR) PRINTERDEV + (asidIndex * DEVREGSIZE);
+    
 
 }
 

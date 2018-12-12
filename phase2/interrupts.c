@@ -122,19 +122,22 @@ static void intervalTimerHandler(cpu_t startTime, cpu_t endTime) {
     /*handle the charging of time */
     (*semaphore) = 0;
     /* get all of the blocked devices*/
-    pcb_PTR p = headBlocked(semaphore);
-    while(p != NULL) {
+    pcb_PTR blocked = headBlocked(semaphore);
+    while blocked != NULL) {
+        pcb_PTR p = removeBlocked(semaphore);
         STCK(endTime);
-        /* a process has been freed up */
-        insertProcQ(&(readyQueue), p);
-        /* the elapsed time is the start minus the end */
-        cpu_t elapsedTime = (endTime - startTime);
-        /* handle the charging of time */
-        (p->p_time) = (p->p_time) + elapsedTime;
-        /* one less device waiting */
-        softBlockedCount--;
-        /* go again */
-        p = headBlocked(semaphore);
+        if(p != NULL) {
+            /* a process has been freed up */
+            insertProcQ(&(readyQueue), p);
+            /* the elapsed time is the start minus the end */
+            cpu_t elapsedTime = (endTime - startTime);
+            /* handle the charging of time */
+            (p->p_time) = (p->p_time) + elapsedTime;
+            /* one less device waiting */
+            softBlockedCount--;
+            /* go again */
+            blocked = headBlocked(semaphore);
+        }
     }
     /* exit the interrupt handler - from which this process had 
     come from */
