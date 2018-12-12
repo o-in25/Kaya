@@ -185,13 +185,21 @@ static void diskOperation(int[] params, int* semaphore, device_PTR diskDevice) {
 	/* gain control */
 	mutex(TRUE, semaphore);
 	/* save the status before we turn everything off */
-	int preservedStatus = getSTATUS();
+	int oldStatus = getSTATUS();
 	/* turn off interrupts */
 	setSTATUS(ALLOFF);
 	diskDevice->d_command = ALLOFF;
-	int done = SYSCALL(WAITIO, DISKINT, diskInformation[DISKNUM], EMPTY);
+	int status = SYSCALL(WAITIO, DISKINT, diskInformation[DISKNUM], EMPTY);
 	/* return to how we were */
-	setSTATUS(preservedStatus);
+	setSTATUS(oldStatus);
+	/* if we aren't ready, it's over */
+	if(status != READY) {
+		SYSCALL(TERMINATEPROCESS, EMPTY, EMPTY, EMPTY);
+	}
+
+	
+	/* release control */
+	mutex(FALSE, semaphore);
 }
 
 
