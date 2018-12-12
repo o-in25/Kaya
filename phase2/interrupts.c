@@ -123,7 +123,7 @@ static void intervalTimerHandler(cpu_t startTime, cpu_t endTime) {
     (*semaphore) = 0;
     /* get all of the blocked devices*/
     pcb_PTR blocked = headBlocked(semaphore);
-    while blocked != NULL) {
+    while(blocked != NULL) {
         pcb_PTR p = removeBlocked(semaphore);
         STCK(endTime);
         if(p != NULL) {
