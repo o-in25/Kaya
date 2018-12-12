@@ -1,16 +1,44 @@
 #include "../h/const.h"
 #include "../h/types.h"
-
-
+#include "../e/initProc.e"
 
 void uSyscallHandler() {
-    state_PTR state = NULL;
+    state_PTR state = (&((uProcesses[getASID()-1]).Told_trap[SYSTRAP]));
     delegateUSyscall(state);
 }
 
 static void delegateUSyscall(state_PTR state) {
     switch(state->s_a0) {
-
+        case READ_FROM_TERMINAL: 
+            readFromTerminal();
+            break;
+        case WRITE_TO_TERMINAL:
+            writeToTerminal();
+            break;
+        case V_VIRTUAL_SEMAPHORE:
+            vVerhogen();
+            break;
+        case P_VIRTUAL_SEMAPHORE:
+            vPasseren();
+            break;
+        case DELAY:
+            delay();
+            break;
+        case DISK_PUT:
+            diskPut();
+            break;
+        case DISK_GET:
+            diskGet();
+            break;
+        case WRITE_TO_PRINTER:
+            writeToPrinter();
+            break;
+        case GET_TOD:
+            getTOD();
+            break;
+        case TERMINATE:
+            terminateUProcess();
+            break;
     }
 }
 
@@ -52,7 +80,7 @@ static void getTOD() {
 }
 
 static void terminateUProcess() {
-    
+
 }
 
 
