@@ -127,9 +127,10 @@ static void initUProc() {
 	int asid = extractASID();
 	int asidIndex = asid - 1;
 	/* set up the disk */
-	device_PTR diskDevice = DISKDEV;
+	int diskControl = (EMPTY * DEVREGSIZE);
+	device_PTR diskDevice = (device_PTR)DISKDEV + diskControl;
 	/* set up the tape */
-	device_PTR tapeDevice = (device_PTR)TAPEDEV + ((asidIndex)*DEVREGSIZE);
+	device_PTR tapeDevice = (device_PTR) TAPEDEV + ((asidIndex) * DEVREGSIZE);
 	/* set up a memory buffer */
 	int memoryBuffer = BUFFER + (asidIndex * PAGESIZE);
 
@@ -154,7 +155,7 @@ static void initUProc() {
 		diskInformation[READWRITE] = WRITE;
 		/* perform a disk I/O now that we have all of the 
 		information we need */
-		diskOperation(diskInformation, &(disk0Semaphore));
+		diskOperation(diskInformation, &(disk0Semaphore), diskDevice);
 		/* keep track of the pages */
 		pageNumber++;
 	}
@@ -165,9 +166,25 @@ static void initUProc() {
 	contextSwitch(processorState);
 }
 
+/* used to gain mutual exclusion on a passed in semaphore or 
+release mutal exclusion so that a process can be done atomically. Here,
+TRUE is to gain mutal exclusion and FALSE is to release it */
+void mutex(int flag, int *semaphore) {
+	/* are we gaining control? */
+	if (flag) {
+		SYSCALL(PASSERN, (int)semaphore, EMPTY, EMPTY);
+	} else {
+		/* no - we are releasing it */
+		SYSCALL(VERHOGEN, (int)semaphore, EMPTY, EMPTY);
+	}
+}
 
-static void diskOperation(int[] subdivisions, int* semaphore) {
-	/* TODO: build this */
+static void diskOperation(int[] params, int* semaphore, device_PTR disk) {
+	/* initialize the disk with the disk number */
+	*(disk) += (diskInformation[DISKNUM] * DEVREGSIZE);
+	/* gain control */
+	mutex(TRUE, semaphore);
+	int status = getSTATUS();
 	
 }
 
@@ -198,6 +215,8 @@ static void initializeExceptionsStateVector() {
 		SYSCALL(SPECTRAPVEC, i, (int) &(uProcesses[extractASID() - 1].Told_trap[i]), (int) state);
 	}
 }
+
+
 
 
 

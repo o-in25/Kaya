@@ -131,7 +131,7 @@ static void passUpOrDie(int callNumber, state_PTR old) {
 */
 static void terminateProgeny(pcb_PTR p) {
     /* kill each progeny */
-     while (!emptyChild(p)) {
+     while(!emptyChild(p)) {
         /* perform tail recursion */
         terminateProgeny(removeChild(p));
      }
