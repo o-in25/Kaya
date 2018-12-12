@@ -179,6 +179,7 @@ void mutex(int flag, int *semaphore) {
 	}
 }
 
+/* read in the uproc's .data and .text from the tape */
 static void diskOperation(int[] params, int* semaphore, device_PTR diskDevice) {
 	/* initialize the disk with the disk number */
 	*(diskDevice) += (diskInformation[DISKNUM] * DEVREGSIZE);
@@ -197,7 +198,7 @@ static void diskOperation(int[] params, int* semaphore, device_PTR diskDevice) {
 		SYSCALL(TERMINATEPROCESS, EMPTY, EMPTY, EMPTY);
 	}
 
-	
+
 	/* release control */
 	mutex(FALSE, semaphore);
 }
