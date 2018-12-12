@@ -187,9 +187,11 @@
 #define DEVPERINT 8
 
 /* devices */
-#define TAPEDEV (((TAPEINT - 3) * DEVREGSIZE * DEVPERINT) + INTDEVREG)
-#define DISKDEV (((DISKINT - 3) * DEVREGSIZE * DEVPERINT) + INTDEVREG)
+#define TAPEDEV (((TAPEINT - NOSEM) * DEVREGSIZE * DEVPERINT) + INTDEVREG)
+#define DISKDEV (((DISKINT - NOSEM) * DEVREGSIZE * DEVPERINT) + INTDEVREG)
+#define PRINTERDEV (INTDEVREG + (PRNTINT - NOSEM) * DEVREGSIZE * DEVPERINT)
 #define BUFFER (KSEGOSARA - (DISKCOUNT * PAGESIZE))
+
 
 /* disk parameters */
 #define DISKPARAMS 6
@@ -205,6 +207,9 @@
 #define COMMAND	1
 #define DATA0 2
 #define DATA1 3
+
+/* device register field for printer devices */
+#define PRINTCHR 2
 
 /* device register field number for terminal devices */
 #define RECVSTATUS 0

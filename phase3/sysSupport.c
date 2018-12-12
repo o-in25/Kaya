@@ -72,10 +72,24 @@ static void diskGet() {
 }
 
 static void writeToPrinter(state_PTR state) {
-    int nextChar = (char*) state->s_a1;
+    char* nextChar = (char*) state->s_a1;
     int stringLength = (int) state->s_a2;
-    device_PTR printerDevice = (device_PTR) PRINTERDEV + ((getASID() - 1) * DEVREGSIZE);
+    int asidIndex = getASID() - 1;
+    /* get the device */
+    device_PTR printerDevice = (device_PTR) PRINTERDEV + (asidIndex * DEVREGSIZE);
     int i = 0;
+    int status;
+    while(i < stringLength && i > 0) {
+        printerDevice->d_command = PRINTCHR;
+        printerDevice->d_data0 = nextChar[i];
+        status = SYSCALL(WAITIO, PRNTINT, asidIndex, EMPTY);
+        if(status == READY) {
+            i++;
+            continue;
+        }
+        /* the device is not ready, return the negative value */
+        i = i - (2 * i);
+    }
 }
 
 static void getTOD() {
