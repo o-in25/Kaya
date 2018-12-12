@@ -108,18 +108,16 @@ int getLineNumber(unsigned int cause) {
 
 /*
 * Function: Interval Timer Handler
-* The handler for the interrupting interval timer handler. 
-* Performs a V operation on the nucleus maintained semaphore associated with the interrupting (sub)device. 
-* The kernel maintains two semaphores for each terminal subdevice. For Interval 
-* Timer interrupts that represent a pseudo-clock tick, perform the V operation on the kernel
-* maintained pseudo-clock timer semaphore.
+* Handles the interval timer which serves as a pseudo-clock. If left unadjusted, 
+* the p
 */
 static void intervalTimerHandler(cpu_t startTime, cpu_t endTime) {
-    LDIT(INTERVAL);
+    /* load the interval */
+    setTIMER(QUANTUM);
     /* get the index of the last device in the device 
     semaphore list - which is the interval timer */
     int* semaphore = &(semdTable[MAXSEMALLOC - 1]);
-    /* reset the  */
+    /* reset the semaphore */
     (*semaphore) = 0;
     /* get all of the blocked devices*/
     pcb_PTR blocked = headBlocked(semaphore);
