@@ -2,7 +2,7 @@
 #include "../h/types.h"
 
 /* read in the uproc's .data and .text from the tape */
-extern void diskOperation(int diskInformation[], int *semaphore, device_PTR diskDevice) {
+void diskOperation(int diskInformation[], int *semaphore, device_PTR diskDevice) {
     /* initialize the disk with the disk number */
     diskDevice = (device_PTR) diskDevice + (diskInformation[DISKNUM] * DEVREGSIZE);
     /* gain control */
