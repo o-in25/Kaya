@@ -1,6 +1,7 @@
 
 #include "../h/const.h"
 #include "../h/types.h"
+#include "../e/initProc.e"
 void test() {
     
 }
@@ -21,7 +22,7 @@ int nextFrame (){
 }
 
 void TLBhandler (){
-    devregarea_t* devReg = (devregarea_t*) RAMBASEADDR;
+    devregarea_PTR devReg = (devregarea_PTR)RAMBASEADDR;
     memaddr RAMTOP = devReg->rambase + devReg->ramsize;
     memaddr swappoolstart = RAMTOP - (2 * PAGESIZE) - (SWAPSIZE * PAGESIZE);
     
@@ -32,8 +33,8 @@ void TLBhandler (){
     
     /* why are we here */
     /*examine oldmem cause register */
-    state_t* oldState = (state_t*) &(uProcesses[missing_ASID - 1]./*however we do old trap area for tlb */)
-    int cause = (oldState->s_cause & /* bits 2-6 */) >> 2;
+    state_PTR oldState = (state_PTR) & (uProcesses[missing_ASID - 1] /*however we do old trap area for tlb */);
+    int cause = (oldState->s_cause & 0 /* bits 2-6 */) >> 2;
     /* if TLB Invalid then SYS18 */
     /* 2 and 3 only valid TLB causes (pg 16 in yellow book) */
     if ((cause != 2) && (cause != 3)){
@@ -44,7 +45,7 @@ void TLBhandler (){
     /*not sure about 30, will revisit later */
     int segmentNumber = (oldState->s_asid >> 30);
     /* i think that 0x3FFFF000 covers the asid but im not sure */
-    int pageNumber =((oldstate->s_asid & 0x3FFFF000) >> 12);
+    int pageNumber = ((oldState->s_asid & 0x3FFFF000) >> 12);
     /* acquire the mutex on the swapool metaphor */
     SYSCALL (PASSEREN, (int) &swapSemaphore, 0, 0);
     
