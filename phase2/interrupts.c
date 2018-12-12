@@ -1,10 +1,14 @@
-/*************************************************** interrupts.c ************************************************************
-	Interrupts.c is the I/O handler. In the I/O handler, the following steps are taken: first, the
-    interrupt line that is on is determined (for convience and organization, the devices 3-7 are stored
-    as constants in constants.h). Next, with the line number, the device instance must be determined, 
-    and the address of that device's regsiter must be acquired.  
+/*************************************************** interrupts.c ********************************************************
+	Handles the interrupts that occur in the Kaya OS/ When an interrupt occurs, assuming that the interrupt bit is 
+    turned on (otherwise an interrupt cannot occur), the interval handler will be invoked to dermine the cause of 
+    the interrupt, as well as the appropriate actions to be taken henceforth. The cause of the interrupt can either 
+    be a device that requires to be acknowledged as part of umps2's handshake protocol, or for from a clock interrupt
+    caused by either a quantum ending or a psuedo clock timer. For semaphore devices, i.e. a disk, tape, network, printer 
+    or terminal device, causes an interupt, a V operation is performed on that device's semaphore and implements the 
+    shandshake. Furthermore, for all devices, the interrupt handler will insure that running processes' will not be
+    charged for time spent in the the interupt handler. 
 
-***************************************************** interrupts.c ************************************************************/
+***************************************************** interrupts.c ******************************************************/
 
 /* h files to include */
 #include "../h/const.h"
@@ -17,10 +21,10 @@
 #include "../e/scheduler.e"
 #include "/usr/local/include/umps2/umps/libumps.e"
 
+
 /************************************************************************************************************************/
 /******************************************** HELPER FUNCTIONS  *********************************************************/
 /************************************************************************************************************************/
-
 /*
 * Function: Get Device Number 
 * The interrupting devices bit map IDBM is a read-only 5 word 
@@ -28,7 +32,7 @@
 * When bit i in word j is equal to 1, the device associated with
 * that corresponding bit has an interrupt pending. Since the word
 * will be supplied prior to this function call, this will simply 
-* calculate the device number  
+* calculate the device number by looping through each bit
 */
 static int getDeviceNumber(int lineNumber) {
     /* get the address of the device bit map. Per secion 5.2.4 of pops, the 
@@ -56,15 +60,14 @@ static int getDeviceNumber(int lineNumber) {
 
 /*
 * Function: Exit Interrupt Handler
-* Ensures that the current process will not be charged for
-* the time in the interrupt handler - if an interrupt occured 
-* whem the current process is running
+* Ensures that the current process will not be charged for time spent the 
+* in the interrupt handler - baring that there is a current process. I
 */
 static void exitInterruptHandler(cpu_t startTime) {
-    /* get the old interrupt area */
-    state_PTR oldInterrupt = (memaddr) INTRUPTOLDAREA;
-    /* the process should not be null */
+    /* do we have a current process? */
     if(currentProcess != NULL) {
+        /* get the old interrupt area */
+        state_PTR oldInterrupt = (memaddr)INTRUPTOLDAREA;
         cpu_t endTime;
         /* start the clock by placing a new value in 
         the ROM supported STCK function */
@@ -83,10 +86,10 @@ static void exitInterruptHandler(cpu_t startTime) {
 
 /*
 * Function: Get line number
-* Gets the line number of the outstanding device interrupt. 
-* This function will only handle finding the line number for devices 
+* Gets the line number of the outstanding device interrupt; only finds
+* the line number for devices with semaphore's associated with them, (i.e. lines 3-7). 
 */
-int getLineNumber(unsigned int cause) {
+static int getLineNumber(unsigned int cause) {
     /* declare the array of possible line numbers */
     unsigned int lineNumbers[SEMDEVICE] = {FOURTH, FIFTH, SIXTH, SEVENTH, EIGHTH};
     /* declare the array of possible line numbers */
@@ -104,6 +107,10 @@ int getLineNumber(unsigned int cause) {
     /* we found it */
     return finding;
 }
+
+/************************************************************************************************************************/
+/******************************************** INTERVAL TIMER HANDLER*****************************************************/
+/************************************************************************************************************************/
 
 /*
 * Function: Interval Timer Handler
