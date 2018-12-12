@@ -2,7 +2,7 @@ void test() {
     
 }
 
-int lastFrame
+int lastFrame;
 
 void progTrapHandler (){
     /* SYS18 */

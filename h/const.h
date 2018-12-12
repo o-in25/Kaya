@@ -172,7 +172,7 @@
 #define TLBTRAP	0
 #define PROGTRAP 1
 #define SYSTRAP	2
-#define TRAPTYPES 
+#define TRAPTYPES 3
 
 /* device interrupts */
 #define NOSEM 3

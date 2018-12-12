@@ -1,6 +1,6 @@
 #include "../h/const.h"
 #include "../h/types.h"
-#include "/usr/local/include/umps2/umps/libumps.e"
+
 
 /* GLOBAL VARIABLES */
 pteOS_t kSegOS;
@@ -30,7 +30,7 @@ static state_PTR prepareProcessorState(int flag, int index) {
 	if(flag) {
 		/* the new processor state dictates that interupts are enabled,
 		user mode is on, status.te is 1 and statis vmc = 1 */
-		processState->s_status = ALLOFF | INTERRUPTSON | IM | TE | VMc | KUo;
+		processorState->s_status = ALLOFF | INTERRUPTSON | IM | TE | VMc | KUo;
 		/* set the text area masks */
 		processorState->s_pc = (memaddr) TEXTAREASEGMENTMASK;
 		processorState->s_t9 = (memaddr) TEXTAREASEGMENTMASK;
@@ -101,7 +101,7 @@ void test() {
 			SYSCALL(TERMINATEPROCESS, EMPTY, EMPTY, EMPTY);
 		}
 		if(i < MAXUPROC + 1) {
-			SYSCALL(PASSERN, (int) &masterSemaphore, EMPTY, EMPTY);
+			SYSCALL(PASSEREN, (int) &masterSemaphore, EMPTY, EMPTY);
 		}
 	}
 	/* end the process */
@@ -115,7 +115,7 @@ void test() {
 * since the ASID is bits 6-11, the ENTRYHIASID constant will determine
 * which buts signify the ASID
 */
-static void extractASID() {
+static int extractASID() {
 	/* extracts the asid from the entryHi cp0 register */
 	return ((getENTRYHI() & ENTRYHIASID) >> ASIDMASK);
 }
@@ -128,7 +128,7 @@ static void initUProc() {
 	int asidIndex = asid - 1;
 	/* set up the disk */
 	int diskControl = (EMPTY * DEVREGSIZE);
-	device_PTR diskDevice = (device_PTR)DISKDEV + diskControl;
+	device_PTR diskDevice = (device_PTR) DISKDEV + diskControl;
 	/* set up the tape */
 	device_PTR tapeDevice = (device_PTR) TAPEDEV + ((asidIndex) * DEVREGSIZE);
 	/* set up a memory buffer */
@@ -141,7 +141,7 @@ static void initUProc() {
 	/* read until we reach the end of line character or the 
 	end of tape marker */
 	int diskInformation[DISKPARAMS];
-	while((tapeDevice->d_data1 != EOF) && (tape->d_data1 != EOT)) {
+	while((tapeDevice->d_data1 != EOF) && (tapeDevice->d_data1 != EOT)) {
 		/* while there are things to do... */
 		tapeDevice->d_data0 = memoryBuffer;
 		tapeDevice->d_command = READ;
@@ -172,35 +172,11 @@ TRUE is to gain mutal exclusion and FALSE is to release it */
 void mutex(int flag, int *semaphore) {
 	/* are we gaining control? */
 	if (flag) {
-		SYSCALL(PASSERN, (int)semaphore, EMPTY, EMPTY);
+		SYSCALL(PASSEREN, (int)semaphore, EMPTY, EMPTY);
 	} else {
 		/* no - we are releasing it */
 		SYSCALL(VERHOGEN, (int)semaphore, EMPTY, EMPTY);
 	}
-}
-
-/* read in the uproc's .data and .text from the tape */
-static void diskOperation(int[] params, int* semaphore, device_PTR diskDevice) {
-	/* initialize the disk with the disk number */
-	*(diskDevice) += (diskInformation[DISKNUM] * DEVREGSIZE);
-	/* gain control */
-	mutex(TRUE, semaphore);
-	/* save the status before we turn everything off */
-	int oldStatus = getSTATUS();
-	/* turn off interrupts */
-	setSTATUS(ALLOFF);
-	diskDevice->d_command = ALLOFF;
-	int status = SYSCALL(WAITIO, DISKINT, diskInformation[DISKNUM], EMPTY);
-	/* return to how we were */
-	setSTATUS(oldStatus);
-	/* if we aren't ready, it's over */
-	if(status != READY) {
-		SYSCALL(TERMINATEPROCESS, EMPTY, EMPTY, EMPTY);
-	}
-
-
-	/* release control */
-	mutex(FALSE, semaphore);
 }
 
 
