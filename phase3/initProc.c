@@ -19,7 +19,6 @@ int mutexSemaphores[MAXSEMALLOC];
 static void initUProcs() {
 	int i;
 	int j;
-	
 }
 
 /* prepare a new processor state */
@@ -27,7 +26,8 @@ static state_PTR prepareProcessorState(int flag, int index) {
 	/* preparing a processor state appropriate for the 
 	execution of uprocs */
 	state_PTR processorState;
-	/* is this being prepared in the segment table? */
+	/* is new processor state for variable 
+	initialization or for reading from a tape? */
 	if(flag) {
 		/* the new processor state dictates that interupts are enabled,
 		user mode is on, status.te is 1 and statis vmc = 1 */
@@ -42,9 +42,8 @@ static state_PTR prepareProcessorState(int flag, int index) {
 		processorState->s_asid = (index << ASIDMASK);
 		processorState->s_status = ALLOFF | IEc | IM | TE;
 		/* TODO: set up the handler */
-		processorState->s_t9 = NULL;
-		processorState->s_status = NULL;
-
+		processorState->s_t9 = initUProc;
+		processorState->s_status = initUProc;
 	}
 	return processorState;
 }
