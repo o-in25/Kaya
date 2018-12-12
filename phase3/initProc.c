@@ -128,8 +128,7 @@ static void initUProc() {
 	int asid = extractASID();
 	int asidIndex = asid - 1;
 	/* set up the disk */
-	int diskControl = (EMPTY * DEVREGSIZE);
-	device_PTR diskDevice = (device_PTR) DISKDEV + diskControl;
+	device_PTR diskDevice = (device_PTR) DISKDEV;
 	/* set up the tape */
 	device_PTR tapeDevice = (device_PTR) TAPEDEV + ((asidIndex) * DEVREGSIZE);
 	/* set up a memory buffer */
@@ -165,19 +164,6 @@ static void initUProc() {
 	state_PTR processorState = prepareProcessorState(FALSE, 0);
 	/* perform a context switch for the prepared state */
 	contextSwitch(processorState);
-}
-
-/* used to gain mutual exclusion on a passed in semaphore or 
-release mutal exclusion so that a process can be done atomically. Here,
-TRUE is to gain mutal exclusion and FALSE is to release it */
-void mutex(int flag, int *semaphore) {
-	/* are we gaining control? */
-	if (flag) {
-		SYSCALL(PASSEREN, (int)semaphore, EMPTY, EMPTY);
-	} else {
-		/* no - we are releasing it */
-		SYSCALL(VERHOGEN, (int)semaphore, EMPTY, EMPTY);
-	}
 }
 
 

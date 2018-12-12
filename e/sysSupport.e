@@ -2,5 +2,6 @@
 #include "../h/types.h"
 #ifndef SYSSUPPORT
 #define SYSSUPPORT
-    diskOperation(int diskInformation[], int *semaphore, device_PTR diskDevice);
+    void diskOperation(int diskInformation[], int *semaphore, device_PTR diskDevice);
+    void mutex(int flag, int *semaphore);
 #endif

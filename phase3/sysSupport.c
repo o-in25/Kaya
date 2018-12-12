@@ -25,3 +25,16 @@ void diskOperation(int diskInformation[], int *semaphore, device_PTR diskDevice)
     /* release control */
     mutex(FALSE, semaphore);
 }
+
+/* used to gain mutual exclusion on a passed in semaphore or 
+release mutal exclusion so that a process can be done atomically. Here,
+TRUE is to gain mutal exclusion and FALSE is to release it */
+void mutex(int flag, int *semaphore) {
+    /* are we gaining control? */
+    if (flag) {
+        SYSCALL(PASSEREN, (int)semaphore, EMPTY, EMPTY);
+    } else {
+        /* no - we are releasing it */
+        SYSCALL(VERHOGEN, (int)semaphore, EMPTY, EMPTY);
+    }
+}
