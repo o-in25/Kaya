@@ -146,18 +146,11 @@ static void intervalTimerHandler(cpu_t startTime, cpu_t endTime) {
 
 /*
 * Function: The interrupt handler 
-* Acknowledges the outstanding interrupt. For all devices except 
-* the two timer devices (the system-wide Interval Timer, and the processor Local Timer)
-* this is accomplished by writing the 
-* acknowledge command code in the interrupting device’s device register. 
-* An interrupt for a timer device is acknowledged by loading the timer with a new value.
-* If the SYS8 for this interrupt was requested prior to the handling of this interrupt, 
-* recognized by the V operation above unblocking a blocked pro- cess, 
-* store the interrupting (sub)device’s status  word in the newly unblocked 
-* process’es v0. If the SYS8 for this interrupt has not yet been requested, 
-* recognized by the V operation not unblocking any process,the interrupting 
-* device’s status word is stored off 
-* until the SYS8 is eventually requested.
+* Will handler interrupts that are caused by various interrupting devices, such 
+* as terminal devices, printer devices, network devices (though this is not implemented
+* at this phase, tape devices, and disk devices. Additionally, it handles interrupts from a 
+* psuedo-clock timer to signify a process' specific quantum is over. The interval timer handler 
+* will analyze the contents of the cause register to see what 
 */
 void interruptHandler() {
     /* the old interrupt area */
@@ -180,6 +173,7 @@ void interruptHandler() {
     int lineNumber = 0;
     /* initialize the index */
     int i = 0;
+    /* what happened? */
     if ((cause & FIRST) != 0) {
         /* the cause should not be 0 - since it is not supported 
         in Kaya */
