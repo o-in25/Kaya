@@ -145,7 +145,7 @@ static void terminateProgeny(pcb_PTR p) {
         outBlocked(p);
         /* if the semaphore greater than 0 and less than 48, then
         it is a device semapore */
-        if(semaphore >= &(semdTable[0]) && semaphore <= &(semdTable[MAXSEMALLOC - 1])) {
+        if(semaphore >= &(semdTable[0]) && semaphore <= &(semdTable[CLOCK])) {
             /* we have 1 less waiting process */
             softBlockedCount--;
         } else {
@@ -215,10 +215,9 @@ static void waitForIODevice(state_PTR state) {
 * This instruction performs a P operation on the kernel maintained pseudo-clock timer semaphore. 
 * This semaphore is V’ed every 100 milliseconds automatically by the kernel.
 */
- static void waitForClock(state_PTR state)
- {
+ static void waitForClock(state_PTR state) {
      /* get the semaphore index of the clock timer */
-     int *semaphore = (int *)&(semdTable[(MAXSEMALLOC - 1)]);
+     int *semaphore = (int*) &(semdTable[CLOCK]);
      /* perform a passeren operation */
      (*semaphore)--;
      if ((*semaphore) < 0)

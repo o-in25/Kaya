@@ -10,13 +10,15 @@
 /* Maximum process blocks */
 #define MAXPROC 20
 #define MAXINT 2147483647
-#define MAXSEMALLOC 49 
+#define MAXSEMALLOC 49
+#define CLOCK MAXSEMALLOC - 1
 /* Maximum 32-bit signed */
 /* Hardware and software constants */
 #define PAGESIZE 4096	/* page size in bytes */
 #define WORDLEN	4		/* word size in bytes */
 #define PTEMAGICNO 0x2A
 #define TIME 100000
+#define DEVPERINT 8
 
 #define ROMPAGESTART 0x20000000	 /* ROM Reserved Page */
 
@@ -185,6 +187,7 @@
 #define DEVREGSIZE 16 	/* device register size in bytes */
 #define DEVINTNUM 5
 #define DEVPERINT 8
+#define SEMDEVICE (DEVPERINT - NOSEM)
 
 /* devices */
 #define TAPEDEV (((TAPEINT - NOSEM) * DEVREGSIZE * DEVPERINT) + INTDEVREG)

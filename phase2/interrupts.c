@@ -83,44 +83,51 @@ static void exitInterruptHandler(cpu_t startTime) {
 
 /*
 * Function: Get line number
-* Gets the line number of the non-cpu and non-clock devices,
-* given the cause integer. This function gets invoked whenever the 
-* cause is for the interrupt is not a cpu interrupt, a local timer 
-* interrupt, or a interval time interrupt. If the cause is neither of
-* these, this simply determines which line it is
+* Gets the line number of the outstanding device interrupt. 
+* This function will only handle finding the line number for devices 
 */
 int getLineNumber(unsigned int cause) {
     /* declare the array of possible line numbers */
-    unsigned int lineNumbers[(DEVPERINT - NOSEM)] = {FOURTH, FIFTH, SIXTH, SEVENTH, EIGHTH};
+    unsigned int lineNumbers[SEMDEVICE] = {FOURTH, FIFTH, SIXTH, SEVENTH, EIGHTH};
     /* declare the array of possible line numbers */
-    unsigned int devices[(DEVPERINT - NOSEM)] = {DISKINT, TAPEINT, NETWINT, PRNTINT, TERMINT};
+    unsigned int devices[SEMDEVICE] = {DISKINT, TAPEINT, NETWINT, PRNTINT, TERMINT};
     int i;
+    /* what was our line number? */
     int finding = 0;
     /* loop through each possible device */
-    for(i = 0; i < (DEVPERINT - NOSEM); i++) {
+    for (i = 0; i < SEMDEVICE; i++) {
         if(((cause) & (lineNumbers[i])) != 0) {
             /* match the line number with the device */
             finding = devices[i];
         }
     }
+    /* we found it */
     return finding;
 }
 
 /*
 * Function: Interval Timer Handler
 * Handles the interval timer which serves as a pseudo-clock. If left unadjusted, 
-* the p
+* the pseudo-clock will grow by 1 every 100 milliseconds - which represents a clock 
+* tick. When a wait for clock is requested inbetween to adjacent clock ticks, the the interval 
+* timer handler will load a new 100 millisecond intervals, resets the interval timer's
+* semaphore device, and performs a V operation on all of the blocked processes. Finally, 
+* it exits the interrupt handler. Takes in the start time and the end time to properly insure 
+* each process refelcts its true time and insures the current process does not be charged 
+* for the time in the interupt handler or its various subroutines
+*
 */
 static void intervalTimerHandler(cpu_t startTime, cpu_t endTime) {
     /* load the interval */
-    setTIMER(QUANTUM);
+    LDIT(INTERVAL);
     /* get the index of the last device in the device 
     semaphore list - which is the interval timer */
-    int* semaphore = &(semdTable[MAXSEMALLOC - 1]);
+    int *semaphore = &(semdTable[CLOCK]);
     /* reset the semaphore */
     (*semaphore) = 0;
     /* get all of the blocked devices*/
     pcb_PTR blocked = headBlocked(semaphore);
+    /* while there are blocked devices */
     while(blocked != NULL) {
         pcb_PTR p = removeBlocked(semaphore);
         STCK(endTime);
@@ -133,7 +140,7 @@ static void intervalTimerHandler(cpu_t startTime, cpu_t endTime) {
             (p->p_time) = (p->p_time) + elapsedTime;
             /* one less device waiting */
             softBlockedCount--;
-            /* go again */
+            /* get the next one */
             blocked = headBlocked(semaphore);
         }
     }
