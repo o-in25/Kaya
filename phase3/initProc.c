@@ -144,7 +144,7 @@ static void initUProc() {
 	while((tapeDevice->d_data1 != EOF) && (tapeDevice->d_data1 != EOT)) {
 		/* while there are things to do... */
 		tapeDevice->d_data0 = memoryBuffer;
-		tapeDevice->d_command = READ;
+		tapeDevice->d_command = READBLK;
 		/* set up the parameters for a disk 
 		operation */
 		diskInformation[SECTOR] = asidIndex;
@@ -152,7 +152,7 @@ static void initUProc() {
 		diskInformation[HEAD] = EMPTY;
 		diskInformation[DISKNUM] = EMPTY;
 		diskInformation[PAGELOCATION] = memoryBuffer;
-		diskInformation[READWRITE] = WRITE;
+		diskInformation[READWRITE] = WRITEBLK;
 		/* perform a disk I/O now that we have all of the 
 		information we need */
 		diskOperation(diskInformation, &(disk0Semaphore), diskDevice);

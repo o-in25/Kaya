@@ -24,8 +24,8 @@ void diskOperation(int diskInformation[], int *semaphore, device_PTR diskDevice)
     mutex(TRUE, semaphore);
     /* turn off interrupts */
     setSTATUS(ALLOFF);
-
-    diskDevice->d_command = ALLOFF;
+    /* the command for the disk operation to find the specified cylinder, per 5.3 of pops */
+    diskDevice->d_command = ((diskInformation[CYLINDER] << COMMANDMASK) | SEEKCYL);
     int status = SYSCALL(WAITIO, DISKINT, diskInformation[DISKNUM], EMPTY);
     /* return to how we were */
     setSTATUS(oldStatus);
@@ -33,9 +33,21 @@ void diskOperation(int diskInformation[], int *semaphore, device_PTR diskDevice)
     if(status != READY) {
         SYSCALL(TERMINATEPROCESS, EMPTY, EMPTY, EMPTY);
     }
-    /* we are ready, time to write */
+    /* set the data we wish to write */
     diskDevice->d_data0 = diskInformation[PAGELOCATION];
-
+    /* done, now we turn back off interrupts */
+    oldStatus = getSTATUS();
+    setSTATUS(ALLOFF);
+    /* we are ready, time to write */
+    /* write the disk */
+    diskDevice->d_command = ((diskInformation[HEAD] << COMMANDMASK) | diskInformation[SECTOR]) | diskInformation[READWRITE];
+    /* wait for the I/O while we have mutex */
+    status = SYSCALL(WAITIO, DISKINT, diskInformation[DISKNUM], EMPTY);
+    setSTATUS(oldStatus);
+    /* are we ready? */
+    if (status != READY) {
+        SYSCALL(TERMINATEPROCESS, EMPTY, EMPTY, EMPTY);
+    }
     /* release control */
     mutex(FALSE, semaphore);
 }

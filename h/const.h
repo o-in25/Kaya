@@ -142,7 +142,7 @@
 
 /* masks */
 #define ASIDMASK 6
-
+#define COMMANDMASK 8
 
 
 
@@ -216,8 +216,11 @@
 #define UNINSTALLED	0
 #define READY 1
 #define BUSY 3
-#define READ 3
-#define WRITE 4
+
+/* disk devices commands */
+#define SEEKCYL 2
+#define READBLK 3
+#define WRITEBLK 4
 
 /* device common COMMAND codes */
 #define RESET 0
