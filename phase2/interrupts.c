@@ -119,7 +119,7 @@ static void intervalTimerHandler(cpu_t startTime, cpu_t endTime) {
     /* get the index of the last device in the device 
     semaphore list - which is the interval timer */
     int* semaphore = &(semdTable[MAXSEMALLOC - 1]);
-    /*handle the charging of time */
+    /* reset the  */
     (*semaphore) = 0;
     /* get all of the blocked devices*/
     pcb_PTR blocked = headBlocked(semaphore);
@@ -150,7 +150,18 @@ static void intervalTimerHandler(cpu_t startTime, cpu_t endTime) {
 * as terminal devices, printer devices, network devices (though this is not implemented
 * at this phase, tape devices, and disk devices. Additionally, it handles interrupts from a 
 * psuedo-clock timer to signify a process' specific quantum is over. The interval timer handler 
-* will analyze the contents of the cause register to see what 
+* will analyze the contents of the cause register to see what happened - i.e. what is the cause line
+* number for this particular interrupt. Based on the cause, if it is line number is 0, it is an 
+* inter-processor interrupt and handled with a kernel panic - since it is not supported in Kaya.
+* If the line number is the processor local timer, the interrupt handler will then exit the 
+* interrupt handler by entering the exit handler - which will then get a new job from the scheduler. If
+* the interrupting line was the interal timer bus, then it will be passed to the interval timer handler 
+* which will treat the interrupt as a pseudo-clock tick. Finally, for all other interrupts, their 
+* line and device numbers are computed through subroutines. From their line and device numbers, their 
+* synchronization semaphore index is calculated as well as their device register area. For terminal
+* interrupts, a distinction must be made between a send command and a recieve command. Finally, once
+* these have been computed, the interupt handler will perform a V operation on that semaphore and 
+* implement the umps2 interrupt-driven handshake protocol 
 */
 void interruptHandler() {
     /* the old interrupt area */
