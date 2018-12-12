@@ -12,4 +12,5 @@
     int swapSemaphore;
     int masterSemaphore;
     int mutexSemaphores[MAXSEMALLOC];
+    static int extractASID();
 #endif

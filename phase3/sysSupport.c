@@ -1,6 +1,61 @@
 #include "../h/const.h"
 #include "../h/types.h"
 
+
+
+void uSyscallHandler() {
+    state_PTR state = NULL;
+    delegateUSyscall(state);
+}
+
+static void delegateUSyscall(state_PTR state) {
+    switch(state->s_a0) {
+
+    }
+}
+
+
+static void readFromTerminal() {
+
+}
+
+static void writeToTerminal() {
+
+}
+
+static void vVerhogen() {
+
+}
+
+static void vPasseren() {
+
+}
+
+static void delay() {
+
+}
+
+static void diskPut() {
+
+}
+
+static void diskGet() {
+
+}
+
+static void writeToPrinter() {
+
+}
+
+static void getTOD() {
+
+}
+
+static void terminateUProcess() {
+    
+}
+
+
 /* used to gain mutual exclusion on a passed in semaphore or 
 release mutal exclusion so that a process can be done atomically. Here,
 TRUE is to gain mutal exclusion and FALSE is to release it */
