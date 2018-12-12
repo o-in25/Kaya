@@ -167,7 +167,9 @@
 #define KUSEGPTESIZE 32
 #define KSEGOSPTESIZE 64
 
-
+/* for uproc init */
+#define UPROCINIT 1
+#define UPROCDISKIO 0
 
 /* vectors number and type */
 #define VECTSNUM 4

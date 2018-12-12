@@ -56,7 +56,7 @@ static int findSemaphoreIndex(int lineNumber, int deviceNumber, int flag) {
 
 /*
 * Function: Pass Up Or Die 
-* The syscall 5 (specify state exceptions vector) helper will
+* A syscall 5 (specify state exceptions vector) helper that will
 * check if a new exception vector has been set up for that particular
 * exception. If so, that processes is "passed up" to the appropriate 
 * handler, copys into the processor's state the old exception, and 
@@ -110,7 +110,7 @@ static void passUpOrDie(int callNumber, state_PTR old) {
 * The syscall 2 - terminate process - helper function.
 * Will beform tail recursion on the current process, killing 
 * all of it's progeny until there are none remaining. Then, it wil
-* check if the process is in a semaphore, is the curren process,
+* check if the process is in a semaphore, is the current process,
 * or is in the ready queue. 
 */
 static void terminateProgeny(pcb_PTR p) {
@@ -148,19 +148,8 @@ static void terminateProgeny(pcb_PTR p) {
  }
 
 /*
-* This service performs a P operation on the semaphore that the kernel 
-* maintains for the I/O device indicated by the values in a1, a2, and optionally a3.
-* Each terminal device has two kernel maintained semaphores for it; one for character 
-* receipt and one for character transmission.
-* The kernel performs a V operation on the kernel maintained semaphore whenever 
-* that (sub)device generates an interrupt.
-* Once the process resumes after the occurrence of the anticipated interrupt, 
-* the (sub)device’s status word is returned in v0. For character transmission and receipt,
-* the status word, in addition to containing a device completion code, will also contain the character
-*  transmitted or received. It is possible that the interrupt can occur prior to the request 
-* for the SYS8 service. In this case the requesting process will not block as a result of 
-* the P operation and the interrupting device’s status word, which was stored off,
-* is placed in v0 prior to resuming execution
+* This service performs a P operation on the semaphore requested 
+* by a device. 
 */
 static void waitForIODevice(state_PTR state) {
     /* get the line number in the a1 register */
@@ -196,8 +185,9 @@ static void waitForIODevice(state_PTR state) {
 
 /* 
 * Function: Wait For Clock - Syscall 7
-* This instruction performs a P operation on the kernel maintained pseudo-clock timer semaphore. 
-* This semaphore is V’ed every 100 milliseconds automatically by the kernel.
+* This instruction performs a P operation on the pseudo-clock timer semaphore. 
+* This semaphore is V’ed every 100 milliseconds automatically. Then,
+* a new job is reterieved. 
 */
  static void waitForClock(state_PTR state) {
      /* get the semaphore index of the clock timer */
@@ -218,9 +208,8 @@ static void waitForIODevice(state_PTR state) {
 
 /* 
 * Function: Get CPU Time - Syscall 6
-* When this service is requested, it causes the processor time (in microseconds) used by the 
-* requesting process to be placed/returned in the caller’s v0. The kernel records (in the ProcBlk) the amount
-* of processor time used by each process.
+* When this service is requested, it causes the processor time used by the 
+* requesting process to be placed/returned in the caller’s v0. 
 */
  static void getCpuTime(state_PTR state) {
         /* copy the state from the old syscall into the pcb_t's state */
@@ -242,23 +231,9 @@ static void waitForIODevice(state_PTR state) {
 
 /*
 * Function: Specify the Exceptions State Vector - Syscall 5
-* when this service is requested, will save the contents of a2 and a3 
-* (in the invoking process’es ProcBlk) 
-* to facilitate “passing up” handling of the respective exception 
-* when (and if) one occurs while this
-* process is executing. When an exception occurs for which an
-8  Exception State Vector has been 
-* specified for, the nucleus stores the processor state at the time of 
-* the exception in the area 
-* pointed to by the address in a2, and loads the new processor state from 
-* the area pointed to by the address given in a3.
-* Each process may request a SYS5 service at most once for each of the 
-* three exception types.
-* An attempt to request a SYS5 service more than once per exceptpion 
-* it is construed as an error and treated as a SYS2.
-* If an exception occurs while running a process which has not specified an 
-* Exception State Vector for that exception type, 
-* then the nucleus should treat the exception as a SYS2 as well.
+* Sets up the new TOLB, PGM, and SYS exception areas for 
+* handling, baring they have not be set up yet. If they have
+* been set up, then the process is issued a sys2 - termination 
 */
 static void specifyExceptionsStateVector(state_PTR state) {
     /* get the exception from the a1 register */
@@ -302,12 +277,12 @@ static void specifyExceptionsStateVector(state_PTR state) {
 }
 
 /*
-* Function: Verhogen - Syscall 4
-* When this service is requested, it is interpreted by the kernel as a 
-* request to perform a V operation on a syncronization semaphore. The SYS3 service 
-* is requested by the calling process by placing the value 3 in a0, 
-* the physical address of the semaphore to be V’ed in a1, and then 
-* executing a SYSCALL instruction.
+* Function: Passeren - Syscall 4
+* Perfroms a P operation on a specified synchronization semaphore in the
+* $a1 regoste of the old state. If the semaphore is less than zero, 
+* the currrent processes is blocked, its timer is preserved, the old state 
+* is copied into the pcb_t's state, and a new job is reterieved. Otherwise, 
+* a context switch occurs on the old state. 
 */
 static void passeren(state_PTR state) {
     /* get the semaphore in the s_a1 */
@@ -335,11 +310,11 @@ static void passeren(state_PTR state) {
 
 /*
 * Function: Verhogen - Syscall 3
-* When this service is requested, it is interpreted by the kernel as a 
-* request to perform a V operation on a syncronization semaphore. The SYS3 service 
-* is requested by the calling process by placing the value 3 in a0, 
-* the physical address of the semaphore to be V’ed in a1, and then 
-* executing a SYSCALL instruction.
+* Perfroms a V operation on a specified synchronization semaphore in the
+* $a1 regoste of the old state. If the semaphore is greater than zero, 
+* a new processes is unblocked and placed in the ready queue. Even if 
+* there the semaphore is not greater than zero, a context switch occurs in 
+* either case. 
 */
 static void verhogen(state_PTR state) {
     /* the semaphore is placed in the a1 register of the 
@@ -367,9 +342,10 @@ static void verhogen(state_PTR state) {
 
 /* Function: Terminate Process - Syscall 2
 * This services causes the executing process to cease to exist.
-*  In addition, recurively, all progeny of this process
-*  are terminated as well. Execution of this intruction does not 
-* complete until all progeny are terminated.
+* In addition, recurively, all progeny of this process
+* are terminated as well. Execution of this intruction does not 
+* complete until all progeny are terminated. Then, a new job i s
+* acquired. 
 */
 static void terminateProcess() {
     /* if there are no children, simply decrement 
@@ -395,17 +371,13 @@ static void terminateProcess() {
 
 /*
 * Function: Create Process - Syscall 1
-* When requested, this service causes a new process, 
-* said to be a progeny of the caller, to be created. 
-* a1 should contain the physical address of a processor state 
-* area at the time this instruction is executed. 
-* This processor state is used as the initial state for 
-* the newly created process. The process requesting 
-* the SYS1 service continues to exist and to execute. 
-* If the new process cannot be created due to lack of 
-* resources (for example no more free ProcBlk’s), an error code 
-* of -1 is placed in the caller’s v0, otherwise, the value 0 is 
-* placed the caller’s v0.
+* Creates a new process by allocating a new pcb_t.
+* If the pcb_t is not null, then the number of running 
+* jobs is incremented by 1, it is inserted into ready 
+* queue and marks the operation as a successful on in 
+* the old state. Likewise, it will mark the operation 
+* as a failure if there are no free pcb_ts. In either 
+* case, a context switch occurs. 
 */
 static void createProcess(state_PTR state) {
     /* grab a new process */

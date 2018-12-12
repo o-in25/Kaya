@@ -39,9 +39,10 @@ static state_PTR prepareProcessorState(int flag, int index) {
 		/* set the asid */
 		processorState->s_asid = getENTRYHI();
 	} else {
+		/* this is for variable initialization i.e. step 1 */
 		processorState->s_asid = (index << ASIDMASK);
 		processorState->s_status = ALLOFF | IEc | IM | TE;
-		/* TODO: set up the handler */
+		/* the init handler */
 		processorState->s_t9 = initUProc;
 		processorState->s_status = initUProc;
 	}
@@ -94,7 +95,7 @@ void test() {
 		segmentTable->kSegOS = &kSegOS;
 		segmentTable->kUseg2 = &(userProc->Tp_pte);
 		/* prepare the processor state */
-		state_PTR processorState = prepareProcessorState(TRUE, i);
+		state_PTR processorState = prepareProcessorState(UPROCINIT, i);
 		userProc->Tp_sem = 0;
 
 		if(SYSCALL(CREATEPROCESS, (int) processorState, EMPTY, EMPTY) != SUCCESS) {
@@ -160,7 +161,7 @@ static void initUProc() {
 	}
 
 	/* prepare a new processor state */
-	state_PTR processorState = prepareProcessorState(FALSE, 0);
+	state_PTR processorState = prepareProcessorState(UPROCDISKIO, 0);
 	/* perform a context switch for the prepared state */
 	contextSwitch(processorState);
 }
