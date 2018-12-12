@@ -1,3 +1,6 @@
+
+#include "../h/const.h"
+#include "../h/types.h"
 void test() {
     
 }
@@ -25,7 +28,7 @@ void TLBhandler (){
     /* who am I? */
     /* get current processid in ASID register */
     /* this is needed as the index into the phase3 global structure */
-    int missing_ASID = ((getENTRYHI() & /*whereever the bits are for asid */) >> ASIDMASK)
+    int missing_ASID = ((getENTRYHI() & 0) >> ASIDMASK);
     
     /* why are we here */
     /*examine oldmem cause register */
