@@ -231,6 +231,7 @@ void interruptHandler() {
         /* release synchronization on the process */
         pcb_PTR p = removeBlocked(semaphore);
         if (p != NULL) {
+            /* implement the handshake */
             if(receive && (lineNumber == TERMINT)) {
                 p->p_state.s_v0 = devReg->t_recv_status;
                 /* the reception has been acknowledged */
