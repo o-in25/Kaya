@@ -186,7 +186,7 @@ void interruptHandler() {
     /* the device register */
     device_PTR devReg;
     /* the cause for the interrupt is stored in the cause register */
-    unsigned int cause = ((oldInterupt->s_cause) & IM) >> IPMASK);
+    unsigned int cause = (((oldInterupt->s_cause) & IM) >> IPMASK);
     /* the start timer */
     cpu_t startTime;
     /* the end time */
