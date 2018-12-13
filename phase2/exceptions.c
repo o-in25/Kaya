@@ -6,7 +6,11 @@
     such as the copy state function, which will transfer the copies of one state to another, terminate progeny, which 
     will perform tail recursion on a process and all its children, a handler for requesting a syscall while in 
     user mode, the afformentioned pass up or die function, as well as global function for context switching. If
-    a syscall is requested in user mode, a reserved instruction cause register will
+    a syscall is requested in user mode, a reserved instruction will be placed in the state's cause register and 
+    will enter a program trap. Otherwise, the corresponding syscall will take control of execution. 
+
+    This module contributes function definitions and a few sample fucntion implementations to the contributors put 
+    forth by the Kaya OS project.
 
 ***************************************************** exceptions.c ******************************************************/
 
