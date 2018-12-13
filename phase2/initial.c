@@ -114,7 +114,8 @@ int main() {
     insertProcQ(&(readyQueue), currentProcess);
     /* its in the queue */
     currentProcess = NULL;
-    /* call the scheduler */
+    /* load an interval */
     LDIT(INTERVAL);
+    /* call the scheduler */
     invokeScheduler();
 }

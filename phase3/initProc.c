@@ -44,6 +44,7 @@ static state_PTR prepareProcessorState(int flag, int index) {
 		processorState->s_status = ALLOFF | IEc | IM | TE;
 		/* the init handler */
 		processorState->s_t9 = initUProc;
+		/* TODO: set up pc */
 		processorState->s_status = initUProc;
 	}
 	return processorState;
@@ -55,7 +56,7 @@ void test() {
 	int i;
 	int j;
 
-	/* initalize the page table */
+	/* initalize the swap pool */
 	for(i = 0; i < SWAPSIZE; i++) {
 		pool[i].pageTableEntry = NULL;
 		pool[i].segmentNumber = 0;
@@ -68,25 +69,30 @@ void test() {
 	for(i = 0; i < MAXSEMALLOC; i++){
 		mutexSemaphores[i] = 1;
 	}
-	/* initalize the page table entries for the kUsegOS */
+
+
+	/* initalize the page table for the kUsegOS */
 	for (i = 0; i < KUSEGPTESIZE; i++) {
 		/* occupy the EntryHI CP0 register */
-		kSegOS.pteTable[i].entryHI = (PADDRBASE + i) << VPN;
+		kSegOS.pteTable[i].entryHI = (PADDRBASE + i) << VPNMASK;
 		/* occupy the EntryLO CP0 register */
-		kSegOS.pteTable[i].entryLO = ((PADDRBASE + i) << VPN) | VALID | DIRTY | GLOBAL;
+		kSegOS.pteTable[i].entryLO = ((PADDRBASE + i) << VPNMASK) | VALID | DIRTY | GLOBAL;
 	} 
+
+
 	/* initialize the header */
 	kSegOS.header = MAGICNO << PGTBLHEADERWORD | KSEGOSPTESIZE;
+
 	for(i = 0; i < MAXUPROC; i++) {
 		/* get the ith uProc */
 		Tproc_PTR userProc = &(uProcesses[i - 1]);
 		/* initialize the header */
-		userProc->Tp_pte.header = (MAGICNO << PGTBLHEADERWORD | KUSEGPTESIZE);
+		userProc->Tp_pte.header = ((MAGICNO << PGTBLHEADERWORD) | KUSEGPTESIZE);
 
 		/* set up the page table entry */
 		for(j = 0; j < KUSEGPTESIZE; j++) {
 			/* TODO: set up entryHI */
-			userProc->Tp_pte.pteTable[j].entryHI = NULL;
+			userProc->Tp_pte.pteTable[j].entryHI = (BASEADDR + j) >> VPNMASK | (i << ASIDMASK);
 			userProc->Tp_pte.pteTable[j].entryLO = ALLOFF | DIRTY;
 		}
 		/* get the address of ith entry the segment table */
@@ -101,9 +107,9 @@ void test() {
 		if(SYSCALL(CREATEPROCESS, (int) processorState, EMPTY, EMPTY) != SUCCESS) {
 			SYSCALL(TERMINATEPROCESS, EMPTY, EMPTY, EMPTY);
 		}
-		if(i < MAXUPROC + 1) {
-			SYSCALL(PASSEREN, (int) &masterSemaphore, EMPTY, EMPTY);
-		}
+	}
+	if (i < MAXUPROC + 1) {
+		SYSCALL(PASSEREN, (int) &masterSemaphore, EMPTY, EMPTY);
 	}
 	/* end the process */
 	SYSCALL(TERMINATEPROCESS, EMPTY, EMPTY, EMPTY);

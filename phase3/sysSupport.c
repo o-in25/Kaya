@@ -47,7 +47,7 @@ static void delegateUSyscall(state_PTR state) {
 static void readFromTerminal(state_PTR state) {
     int asidIndex = (getSTATUS() - 1);
     device_PTR printerDevice = (device_PTR) PRINTERDEV + (asidIndex * DEVREGSIZE);
-    
+
 
 }
 
@@ -114,17 +114,17 @@ TRUE is to gain mutal exclusion and FALSE is to release it */
 void mutex(int flag, int *semaphore) {
     /* are we gaining control? */
     if(flag) {
-        SYSCALL(PASSEREN, (int)semaphore, EMPTY, EMPTY);
+        SYSCALL(PASSEREN, (int) semaphore, EMPTY, EMPTY);
     } else {
         /* no - we are releasing it */
-        SYSCALL(VERHOGEN, (int)semaphore, EMPTY, EMPTY);
+        SYSCALL(VERHOGEN, (int) semaphore, EMPTY, EMPTY);
     }
 } 
 
 /* read in the uproc's .data and .text from the tape */
-void diskOperation(int diskInformation[], int *semaphore, device_PTR diskDevice) {
+void diskOperation(int* diskInformation, int *semaphore, device_PTR diskDevice) {
     /* initialize the disk with the disk number */
-    diskDevice = (device_PTR) diskDevice + (diskInformation[DISKNUM] * DEVREGSIZE);
+    diskDevice = (device_PTR) diskDevice + ((*(diskInformation + DISKNUM)) * DEVREGSIZE);
     /* save the status before we turn everything off */
     int oldStatus = getSTATUS();
     /* gain control */
@@ -132,8 +132,8 @@ void diskOperation(int diskInformation[], int *semaphore, device_PTR diskDevice)
     /* turn off interrupts */
     setSTATUS(ALLOFF);
     /* the command for the disk operation to find the specified cylinder, per 5.3 of pops */
-    diskDevice->d_command = ((diskInformation[CYLINDER] << COMMANDMASK) | SEEKCYL);
-    int status = SYSCALL(WAITIO, DISKINT, diskInformation[DISKNUM], EMPTY);
+    diskDevice->d_command = (( (*(diskInformation + CYLINDER)) << COMMANDMASK) | SEEKCYL);
+    int status = SYSCALL(WAITIO, DISKINT, (*(diskInformation + DISKNUM)), EMPTY);
     /* return to how we were */
     setSTATUS(oldStatus);
     /* if we aren't ready, it's over */
@@ -147,9 +147,9 @@ void diskOperation(int diskInformation[], int *semaphore, device_PTR diskDevice)
     setSTATUS(ALLOFF);
     /* we are ready, time to write */
     /* write the disk */
-    diskDevice->d_command = ((diskInformation[HEAD] << COMMANDMASK) | diskInformation[SECTOR]) | diskInformation[READWRITE];
+    diskDevice->d_command = (((*(diskInformation + HEAD)) << COMMANDMASK) | (*(diskInformation + SECTOR))) | (*(diskInformation + READWRITE));
     /* wait for the I/O while we have mutex */
-    status = SYSCALL(WAITIO, DISKINT, diskInformation[DISKNUM], EMPTY);
+    status = SYSCALL(WAITIO, DISKINT, (*(diskInformation = DISKNUM)), EMPTY);
     setSTATUS(oldStatus);
     /* are we ready? */
     if (status != READY) {

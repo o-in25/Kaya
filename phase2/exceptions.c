@@ -1,15 +1,12 @@
 /*************************************************** exceptions.c ********************************************************
-	Handles the interrupts that occur in the Kaya OS/ When an interrupt occurs, assuming that the interrupt bit is 
-    turned on (otherwise an interrupt cannot occur), the interval handler will be invoked to dermine the cause of 
-    the interrupt, as well as the appropriate actions to be taken henceforth. The cause of the interrupt can either 
-    be a device that requires to be acknowledged as part of umps2's handshake protocol, or for from a clock interrupt
-    caused by either a quantum ending or a psuedo clock timer. For semaphore devices, i.e. a disk, tape, network, printer 
-    or terminal device, causes an interupt, a V operation is performed on that device's semaphore and implements the 
-    shandshake. Furthermore, for all devices, the interrupt handler will insure that running processes' will not be
-    charged for time spent in the the interupt handler. 
-
-    This module contributes function definitions and a few sample fucntion implementations to the contributors put 
-    forth by the Kaya OS project.
+	Handles the exceptions that occur in the Kaya OS. Provides the appropriate handlers for program traps, translation
+    lookaside buffer (TLB) exceptions, as well as syscalls. For program traps and TLB exceptions, if the offending 
+    process does not have its appropriate handler set up to manage the exception, the processes dies in a technique 
+    known as "passing up or dying." For syscalls, a variety of helper functions exist to assist in program execution, 
+    such as the copy state function, which will transfer the copies of one state to another, terminate progeny, which 
+    will perform tail recursion on a process and all its children, a handler for requesting a syscall while in 
+    user mode, the afformentioned pass up or die function, as well as global function for context switching. If
+    a syscall is requested in user mode, a reserved instruction cause register will
 
 ***************************************************** exceptions.c ******************************************************/
 
@@ -149,7 +146,15 @@ static void terminateProgeny(pcb_PTR p) {
 
 /*
 * This service performs a P operation on the semaphore requested 
-* by a device. 
+* by a device. The line number and the device number are found 
+* in the requesting state's a1 and a2 registers. Then, the semaphore
+* index is computed via the find semaphore index helper function.
+* If the line number is out of bounds, the process is killed.
+* Otherwise, the P operation will check if that device's semaphore 
+* is less than 0. If so, the process is blocked, as it waits,
+* and the state is copied over to the current process' state. If
+* the job must wait, it looks for a new job to begin. Otherwise, 
+* a context switch occurs. 
 */
 static void waitForIODevice(state_PTR state) {
     /* get the line number in the a1 register */
@@ -549,7 +554,9 @@ void copyState(state_PTR from, state_PTR to) {
  * program is set to be a reserved instruction and will 
  * pass the responsibility to the user mode handler. 
  * In the case that a syscall >9 is issued in kernel,
- * mode, a program trap is set up
+ * mode, a program trap is set up. Otherwise, the 
+ * old syscall area state will be passed down to the 
+ * corresponding syscall that it has requested. 
  */ 
  void syscallHandler() {
     /* get the old syscall area in memory */

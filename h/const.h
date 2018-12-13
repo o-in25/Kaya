@@ -145,13 +145,14 @@
 /* masks */
 #define ASIDMASK 6
 #define COMMANDMASK 8
-
+#define IPMASK 8
+#define VPNMASK 12
 
 
 /* bits 6-11 are the ASID in the CP0 register */
 #define ENTRYHIASID 0x00000FC0
-#define BASEADDR 0x8000
-#define TEXTAREASEGMENTMASK BASEADDR + 0x00B0
+#define BASEADDR 0x80000
+#define TEXTAREASEGMENTMASK BASEADDR + 0x0B0
 
 #define OSAREA (PAGESIZE * KSEGOSPTESIZE)
 #define KSEGOSARA ROMPAGESTART + OSAREA
@@ -163,7 +164,6 @@
 
 /* virtual memory & swap pool */
 #define SWAPPOOLSIZE 
-#define VPN 12
 #define KUSEGPTESIZE 32
 #define KSEGOSPTESIZE 64
 

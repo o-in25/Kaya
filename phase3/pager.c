@@ -2,15 +2,28 @@
 #include "../h/const.h"
 #include "../h/types.h"
 #include "../e/initProc.e"
+
+
+void pager() {
+    
+    
+}
+
+
 void test() {
     
 }
 
+
+
+
+
 int lastFrame;
 
-void progTrapHandler (){
+void progTrapHandler () {
     /* SYS18 */
 }
+
 
 /* just returns an increment on the last frame mod to simulate an incremental choice */
 int nextFrame (){

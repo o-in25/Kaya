@@ -1,5 +1,5 @@
 /*************************************************** interrupts.c ********************************************************
-	Handles the interrupts that occur in the Kaya OS/ When an interrupt occurs, assuming that the interrupt bit is 
+	Handles the interrupts that occur in the Kaya OS. When an interrupt occurs, assuming that the interrupt bit is 
     turned on (otherwise an interrupt cannot occur), the interval handler will be invoked to dermine the cause of 
     the interrupt, as well as the appropriate actions to be taken henceforth. The cause of the interrupt can either 
     be a device that requires to be acknowledged as part of umps2's handshake protocol, or for from a clock interrupt
@@ -186,9 +186,7 @@ void interruptHandler() {
     /* the device register */
     device_PTR devReg;
     /* the cause for the interrupt is stored in the cause register */
-    unsigned int cause = oldInterupt->s_cause;
-    /* bitwside shift the cause by eight */
-    cause += (cause & IM) >> 8;
+    unsigned int cause = ((oldInterupt->s_cause) & IM) >> IPMASK);
     /* the start timer */
     cpu_t startTime;
     /* the end time */
