@@ -1,13 +1,37 @@
+/*************************************************** scheduler.c ********************************************************
+	Manages the requests for new jobs in the Kaya OS and is resonsible for scheduling them. The scheduler will 
+    check if there are any jobs in the ready queue. If there are no jobs in the ready queue, the schedule 
+    will ten determine why. If there are no processes listed as running, then the system halts. Otherwise, if 
+    there is a record of processes running (the process count is greater than zero), then it will check if 
+    any of these jobs are simply waiting on IO to finish. If they are, the scheduler will simply invoke the ROM
+    reserved WAIT instruction - and sets up the bit masks for the next job. Otherwise, it enters a kernel panic.
+    If there are jobs in the ready queue, however, the scheduler grab a job from the ready queue,
+    will initialize their timer, set their quantum, and perform a context switch on that new job.
+
+    This module contributes function definitions and a few sample fucntion implementations to the contributors put 
+    forth by the Kaya OS project.
+
+***************************************************** scheduler.c ******************************************************/
+
+/* h files to include */
 #include "../h/const.h"
 #include "../h/types.h"
+/* e files to include */
 #include "../e/initial.e"
 #include "../e/pcb.e"
 #include "../e/asl.e"
+/* include the µmps2 library */
 #include "/usr/local/include/umps2/umps/libumps.e"
 
-/* clock timer */
+/* GLOBAL VARIABLES */
 cpu_t startTOD;
+/* clock timers */
 cpu_t currentTOD;
+/* END OF GLOBAL VARIABLES */
+
+/************************************************************************************************************************/
+/*************************************************** SCHEDULER  *********************************************************/
+/************************************************************************************************************************/
 
 /* 
 * Function: Invoke Scheduler 
@@ -32,7 +56,7 @@ void invokeScheduler() {
         }
         /* are we waiting on I/O? */
         if(processCount > 0) {
-            /* do are we waiting for I/O */
+            /* do are we waiting for I/O? */
             if(softBlockedCount == 0) {
                 /* not a job, not waiting for a job, 
                 and are not a job itself - kernel panic */ 

@@ -1,10 +1,10 @@
 /*************************************************** initial.c ************************************************************
-	inital.c is the bootcode for the Kaya Operating System. It contains the definitions for the gobal variables required for
-    phase2, being the process cout, the softblocked count, the current process, and the ready queue - the queue of jobs who
-    status is marked as ready. In main, there are a number of boot opertions. First, the four new areas in low memory are 
-    populated to support context switching. The stack pointer will be set, the program counter will be reflected appropriately
-    and the status of VM will be off, interrupts will be masked, and kernel mode is on. Process control blocks are allocated
-    and the ASL is set. 
+	Contains he bootcode for the Kaya Operating System. It contains the definitions for the gobal variables required for
+    phase2, being the process count, the softblocked count, the current process (henceforth, jobs and processes will be 
+    synonymous), and the ready queue - the queue of jobs who status is marked as ready. In main, there are a number of 
+    boot opertions. First, the four new areas in low memory are populated to support context switching. The stack 
+    pointer will be set, the program counter will be reflected appropriately and the status of VM will be off, 
+    interrupts will be masked, and kernel mode is on. Process control blocks are allocated and the ASL is set. 
 
 ***************************************************** initial.c ************************************************************/
 
@@ -14,12 +14,12 @@
 /* e files to include */
 #include "../e/pcb.e"
 #include "../e/asl.e"
-
 #include "../e/initial.e"
 #include "../e/interrupts.e"
 #include "../e/exceptions.e"
 #include "../e/scheduler.e"
 #include "../e/p2test.e"
+/* include the µmps2 library */
 #include "/usr/local/include/umps2/umps/libumps.e"
 
 /* globals */
