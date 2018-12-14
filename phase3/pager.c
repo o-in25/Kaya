@@ -91,19 +91,19 @@ void progTrapHandler () {
 }
 
 
-/* just returns an increment on the last frame mod to simulate an incremental choice */
+/* just returns an increment on the last frame mod to create an incremental choice */
 int nextFrame (){
     if (!lastFrame){
         lastFrame = 0;
     }
     lastFrame = lastFrame + 1;
-    return (lastFrame % (8*2));
+    return (lastFrame % (16));
 }
 
 void TLBhandler (){
     devregarea_PTR devReg = (devregarea_PTR)RAMBASEADDR;
     memaddr RAMTOP = devReg->rambase + devReg->ramsize;
-    memaddr swappoolstart = RAMTOP - (2 * PAGESIZE) - (SWAPSIZE * PAGESIZE);
+    memaddr swappoolstart = RAMTOP - (2 * PAGESIZE) - (SWAPPOOLSIZE * PAGESIZE);
     
     /* who am I? */
     /* get current processid in ASID register */
@@ -112,8 +112,8 @@ void TLBhandler (){
     
     /* why are we here */
     /*examine oldmem cause register */
-    state_PTR oldState = (state_PTR) & (uProcesses[missing_ASID - 1].Told_trap[2]);
-    int cause = (oldState->s_cause & 0 /* bits 2-6 */) >> 2;
+    state_PTR oldState = (state_PTR) &(uProcesses[missing_ASID - 1].Told_trap[2]);
+    int cause = (oldState->s_cause & 0x3C) >> 2;
     /* if TLB Invalid then SYS18 */
     /* 2 and 3 only valid TLB causes (pg 16 in yellow book) */
     if ((cause != 2) && (cause != 3)){
