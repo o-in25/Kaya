@@ -43,12 +43,54 @@ static void delegateUSyscall(state_PTR state) {
     }
 }
 
-
 static void readFromTerminal(state_PTR state) {
-    int asidIndex = (getSTATUS() - 1);
-    device_PTR printerDevice = (device_PTR) PRINTERDEV + (asidIndex * DEVREGSIZE);
-
-
+    /*int asidIndex = (getSTATUS() - 1);
+    device_PTR printerDevice = (device_PTR) PRINTERDEV + (asidIndex * DEVREGSIZE); */
+    
+    char* address = state->s_a1;
+    int ASID = ((getENTRYHI() & 0x19DEBB4FC0) >> ASIDMASK)
+    /* call dibs */
+    SYSCALL (PASSEREN, (int)&mutexSemaphores[32 + (ASID -1)], 0, 0);
+    done = FALSE;
+    unsigned int status;
+    /* find that pesky terminal */
+    state_t* oldState = (state_t*) &uProcessses[ASID-1].Told_trap[2];
+    devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
+    int deviceNumber = 32 + (ASID - 1);
+    device_PTR terminal = &(devReg->devReg[deviceNumber])
+    int total = 0;
+    
+    /* loop for reading */
+    while (!done) {
+        /* tell the machine what to do and then tell it to do it */
+        disableInterrupts ();
+        /*tell the machine to read from the terminal */
+        terminal->t_recv_command = 2;
+        /*then tell it to do it */
+        status = SYSCALL(WAITFORIO, TERMINT, (ASID -1), 1);
+        enableInterrupts ();
+        
+        /* check if we are done */
+        if (((status & 0x0FF00) >> 8) == (0xA)){
+            done = TRUE;
+        } else {
+            /* set the character */
+            *address = ((status &0xFF00) >> 8);
+            total++;
+        }
+        
+        /* did it work? */
+        if ((status & 0xFF) != 5){
+            PANIC();
+        }
+        address++
+    }
+    
+    /* put the ammount that were  written into v0 */
+    state->s_v0 = total;
+    
+    /* RELEASE THE KRAKEN...by which i mean release the mutex */
+    SYSCALL (VERHOGEN, (int)&mutexSemaphores[32 + (ASID - 1)], 0, 0);
 }
 
 static void writeToTerminal(state_PTR state) {
