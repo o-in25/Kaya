@@ -18,10 +18,10 @@ void enableInterrupts() {
 }
 
 /* readBacking reads in data from the backing store using the givin cylinder, sector, head and address to write to */
-void readBacking (int cylinder, int sector, int head, memaddr address){
+void readBacking (int cylinder, int sector, int head, memaddr address) {
     SYSCALL(PASSEREN, (int)&disk0Semaphore, 0, 0);
     
-    devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
+    devregarea_PTR devReg = (devregarea_PTR) RAMBASEADDR;
     device_t* disk = &(devReg->devreg[0]);
     unsigned int status;
     
@@ -165,7 +165,7 @@ void TLBhandler (){
     pool[frame].pageNumber = pageNumber;
     /* update missing pages page table entry: frame and valid bit */
     if (segmentNumber == 3) {
-        pool[frame].pageTableEntry = &(KUseg3.pteTable[pageNumber]);
+        pool[frame].pageTableEntry = &(kUseg3.pteTable[pageNumber]);
         pool[frame].pageTableEntry->entryLO = address | VALID | DIRTY |GLOBAL;
     } else {
         pool[frame].pageTableEntry = &(uProcesses[missing_ASID].tp_pte.pteTable[pageNumber]);
