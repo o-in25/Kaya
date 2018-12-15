@@ -1,8 +1,7 @@
-
 #include "../h/const.h"
 #include "../h/types.h"
-#include "../e/initProc.e"
 
+#include "../e/initProc.e"
 
 /* disables interrupts on request */
 void disableInterrupts() {
@@ -18,18 +17,17 @@ void enableInterrupts() {
     setSTATUS(status);
 }
 
-
 /* readBacking reads in data from the backing store using the givin cylinder, sector, head and address to write to */
 void readBacking (int cylinder, int sector, int head, memaddr address){
     SYSCALL(PASSEREN, (int)&disk0Semaphore, 0, 0);
     
     devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
-    device_t* disk = &(devReg->devreg[0])
+    device_t* disk = &(devReg->devreg[0]);
     unsigned int status;
     
     disableInterrupts();
     disk->d_command = (cylinder << 8) | 2;
-    status = SYSCALL (WAITFORIO, DISKINT, BACKINGSTORE, 0);
+    status = SYSCALL(WAITIO, DISKINT, BACKINGSTORE, 0);
     enableInterrupts();
     
     if (status == 1){
@@ -37,24 +35,24 @@ void readBacking (int cylinder, int sector, int head, memaddr address){
         disk->d_data0 = address;
         disk->d_command = (head << 16) | ((sector - 1) << 8) |  4;
         
-        status = SYSCALL (WAITFORIO, DISKINT, BACKINGSTORE, 0);
+        status = SYSCALL(WAITFORIO, DISKINT, BACKINGSTORE, 0);
         enableInterrupts();
     }
     
-    SYSCALL VERHOGEN, (int)&disk0Semaphore, 0, 0);
+    SYSCALL(VERHOGEN, (int) &(disk0Semaphore), 0, 0);
 }
 
 /* write backing writes to the backing store given a cylinder, sector, head and memory address to write from */
 void writeBacking (int cylinder, int sector, int head, memaddr address){
     SYSCALL(PASSEREN, (int)&disk0Semaphore, 0, 0);
-    
-    devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
-    device_t* disk = &(devReg->devreg[0])
+
+    devregarea_PTR devReg = (devregarea_PTR) RAMBASEADDR;
+    device_t* disk = &(devReg->devreg[0]);
     unsigned int status;
     
     disableInterrupts();
     disk->d_command = (cylinder << 8) | 2;
-    status = SYSCALL (WAITFORIO, DISKINT, BACKINGSTORE, 0);
+    status = SYSCALL (WAITIO, DISKINT, BACKINGSTORE, 0);
     enableInterrupts();
     
     if (status == 1){
@@ -92,7 +90,7 @@ void progTrapHandler () {
 
 
 /* just returns an increment on the last frame mod to create an incremental choice */
-int nextFrame (){
+int nextFrame() {
     if (!lastFrame){
         lastFrame = 0;
     }

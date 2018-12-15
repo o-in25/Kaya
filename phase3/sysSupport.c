@@ -1,7 +1,10 @@
+/* h files */
 #include "../h/const.h"
 #include "../h/types.h"
+/* e files */
 #include "../e/initProc.e"
 #include "../e/exceptions.e"
+#include "../e/initProc.e"
 
 void uSyscallHandler() {
     state_PTR state = (&((uProcesses[getASID()-1]).Told_trap[SYSTRAP]));
@@ -48,16 +51,16 @@ static void readFromTerminal(state_PTR state) {
     device_PTR printerDevice = (device_PTR) PRINTERDEV + (asidIndex * DEVREGSIZE); */
     
     char* address = state->s_a1;
-    int ASID = ((getENTRYHI() & 0x19DEBB4FC0) >> ASIDMASK)
+    int ASID = ((getENTRYHI() & 0x19DEBB4FC0) >> ASIDMASK);
     /* call dibs */
-    SYSCALL (PASSEREN, (int)&mutexSemaphores[32 + (ASID -1)], 0, 0);
-    done = FALSE;
+    SYSCALL(PASSEREN, (int)&mutexSemaphores[32 + (ASID -1)], 0, 0);
+    int done = FALSE;
     unsigned int status;
     /* find that pesky terminal */
-    state_t* oldState = (state_t*) &uProcessses[ASID-1].Told_trap[2];
-    devregarea_t* devReg = (devregarea_t *) RAMBASEADDR;
+    state_PTR oldState = (state_PTR) &uProcesses[ASID - 1].Told_trap[2];
+    devregarea_PTR devReg = (devregarea_PTR) RAMBASEADDR;
     int deviceNumber = 32 + (ASID - 1);
-    device_PTR terminal = &(devReg->devReg[deviceNumber])
+    device_PTR terminal = &(devReg->devreg[deviceNumber]);
     int total = 0;
     
     /* loop for reading */
@@ -67,7 +70,7 @@ static void readFromTerminal(state_PTR state) {
         /*tell the machine to read from the terminal */
         terminal->t_recv_command = 2;
         /*then tell it to do it */
-        status = SYSCALL(WAITFORIO, TERMINT, (ASID -1), 1);
+        status = SYSCALL(WAITIO, TERMINT, (ASID -1), 1);
         enableInterrupts ();
         
         /* check if we are done */
