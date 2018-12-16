@@ -85,7 +85,7 @@ void test() {
 int lastFrame;
 
 void progTrapHandler () {
-    /* SYS18 */
+    terminateUProcess ();
 }
 
 
@@ -115,7 +115,7 @@ void TLBhandler (){
     /* if TLB Invalid then SYS18 */
     /* 2 and 3 only valid TLB causes (pg 16 in yellow book) */
     if ((cause != 2) && (cause != 3)){
-        /* sys 18 */
+        terminateUProcess ();
     }
     /* which page is missing */
     /*oldMem ASID register has segment no and page no */
