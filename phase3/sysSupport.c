@@ -188,7 +188,7 @@ static void diskStuff (state_PTR state, int readOrWrite){
             
             /* move on! */
             buffer++;
-            source++;
+            address++;
             i++;
         }
     }
@@ -220,7 +220,7 @@ static void diskStuff (state_PTR state, int readOrWrite){
             
             /* move on! */
             buffer++;
-            source++;
+            address++;
             i++;
         }
     }
