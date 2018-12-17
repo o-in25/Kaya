@@ -215,6 +215,8 @@ static void terminateUProcess() {
 }
 
 
+state_PTR get
+
 /* used to gain mutual exclusion on a passed in semaphore or 
 release mutal exclusion so that a process can be done atomically. Here,
 TRUE is to gain mutal exclusion and FALSE is to release it */

@@ -16,6 +16,13 @@ int masterSemaphore;
 int mutexSemaphores[MAXSEMALLOC];
 /* END OF GLOBAL VARIABLES */
 
+
+extern void terminateProcess() {
+	SYSCALL(TERMINATEPROCESS, 0, 0, 0);
+}
+
+
+
 static void initUProcs() {
 	int i;
 	int j;

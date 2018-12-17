@@ -1,7 +1,9 @@
 #include "../h/const.h"
 #include "../h/types.h"
-
+/* e files */
+#include "../e/exceptions.e"
 #include "../e/initProc.e"
+#include "../e/sysSupport.e"
 
 /* disables interrupts on request */
 void disableInterrupts() {
@@ -17,6 +19,7 @@ void enableInterrupts() {
     setSTATUS(status);
 }
 
+
 /* readBacking reads in data from the backing store using the givin cylinder, sector, head and address to write to */
 void readBacking (int cylinder, int sector, int head, memaddr address) {
     SYSCALL(PASSEREN, (int)&disk0Semaphore, 0, 0);
@@ -30,7 +33,7 @@ void readBacking (int cylinder, int sector, int head, memaddr address) {
     status = SYSCALL(WAITIO, DISKINT, BACKINGSTORE, 0);
     enableInterrupts();
     
-    if (status == 1){
+    if(status == 1){
         disableInterrupts();
         disk->d_data0 = address;
         disk->d_command = (head << 16) | ((sector - 1) << 8) |  4;
@@ -67,22 +70,6 @@ void writeBacking (int cylinder, int sector, int head, memaddr address){
     SYSCALL VERHOGEN, (int)&disk0Semaphore, 0, 0);
 }
 
-void pager() {
-    
-    
-}
-
-
-void test() {
-    
-}
-
-
-
-
-
-
-int lastFrame;
 
 void progTrapHandler () {
     terminateUProcess ();
@@ -98,7 +85,7 @@ int nextFrame() {
     return (lastFrame % (16));
 }
 
-void TLBhandler (){
+void pager() {
     devregarea_PTR devReg = (devregarea_PTR)RAMBASEADDR;
     memaddr RAMTOP = devReg->rambase + devReg->ramsize;
     memaddr swappoolstart = RAMTOP - (2 * PAGESIZE) - (SWAPPOOLSIZE * PAGESIZE);
@@ -115,7 +102,7 @@ void TLBhandler (){
     /* if TLB Invalid then SYS18 */
     /* 2 and 3 only valid TLB causes (pg 16 in yellow book) */
     if ((cause != 2) && (cause != 3)){
-        terminateUProcess ();
+        terminateUProcess();
     }
     /* which page is missing */
     /*oldMem ASID register has segment no and page no */
@@ -153,6 +140,7 @@ void TLBhandler (){
         int squatterPageNum = pool[frame].pageNumber;
         /* write current frames contents on the backing store */
         writeBacking (squatterPageNum, squatterASID, 0, address);
+        diskOp
         
     }
     
