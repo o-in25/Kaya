@@ -156,7 +156,7 @@ static void diskGet(state_PTR state) {
 /* since write and read commands are set to 3 and 4, those are used here as well to */
 /* which command is desired */
 static void diskStuff (state_PTR state, int readOrWrite){
-    int *address = (int*) state->s_a1;
+    int* address = (int*) state->s_a1;
     int disk = state->s_a2;
     int sectNumber = state->s_a3;
     ASID = getASID();
