@@ -37,7 +37,7 @@ static int next() {
 }
 
 /* will invalidate a page table entry given a frame number */
-static void invalidateEntry(int frameNumber) {
+void invalidateEntry(int frameNumber) {
     pool[frameNumber].pageTableEntry->entryLO = ALLOFF | DIRTY;
     pool[frameNumber].ASID = -1;
     pool[frameNumber].pageNumber = 0;
