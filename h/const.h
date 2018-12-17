@@ -65,6 +65,7 @@
 /**************************** ALL OFF *************************/
 #define ALLOFF 0x00000000
 /************************* INTERRUPTS *************************/
+#define LOCAL 0xFFFFF000
 
 /* status codes */
  #define IEc 0x00000001

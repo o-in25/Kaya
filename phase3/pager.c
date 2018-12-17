@@ -5,19 +5,6 @@
 #include "../e/initProc.e"
 #include "../e/sysSupport.e"
 
-/* disables interrupts on request */
-void disableInterrupts() {
-    int status = getSTATUS();
-    status = (status & 0xFFFFFFFE);
-    setSTATUS(status);
-}
-
-/* enables interrupts on request */
-void enableInterrupts() {
-    int status = getSTATUS();
-    status = (status & 0x1);
-    setSTATUS(status);
-}
 
 void progTrapHandler() {
     terminateUProcess();
@@ -47,9 +34,12 @@ static void invalidateEntry(int frameNumber) {
     TLBCLR();
 }
 
+/* the pager! */
 void pager() {
     /* acquire the mutex on the swapool metaphor */
     mutex(TRUE, &(swapSemaphore));
+    /* get the current asid */
+    int ASID = extractASID();
     /* why are we here */
     /*examine oldmem cause register */
     state_PTR state = &(uProcesses[extractASID() - 1].Told_trap[TLBTRAP]);
@@ -64,6 +54,7 @@ void pager() {
     /* get current processid in ASID register */
     /* this is needed as the index into the phase3 global structure */
     int missingASID = ((getENTRYHI() & 0x3FFFF000) >> ASIDMASK);
+    device_PTR diskDevice = (device_PTR)DISKDEV;
     /* get the cause */
     /* if TLB Invalid then SYS18 */
     /* 2 and 3 only valid TLB causes (pg 16 in yellow book) */
@@ -80,28 +71,45 @@ void pager() {
     int frameNumber = next();
     swapPoolStart = swapPoolStart + (frameNumber * PAGESIZE);
 
+    /* information for the disk */
+    int diskInformation[DISKPARAMS];
+    diskInformation[HEAD] = EMPTY;
+    diskInformation[DISKNUM] = EMPTY;
+    diskInformation[PAGELOCATION] = pageNumber;
+    /* what type of operation is it? */
+    diskInformation[READWRITE] = WRITEBLK;
+    /* save out status for interrupts */
+    int preservedStatus;
     /* if the frame is currently occupied */
-    if (pool[frameNumber].ASID != -1)
-    {
-
-        disableInterrupts();
+    if(pool[frameNumber].ASID != -1) {
+        preservedStatus = getSTATUS();
+        setSTATUS(ALLOFF);
         /* turn the valid bit off in the page table of the current frames occupent */
-        pool[frameNumber].pageTableEntry->entryLO = pool[frameNumber].pageTableEntry->entryLO & INVALID;
-    
-        enableInterrupts();
-        int squatterASID = pool[frameNumber].ASID;
+        int squatterASID = pool[frameNumber].ASID - 1;
         int squatterPageNum = pool[frameNumber].pageNumber;
+        if(pageNumber >= KUSEGPTESIZE) {
+            pageNumber = KUSEGPTESIZE - 1;
+        }
+        
         /* write current frames contents on the backing store */
         invalidateEntry(frameNumber);
-        
-        diskOperation(NULL, NULL, NULL);
+        /* get the information ready for the disk */
+        diskInformation[SECTOR] = squatterASID;
+        diskInformation[CYLINDER] = squatterPageNum;
+        /* reenable the enterrupts */
+        setSTATUS(preservedStatus);
+        /* perform a disk operation */
+        diskOperation(diskInformation, (&(disk0Semaphore)), diskDevice);
         
     }
-    
+    /* reset the disk information */
+    diskInformation[SECTOR] = ASID - 1;
+    diskInformation[CYLINDER] = pageNumber;
+    diskInformation[READWRITE] = READBLK;
     /* read missing page into selected frame */
-    diskOperation(pageNumber, missingASID, 0, address);
+    diskOperation(pageNumber, (&(disk0Semaphore)), diskDevice);
 
-    disableInterrupts();
+
     /*update the swapool data structure */
     pool[frameNumber].ASID = missingASID;
     pool[frameNumber].segmentNumber = segmentNumber;
@@ -109,17 +117,16 @@ void pager() {
     /* update missing pages page table entry: frame and valid bit */
     if (segmentNumber == 3) {
         pool[frameNumber].pageTableEntry = &(kUseg3.pteTable[pageNumber]);
-        pool[frameNumber].pageTableEntry->entryLO = address | VALID | DIRTY | GLOBAL;
+        pool[frameNumber].pageTableEntry->entryLO = swapPoolStart | VALID | DIRTY | GLOBAL;
     } else {
         pool[frameNumber].pageTableEntry = &(uProcesses[missingASID].Tp_pte.pteTable[pageNumber]);
-        pool[frameNumber].pageTableEntry->entryLO = address | VALID | DIRTY | GLOBAL;
+        pool[frameNumber].pageTableEntry->entryLO = (swapPoolStart & LOCAL) | VALID | DIRTY | GLOBAL;
     }
     /* deal with the cache consitency */
     TLBCLR();
-    enableInterrupts();
     
     /*release mutex and return control to process */
-    SYSCALL(VERHOGEN, (int)&swapSemaphore, 0, 0);
+    mutex(FALSE, (&(swapSemaphore)));
     
     contextSwitch(state);
 }

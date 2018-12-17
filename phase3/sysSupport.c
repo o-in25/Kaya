@@ -64,7 +64,7 @@ static void readFromTerminal(state_PTR state) {
     int total = 0;
     
     /* loop for reading */
-    while (!done) {
+    while(!done) {
         /* tell the machine what to do and then tell it to do it */
         disableInterrupts ();
         /*tell the machine to read from the terminal */
