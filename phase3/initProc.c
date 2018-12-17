@@ -23,6 +23,50 @@ static void initUProcs() {
 	int j;
 }
 
+/* gets the ball rolling */
+static void initUProc() {
+
+	int asid = extractASID();
+	int asidIndex = asid - 1;
+	/* set up the disk */
+	device_PTR diskDevice = (device_PTR) DISKDEV;
+	/* set up the tape */
+	device_PTR tapeDevice = (device_PTR) TAPEDEV + ((asidIndex) * DEVREGSIZE);
+	/* set up a memory buffer */
+	int memoryBuffer = BUFFER + (asidIndex * PAGESIZE);
+
+	/* set up the exception state vectors for the sys-5 pass up 
+	or die helper method */
+	initializeExceptionsStateVector();
+	int pageNumber = 0;
+	/* read until we reach the end of line character or the 
+	end of tape marker */
+	int diskInformation[DISKPARAMS];
+	while((tapeDevice->d_data1 != EOF) && (tapeDevice->d_data1 != EOT)) {
+		/* while there are things to do... */
+		tapeDevice->d_data0 = memoryBuffer;
+		tapeDevice->d_command = READBLK;
+		/* set up the parameters for a disk 
+		operation */
+		diskInformation[SECTOR] = asidIndex;
+		diskInformation[CYLINDER] = pageNumber;
+		diskInformation[HEAD] = EMPTY;
+		diskInformation[DISKNUM] = EMPTY;
+		diskInformation[PAGELOCATION] = memoryBuffer;
+		diskInformation[READWRITE] = WRITEBLK;
+		/* perform a disk I/O now that we have all of the 
+		information we need */
+		diskOperation(diskInformation, &(disk0Semaphore), diskDevice);
+		/* keep track of the pages */
+		pageNumber++;
+	}
+
+	/* prepare a new processor state */
+	state_PTR processorState = prepareProcessorState(UPROCDISKIO, 0);
+	/* perform a context switch for the prepared state */
+	contextSwitch(processorState);
+}
+
 /* prepare a new processor state */
 static state_PTR prepareProcessorState(int flag, int index) {
 	/* preparing a processor state appropriate for the 
@@ -51,6 +95,7 @@ static state_PTR prepareProcessorState(int flag, int index) {
 	}
 	return processorState;
 }
+
 
 /* wrapper function for our phase 3 */
 void test() {
@@ -130,49 +175,6 @@ static int extractASID() {
 }
 
 
-/* gets the ball rolling */
-static void initUProc() {
-
-	int asid = extractASID();
-	int asidIndex = asid - 1;
-	/* set up the disk */
-	device_PTR diskDevice = (device_PTR) DISKDEV;
-	/* set up the tape */
-	device_PTR tapeDevice = (device_PTR) TAPEDEV + ((asidIndex) * DEVREGSIZE);
-	/* set up a memory buffer */
-	int memoryBuffer = BUFFER + (asidIndex * PAGESIZE);
-
-	/* set up the exception state vectors for the sys-5 pass up 
-	or die helper method */
-	initializeExceptionsStateVector();
-	int pageNumber = 0;
-	/* read until we reach the end of line character or the 
-	end of tape marker */
-	int diskInformation[DISKPARAMS];
-	while((tapeDevice->d_data1 != EOF) && (tapeDevice->d_data1 != EOT)) {
-		/* while there are things to do... */
-		tapeDevice->d_data0 = memoryBuffer;
-		tapeDevice->d_command = READBLK;
-		/* set up the parameters for a disk 
-		operation */
-		diskInformation[SECTOR] = asidIndex;
-		diskInformation[CYLINDER] = pageNumber;
-		diskInformation[HEAD] = EMPTY;
-		diskInformation[DISKNUM] = EMPTY;
-		diskInformation[PAGELOCATION] = memoryBuffer;
-		diskInformation[READWRITE] = WRITEBLK;
-		/* perform a disk I/O now that we have all of the 
-		information we need */
-		diskOperation(diskInformation, &(disk0Semaphore), diskDevice);
-		/* keep track of the pages */
-		pageNumber++;
-	}
-
-	/* prepare a new processor state */
-	state_PTR processorState = prepareProcessorState(UPROCDISKIO, 0);
-	/* perform a context switch for the prepared state */
-	contextSwitch(processorState);
-}
 
 
 /* sets up pass up or die stuff */

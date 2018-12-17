@@ -24,6 +24,8 @@ void enableInterrupts() {
     setSTATUS(status);
 }
 
+
+
 /* just returns an increment on the last frame mod to create an incremental choice */
 static int next() {
     static int lastFrame = 0;

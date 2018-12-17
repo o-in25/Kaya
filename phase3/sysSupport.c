@@ -128,7 +128,7 @@ static void writeToTerminal(state_PTR state) {
         i++;
     }
     
-    /* return the mutex */
+/* return the mutex */
     SYSCALL (VERHOGEN, (int)mutexSemaphores[40 + (ASID - 1)], 0, 0);
 }
 
@@ -161,7 +161,7 @@ static void diskStuff (state_PTR state, int readOrWrite){
     int sectNumber = state->s_a3;
     ASID = getASID();
     int *buffer = (int*)(0x2001E000 + (disk * 4096));
-    state_PTR oldState = (state_PTR) &uProcs[ASID-1].Told_trap[2];
+    state_PTR oldState = (state_PTR) &uProcesses[ASID-1].Told_trap[2];
     devregarea_PTR devReg = (devregarea_PTR) RAMBASEADDR;
     device_PTR device = &(devReg->devreg[disk]);
     
