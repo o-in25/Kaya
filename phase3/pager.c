@@ -34,7 +34,7 @@ static void invalidateEntry(int frameNumber) {
     TLBCLR();
 }
 
-/* the pager! */
+/* the pager for the TLB exception */
 void pager() {
     /* acquire the mutex on the swapool metaphor */
     mutex(TRUE, &(swapSemaphore));
