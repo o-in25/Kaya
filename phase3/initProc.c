@@ -179,10 +179,9 @@ static int extractASID() {
 
 /* sets up pass up or die stuff */
 static void initializeExceptionsStateVector() {
-	state_PTR state;
-	int i;
-	/* initialize an new state */
+	/* need a new state */
 	state_PTR state = NULL;
+	int i;
 	/* for each trap type */
 	for(i = 0; i < TRAPTYPES; i++) {
 		/* get the state by the asid */
