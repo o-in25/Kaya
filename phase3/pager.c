@@ -10,6 +10,19 @@ void progTrapHandler() {
     terminateUProcess();
 }
 
+/* disables interrupts on request */
+void disableInterrupts() {
+    int status = getSTATUS();
+    status = (status & 0xFFFFFFFE);
+    setSTATUS(status);
+}
+
+/* enables interrupts on request */
+void enableInterrupts() {
+    int status = getSTATUS();
+    status = (status & 0x1);
+    setSTATUS(status);
+}
 
 /* just returns an increment on the last frame mod to create an incremental choice */
 static int next() {
