@@ -147,7 +147,12 @@
 #define COMMANDMASK 8
 #define IPMASK 8
 #define VPNMASK 12
+#define EXCMASK 2
+#define SEGMENTMASK 30
 
+/* causes */
+#define TLBL 2
+#define TLBS 3
 
 /* bits 6-11 are the ASID in the CP0 register */
 #define ENTRYHIASID 0x00000FC0

@@ -17,11 +17,6 @@ int mutexSemaphores[MAXSEMALLOC];
 /* END OF GLOBAL VARIABLES */
 
 
-extern void terminateProcess() {
-	SYSCALL(TERMINATEPROCESS, 0, 0, 0);
-}
-
-
 
 static void initUProcs() {
 	int i;
@@ -206,9 +201,5 @@ static void initializeExceptionsStateVector() {
 		SYSCALL(SPECTRAPVEC, i, (int) &(uProcesses[extractASID() - 1].Told_trap[i]), (int) state);
 	}
 }
-
-
-
-
 
 	
