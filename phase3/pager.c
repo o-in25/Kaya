@@ -34,14 +34,16 @@ static int next() {
     return lastFrame;
 }
 
-static void invalidateEntry(int frameNumber, int pageNumber) {
+/* will invalidate a page table entry given a frame number */
+static void invalidateEntry(int frameNumber) {
     pool[frameNumber].pageTableEntry->entryLO = ALLOFF | DIRTY;
     pool[frameNumber].ASID = -1;
     pool[frameNumber].pageNumber = 0;
     pool[frameNumber].segmentNumber = 0;
     /* were done */
     pool[frameNumber].pageTableEntry = NULL;
-    /* clear */
+    /* deal with the TLB cache consistency */
+    /* by clearing the TLB */
     TLBCLR();
 }
 
@@ -85,15 +87,13 @@ void pager() {
         disableInterrupts();
         /* turn the valid bit off in the page table of the current frames occupent */
         pool[frameNumber].pageTableEntry->entryLO = pool[frameNumber].pageTableEntry->entryLO & INVALID;
-        /* deal with the TLB cache consistency */
-        /* by clearing the TLB */
-        TLBCLR();
+    
         enableInterrupts();
-
         int squatterASID = pool[frameNumber].ASID;
         int squatterPageNum = pool[frameNumber].pageNumber;
         /* write current frames contents on the backing store */
-        writeBacking (squatterPageNum, squatterASID, 0, address);
+        invalidateEntry(frameNumber);
+        
         diskOperation(NULL, NULL, NULL);
         
     }
