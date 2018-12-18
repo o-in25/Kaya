@@ -21,7 +21,6 @@ int mutexSemaphores[MAXSEMALLOC];
 
 
 static void initUProcs() {
-	int i;
 	int j;
 }
 
@@ -171,7 +170,7 @@ void test() {
 * since the ASID is bits 6-11, the ENTRYHIASID constant will determine
 * which buts signify the ASID
 */
-static int extractASID() {
+int extractASID() {
 	/* extracts the asid from the entryHi cp0 register */
 	return ((getENTRYHI() & ENTRYHIASID) >> ASIDMASK);
 }
