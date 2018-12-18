@@ -391,9 +391,6 @@ static void terminateProcess() {
 static void createProcess(state_PTR state) {
     /* grab a new process */
     pcb_PTR p = allocPcb();
-    if (currentProcess == NULL){
-        currentProcess = p;
-    } else {
     if(p != NULL) {
         /* there is now n+1 running processes */
         processCount++;
@@ -414,7 +411,6 @@ static void createProcess(state_PTR state) {
         the failure of a new allocated pcb_t by placing 
         -1 in the state's $v0 register */
         state->s_v0 = FAILURE;
-    }
     }
     /* context switch */
     contextSwitch(state);
