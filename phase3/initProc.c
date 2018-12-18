@@ -164,7 +164,7 @@ void test() {
 		/* set up the page table entry */
 		for(j = 0; j < KUSEGPTESIZE; j++) {
 			/* TODO: set up entryHI */
-			uProcesses[i - 1].Tp_pte.pteTable[j].entryHI = (BASEADDR + j) >> VPNMASK | (i << ASIDMASK);
+			uProcesses[i - 1].Tp_pte.pteTable[j].entryHI = (BASEADDR + j) << VPNMASK | (i << ASIDMASK);
 			uProcesses[i - 1].Tp_pte.pteTable[j].entryLO = ALLOFF | DIRTY;
 		}
 		/* get the address of ith entry the segment table */
