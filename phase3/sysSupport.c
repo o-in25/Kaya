@@ -14,7 +14,7 @@ void uSyscallHandler() {
 }
 
 static void delegateUSyscall(state_PTR state) {
-    switch(statecle->s_a0) {
+    switch(state->s_a0) {
         case READ_FROM_TERMINAL: 
             readFromTerminal(state);
             break;
