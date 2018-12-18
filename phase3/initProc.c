@@ -83,7 +83,7 @@ void initUProc() {
 }
 
 /* prepare a new processor state */
-state_PTR prepareProcessorState(int flag, int index) {
+state_PTR prepareProcessorState(int flag, int* index) {
 	/* preparing a processor state appropriate for the 
 	execution of uprocs */
 	state_PTR processorState;
