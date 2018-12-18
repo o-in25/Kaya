@@ -5,6 +5,7 @@
 #include "../e/initProc.e"
 #include "../e/exceptions.e"
 #include "../e/initProc.e"
+#include "../e/pager.e"
 /* include the µmps2 library */
 #include "/usr/local/include/umps2/umps/libumps.e"
 
