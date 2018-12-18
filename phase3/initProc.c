@@ -147,12 +147,12 @@ void test() {
 	/* initialize the header */
 	kSegOS.header = MAGICNO << PGTBLHEADERWORD | KSEGOSPTESIZE;
 
-	for(i = 0; i < MAXUPROC; i++) {
+	for(i = 1; i < MAXUPROC + 1; i++) {
 		/* get the ith uProc */
 		Tproc_PTR userProc = &(uProcesses[i - 1]);
 		/* initialize the header */
 		userProc->Tp_pte.header = ((MAGICNO << PGTBLHEADERWORD) | KUSEGPTESIZE);
-
+		debugger(5);
 		/* set up the page table entry */
 		for(j = 0; j < KUSEGPTESIZE; j++) {
 			/* TODO: set up entryHI */
