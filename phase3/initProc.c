@@ -175,6 +175,8 @@ void test() {
 		/* prepare the processor state */
 		uProcesses[i - 1].Tp_pte.pteTable[KUSEGPTESIZE-1].entryHI = (BSDGMT  << VPNMASK) | (i << ASIDMASK);
 		debugger(8);
+        state_t state;
+        processorState = &state;
 		processorState->s_status = ALLOFF | IEc | IM | TE;
 		/* the init handler */
 		processorState->s_t9 = (memaddr) initUProc;
