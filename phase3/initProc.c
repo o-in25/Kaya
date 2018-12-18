@@ -167,8 +167,9 @@ void test() {
 		debugger(8);
 		/* add a new processor state, per the student guide */
 		state_PTR processorState = prepareProcessorState(FALSE, 0);
+				debugger(9);
 		processorState->s_asid = (i << ASIDMASK);
-		processorState->s_sp = ( (ROMPAGESTART + OSAREA) - (64 * PAGESIZE)) - (((TRAPTYPES-1) * PAGESIZE * (i-1)) + (PAGESIZE * TLBTRAP));
+		processorState->s_sp = ((ROMPAGESTART + OSAREA) - (64 * PAGESIZE)) - (((TRAPTYPES-1) * PAGESIZE * (i-1)) + (PAGESIZE * TLBTRAP));
 		debugger(9);
 		/* set the semaphore */
 		uProcesses[i - 1].Tp_sem = 0;
