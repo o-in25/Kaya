@@ -5,7 +5,7 @@ INCDIR = /usr/local/include/umps2/umps
 SUPDIR = /usr/local/share/umps2
 LIBDIR = /usr/local/lib/umps2
 
-DEFS = ../h/const.h ../h/types.h ../e/pcb.e ../e/asl.e ../e/initial.e ../e/interrupts.e ../e/scheduler.e ../e/exceptions.e ../e/adl.e ../e/initProc.e ../e/vmIOsupport.e ../e/avsl.e $(INCDIR)/libumps.e Makefile
+DEFS = ../h/const.h ../h/types.h ../e/pcb.e ../e/asl.e ../e/initial.e ../e/interrupts.e ../e/scheduler.e ../e/exceptions.e ../e/adl.e ../e/initProc.e ../e/sysSupport.e ../e/avsl.e $(INCDIR)/libumps.e Makefile
 
 TDEFS = ./testers/print.e ./testers/h/tconst.h ../h/const.h ../h/types.h $(INCDIR)/libumps.e Makefile
 
@@ -130,14 +130,14 @@ print.o: ./testers/print.c $(TDEFS)
 kernel.core.umps: kernel
 	$(EF) -k kernel
 
-kernel: initial.o interrupts.o scheduler.o exceptions.o asl.o pcb.o adl.o avsl.o vmIOsupport.o initProc.o
-	$(LD) $(LDCOREFLAGS) $(LIBDIR)/crtso.o initial.o interrupts.o scheduler.o exceptions.o asl.o pcb.o adl.o avsl.o vmIOsupport.o initProc.o $(LIBDIR)/libumps.o -o kernel
+kernel: initial.o interrupts.o scheduler.o exceptions.o asl.o pcb.o adl.o avsl.o sysSupport.o initProc.o
+	$(LD) $(LDCOREFLAGS) $(LIBDIR)/crtso.o initial.o interrupts.o scheduler.o exceptions.o asl.o pcb.o adl.o avsl.o sysSupport.o initProc.o $(LIBDIR)/libumps.o -o kernel
 
 initProc.o: initProc.c $(DEFS)
 	$(CC) $(CFLAGS) initProc.c
 
-vmIOsupport.o: vmIOsupport.c $(DEFS)
-	$(CC) $(CFLAGS) vmIOsupport.c
+vmIOsupport.o: sysSupport.c $(DEFS)
+	$(CC) $(CFLAGS) sysSupport.c
 
 avsl.o: avsl.c $(DEFS)
 	$(CC) $(CFLAGS) avsl.c
