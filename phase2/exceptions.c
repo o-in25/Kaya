@@ -393,8 +393,8 @@ static void createProcess(state_PTR state) {
     pcb_PTR p = allocPcb();
     if (currentProcess == NULL){
         currentProcess = p;
-    }
-    if(p != NULL && currentProcess != NULL) {
+    } else {
+    if(p != NULL) {
         /* there is now n+1 running processes */
         processCount++;
         /* since there is a free process, if the process 
@@ -414,6 +414,7 @@ static void createProcess(state_PTR state) {
         the failure of a new allocated pcb_t by placing 
         -1 in the state's $v0 register */
         state->s_v0 = FAILURE;
+    }
     }
     /* context switch */
     contextSwitch(state);
