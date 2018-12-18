@@ -168,11 +168,11 @@ void test() {
 		debugger(8);
 		/* add a new processor state, per the student guide */
 		state_PTR processorState = prepareProcessorState(FALSE, i);
+					debugger(9);
 		/* set the semaphore */
 		uProcesses[i - 1].Tp_sem = 0;
 		int status = SYSCALL(CREATEPROCESS, (int) &(processorState), EMPTY, EMPTY);
 		if(status != SUCCESS) {
-			debugger(9);
 			SYSCALL(TERMINATEPROCESS, EMPTY, EMPTY, EMPTY);
 		}
 	}
