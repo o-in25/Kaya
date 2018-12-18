@@ -162,8 +162,8 @@ void test() {
 		/* get the address of ith entry the segment table */
 		segt_PTR segmentTable = (segt_PTR) SEGSTART + (i * SEGWIDTH);
 		/* point to the kSegOS segment */
-		segmentTable.kSegOS = kSegOS;
-		segmentTable.kUseg2 = userProc.Tp_pte;
+		segmentTable->kUseg2 = (&(userProc.Tp_pte));
+		segmentTable->kSegOS = (&(kSegOS));
 		/* prepare the processor state */
 		state_PTR processorState = prepareProcessorState(FALSE, i);
 		userProc.Tp_sem = 0;
