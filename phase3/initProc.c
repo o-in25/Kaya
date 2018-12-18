@@ -151,7 +151,7 @@ void test() {
 	disk0Semaphore = 1;
 	swapSemaphore = 1;
 	debugger(4);
-	state_PTR processorState; 
+	state_t processorState;
 	/* add a new processor state, per the student guide */
 	/* initialize the header */
 	kSegOS.header = MAGICNO << PGTBLHEADERWORD | KSEGOSPTESIZE;
@@ -175,18 +175,16 @@ void test() {
 		/* prepare the processor state */
 		uProcesses[i - 1].Tp_pte.pteTable[KUSEGPTESIZE-1].entryHI = (BSDGMT  << VPNMASK) | (i << ASIDMASK);
 		debugger(8);
-        state_t state;
-        processorState = &state;
-		processorState->s_status = ALLOFF | IEc | IM | TE;
+		processorState.s_status = ALLOFF | IEc | IM | TE;
 		/* the init handler */
-		processorState->s_t9 = (memaddr) initUProc;
-		processorState->s_pc = (memaddr) initUProc;
-		processorState->s_asid = (i << ASIDMASK);
-		processorState->s_sp = ((ROMPAGESTART + OSAREA) - (64 * PAGESIZE)) - (((TRAPTYPES-1) * PAGESIZE * (i-1)) + (PAGESIZE * TLBTRAP));
+		processorState.s_t9 = (memaddr) initUProc;
+		processorState.s_pc = (memaddr) initUProc;
+		processorState.s_asid = (i << ASIDMASK);
+		processorState.s_sp = ((ROMPAGESTART + OSAREA) - (64 * PAGESIZE)) - (((TRAPTYPES-1) * PAGESIZE * (i-1)) + (PAGESIZE * TLBTRAP));
 		debugger(9);
 		/* set the semaphore */
 		uProcesses[i - 1].Tp_sem = 0;
-		int status = SYSCALL(CREATEPROCESS, (int) (processorState), EMPTY, EMPTY);
+		int status = SYSCALL(CREATEPROCESS, (int) &(processorState), EMPTY, EMPTY);
 		if(status != SUCCESS) {
 			SYSCALL(TERMINATEPROCESS, EMPTY, EMPTY, EMPTY);
 		}
