@@ -19,7 +19,8 @@ EF = umps2-elf2umps
 UDEV = umps2-mkdev
 
 #main target
-all: kernel.core.umps strConcatTape.umps drawTape.umps readTape.umps fibTape.umps swapTape.umps todTape.umps diskTape.umps pvATape.umps pvBTape.umps printerTape.umps disk0.umps disk1.umps
+# the make file was out of date, here is the new one
+all: kernel.core.umps readTape.umps fibTape.umps swapTape.umps todTape.umps diskTape.umps pvATape.umps pvBTape.umps printerTape.umps disk0.umps disk1.umps
 
 disk0.umps:
 	$(UDEV) -d disk0.umps
