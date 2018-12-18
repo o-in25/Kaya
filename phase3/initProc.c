@@ -148,6 +148,7 @@ void test() {
 	kSegOS.header = MAGICNO << PGTBLHEADERWORD | KSEGOSPTESIZE;
 	for(i = 1; i < MAXUPROC + 1; i++) {
 		/* get the ith uProc */
+		Tproc_t userProc = uProcesses[i - 1];
 		/* initialize the header */
 		uProcesses[i - 1].Tp_pte.header = ((MAGICNO << PGTBLHEADERWORD) | KUSEGPTESIZE);
 		debugger(7);
