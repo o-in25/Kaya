@@ -145,16 +145,27 @@ static void delay() {
 }
 
 static void diskPut(state_PTR state) {
-    messWithDisk(state, 4)
+    /* disk put */
+    diskOperation(NULL, NULL, NULL);
 }
 
 static void diskGet(state_PTR state) {
-    messWithDisk (state, 3)
+    diskOperation(NULL, NULL, NULL);
 }
 
+/*******
+ * 
+ * 
+ *  12/17 6:49PM 
+ *  We shoudn't need this; the diskIO func will handle each type 
+ *  of command by taking in as anargument the command and placing it
+ *  as a command in that device's comannad field per pops pg 38
+ * 
+ * 
+ * / 
 /* I noticed the two disk operations were super similair so I combined them into one */
 /* since write and read commands are set to 3 and 4, those are used here as well to */
-/* which command is desired */
+/* which command is desired 
 static void diskStuff (state_PTR state, int readOrWrite){
     int* address = (int*) state->s_a1;
     int disk = state->s_a2;
@@ -165,35 +176,35 @@ static void diskStuff (state_PTR state, int readOrWrite){
     devregarea_PTR devReg = (devregarea_PTR) RAMBASEADDR;
     device_PTR device = &(devReg->devreg[disk]);
     
-    /* disk0 and ksegos are off limits */
+    /* disk0 and ksegos are off limits 
     if (disk <= 0 || (memaddr) address < 0x80000000) {
-        /* its a trap */
+        /* its a trap 
         terminateUProcess ();
     }
     
-    /* need the head, sector and cylinder for the data */
+    /* need the head, sector and cylinder for the data 
     int head = sectNumber % 2;
     sectNumber = sectNumber/2;
-    int sectorNumber = sectnumber % 8; /* sectNumber and sectorNumber can be easy to mix up but the way to think about it is that the shorter one is the one we dont use for real */
+    int sectorNumber = sectNumber % 8; /* sectNumber and sectorNumber can be easy to mix up but the way to think about it is that the shorter one is the one we dont use for real 
     sectNumber = sectNumber/8;
-    int cylinder = sectNo;
+    int cylinder = sectNumber;
     
-    /* call dibs */
+    /* call dibs 
     SYSCALL(PASSEREN, (int)&mutexSemaphores[disk], 0, 0);
     
-    if (readWrite == 4 /*command for write */){
+    if (readWrite == 4 /*command for write ){
         for (int i = 0; i < 1024; i++){
-            /*copy it and... */
+            /*copy it and... 
             *address = *buffer;
             
-            /* move on! */
+            /* move on! 
             buffer++;
             address++;
             i++;
         }
     }
     
-    /*perform an atomic operation and seek to correct the cylinder */
+    /*perform an atomic operation and seek to correct the cylinder 
     disableInterrupts();
     
     device->d_command = ((cylinder << 8) | 2);
@@ -201,11 +212,11 @@ static void diskStuff (state_PTR state, int readOrWrite){
     
     enableInterrupts();
     
-    /* if successful */
+    /* if successful 
     if (status == 1){
         disableInterrupts();
         
-        /* set up the data location and read/write command */
+        /* set up the data location and read/write command 
         device->d_data0 = (memaddr) buffer;
         device->d_command = (head << 16) | (sectorNumber << 8) | readOrWrite;
         
@@ -213,26 +224,26 @@ static void diskStuff (state_PTR state, int readOrWrite){
         enableInterrupts();
     }
     
-    if (readOrWrite == 3/*read command*/){
+    if (readOrWrite == 3/*read command){
         for (int i = 0; i < 1024; i++){
-            /*copy it and... */
+            /*copy it and... 
             *address = *buffer;
             
-            /* move on! */
+            /* move on! 
             buffer++;
             address++;
             i++;
         }
     }
     
-    /* store the result in v0 */
+    /* store the result in v0 
     state->s_v0 = status;
     
-    /* drop mic on stage */
+    /* drop mic on stage 
     SYSCALL(VERHOGEN, (int)&mutexSemaphores[disk], 0, 0);
     
 }
-
+**/
 static void writeToPrinter(state_PTR state) {
     char* nextChar = (char*) state->s_a1;
     int stringLength = (int) state->s_a2;
@@ -269,27 +280,27 @@ static void terminateUProcess() {
     int ASID = ((getENTRYHI() & 0x00000FC0) >> ASIDMASK);
     
     /* call dibs */
-    SYSCALL(PASSEREN, (int)&swapSemaphore, 0, 0);
+    mutex(TRUE, &(swapSemaphore));
+    SYSCALL(PASSEREN, (int) &swapSemaphore, 0, 0);
     
     disableInterrupts();
     
     /* set page table and the swap pool entries to invalid */
     int touched = FALSE; /* used to know if we have to clear the tlb or not */
-    for (int i = 0; i < 16; i++){
+    for (int i = 0; i < 16; i++) {
         if(pool[i].ASID == ASID){
-            pool[i].pageTableEntry->entryLO = (pool[i].pageTableEntry->entryLO | INVALID);
-            pool[i].ASID = -1;
+            /* invalidate the entry */
+            invalidateEntry(i);
             touched = TRUE;
         }
     }
     if (touched) { /* we handle any problems with the tlb in the most elegant of ways */
         TLBCLR();
     }
-    enableInterrupts ();
+    enableInterrupts();
     
     /* we no longer need the semaphore */
-    SYSCALL(VERHOGEN, (int)&swapSemaphore, 0, 0);
-    SYSCALL(VERHOGEN, (int)&masterSemaphore, 0, 0);
+    mutex(FALSE, &(swapSemaphore));
     
     /* and to finish it off we add a dash of genocide */
     SYSCALL (TERMINATEPROCESS, 0, 0, 0);
