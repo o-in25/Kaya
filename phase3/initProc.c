@@ -24,6 +24,21 @@ static void initUProcs() {
 	int j;
 }
 
+
+
+/* will invalidate a page table entry given a frame number */
+void invalidateEntry(int frameNumber) {
+    pool[frameNumber].pageTableEntry->entryLO = ALLOFF | DIRTY;
+    pool[frameNumber].ASID = -1;
+    pool[frameNumber].pageNumber = 0;
+    pool[frameNumber].segmentNumber = 0;
+    /* were done */
+    pool[frameNumber].pageTableEntry = NULL;
+    /* deal with the TLB cache consistency */
+    /* by clearing the TLB */
+    TLBCLR();
+}
+
 /* gets the ball rolling */
 void initUProc() {
 

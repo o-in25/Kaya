@@ -13,4 +13,5 @@
     int masterSemaphore;
     int mutexSemaphores[MAXSEMALLOC];
     int extractASID();
+    void invalidateEntry();
 #endif

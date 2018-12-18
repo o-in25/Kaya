@@ -14,6 +14,21 @@ void uSyscallHandler() {
     delegateUSyscall(state);
 }
 
+
+/* disables interrupts on request */
+void disableInterrupts() {
+    int status = getSTATUS();
+    status = (status & 0xFFFFFFFE);
+    setSTATUS(status);
+}
+
+/* enables interrupts on request */
+void enableInterrupts() {
+    int status = getSTATUS();
+    status = (status & 0x1);
+    setSTATUS(status);
+}
+
 static void delegateUSyscall(state_PTR state) {
     switch(state->s_a0) {
         case READ_FROM_TERMINAL: 

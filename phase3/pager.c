@@ -11,21 +11,6 @@ void progTrapHandler() {
     terminateUProcess();
 }
 
-/* disables interrupts on request */
-void disableInterrupts() {
-    int status = getSTATUS();
-    status = (status & 0xFFFFFFFE);
-    setSTATUS(status);
-}
-
-/* enables interrupts on request */
-void enableInterrupts() {
-    int status = getSTATUS();
-    status = (status & 0x1);
-    setSTATUS(status);
-}
-
-
 
 /* just returns an increment on the last frame mod to create an incremental choice */
 static int next() {
@@ -35,19 +20,6 @@ static int next() {
     }
     lastFrame++;
     return lastFrame;
-}
-
-/* will invalidate a page table entry given a frame number */
-void invalidateEntry(int frameNumber) {
-    pool[frameNumber].pageTableEntry->entryLO = ALLOFF | DIRTY;
-    pool[frameNumber].ASID = -1;
-    pool[frameNumber].pageNumber = 0;
-    pool[frameNumber].segmentNumber = 0;
-    /* were done */
-    pool[frameNumber].pageTableEntry = NULL;
-    /* deal with the TLB cache consistency */
-    /* by clearing the TLB */
-    TLBCLR();
 }
 
 /* the pager for the TLB exception */
