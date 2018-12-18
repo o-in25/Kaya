@@ -128,12 +128,12 @@ void test() {
 		/* -1 signifies */
 		pool[i].ASID = -1;
 	}
-
+	debugger(2);
 	/* initialize the semaphores */
 	for(i = 0; i < MAXSEMALLOC; i++){
 		mutexSemaphores[i] = 1;
 	}
-
+	debugger(3);
 
 	/* initalize the page table for the kUsegOS */
 	for (i = 0; i < KUSEGPTESIZE; i++) {
@@ -143,7 +143,7 @@ void test() {
 		kSegOS.pteTable[i].entryLO = ((PADDRBASE + i) << VPNMASK) | VALID | DIRTY | GLOBAL;
 	} 
 
-
+	debugger(4);
 	/* initialize the header */
 	kSegOS.header = MAGICNO << PGTBLHEADERWORD | KSEGOSPTESIZE;
 
@@ -172,9 +172,11 @@ void test() {
 			SYSCALL(TERMINATEPROCESS, EMPTY, EMPTY, EMPTY);
 		}
 	}
+	debugger(5);
 	if (i < MAXUPROC + 1) {
 		SYSCALL(PASSEREN, (int) &masterSemaphore, EMPTY, EMPTY);
 	}
+	debugger(6);
 	/* end the process */
 	SYSCALL(TERMINATEPROCESS, EMPTY, EMPTY, EMPTY);
 }
