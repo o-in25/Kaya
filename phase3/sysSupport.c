@@ -9,7 +9,7 @@
 #include "/usr/local/include/umps2/umps/libumps.e"
 
 void uSyscallHandler() {
-    state_PTR state = (&((uProcesses[getASID()-1]).Told_trap[SYSTRAP]));
+    state_PTR state = (&((uProcesses[extractASID()-1]).Told_trap[SYSTRAP]));
     delegateUSyscall(state);
 }
 
@@ -159,7 +159,7 @@ static void diskGet(state_PTR state) {
 static void writeToPrinter(state_PTR state) {
     char* nextChar = (char*) state->s_a1;
     int stringLength = (int) state->s_a2;
-    int asidIndex = getASID() - 1;
+    int asidIndex = extractASID() - 1;
     /* get the device */
     device_PTR printerDevice = (device_PTR) PRINTERDEV + (asidIndex * DEVREGSIZE);
     int i = 0;
