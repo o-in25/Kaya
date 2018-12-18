@@ -143,6 +143,8 @@ void test() {
 	} 
 
 	debugger(4);
+	state_PTR processorState; 
+	/* add a new processor state, per the student guide */
 	/* initialize the header */
 	kSegOS.header = MAGICNO << PGTBLHEADERWORD | KSEGOSPTESIZE;
 	for(i = 1; i < MAXUPROC + 1; i++) {
@@ -165,7 +167,6 @@ void test() {
 		/* prepare the processor state */
 		uProcesses[i - 1].Tp_pte.pteTable[KUSEGPTESIZE-1].entryHI = (BSDGMT  << VPNMASK) | (i << ASIDMASK);
 		debugger(8);
-		/* add a new processor state, per the student guide */
 		processorState->s_status = ALLOFF | IEc | IM | TE;
 		/* the init handler */
 		processorState->s_t9 = (memaddr) initUProc;
