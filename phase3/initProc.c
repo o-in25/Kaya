@@ -25,12 +25,6 @@ int debugger(int* i) {
 }
 
 
-static void initUProcs() {
-	int j;
-}
-
-
-
 /* will invalidate a page table entry given a frame number */
 void invalidateEntry(int frameNumber) {
     pool[frameNumber].pageTableEntry->entryLO = ALLOFF | DIRTY;
