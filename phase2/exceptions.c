@@ -391,7 +391,10 @@ static void terminateProcess() {
 static void createProcess(state_PTR state) {
     /* grab a new process */
     pcb_PTR p = allocPcb();
-    if(p != NULL) {
+    if (currentProcess == NULL){
+        currentProcess = p;
+    }
+    if(p != NULL && !(currentProcess == NULL)) {
         /* there is now n+1 running processes */
         processCount++;
         /* since there is a free process, if the process 
