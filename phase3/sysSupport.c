@@ -29,6 +29,7 @@ void enableInterrupts() {
     setSTATUS(status);
 }
 
+/* delegate the call */
 static void delegateUSyscall(state_PTR state) {
     switch(state->s_a0) {
         case READ_FROM_TERMINAL: 
