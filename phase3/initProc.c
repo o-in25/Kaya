@@ -158,18 +158,7 @@ void test() {
 			userProc.Tp_pte.pteTable[j].entryHI = (BASEADDR + j) >> VPNMASK | (i << ASIDMASK);
 			userProc.Tp_pte.pteTable[j].entryLO = ALLOFF | DIRTY;
 		}
-		/* get the address of ith entry the segment table */
-		segt_PTR segmentTable = (segt_PTR) SEGSTART + (i * SEGWIDTH);
-		/* point to the kSegOS segment */
-		segmentTable->kUseg2 = (&(userProc.Tp_pte));
-		segmentTable->kSegOS = (&(kSegOS));
-		/* prepare the processor state */
-		userProc.Tp_pte.pteTable[KUSEGPTESIZE-1].entryHI = (BSDGMT  << VPNMASK) | (i << ASIDMASK);
-		/* add a new processor state, per the student guide */
-		state_PTR processorState = prepareProcessorState(FALSE, i);
-		/* set the semaphore */
-		userProc.Tp_sem = 0;
-		int status = SYSCALL(CREATEPROCESS, (int) &(processorState), EMPTY, EMPTY);
+	
 		if(status != SUCCESS) {
 			SYSCALL(TERMINATEPROCESS, EMPTY, EMPTY, EMPTY);
 		}
