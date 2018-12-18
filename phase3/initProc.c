@@ -166,7 +166,7 @@ void test() {
 		segmentTable.kUseg2 = userProc.Tp_pte;
 		/* prepare the processor state */
 		state_PTR processorState = prepareProcessorState(FALSE, i);
-		userProc->Tp_sem = 0;
+		userProc.Tp_sem = 0;
 
 		if(SYSCALL(CREATEPROCESS, (int) processorState, EMPTY, EMPTY) != SUCCESS) {
 			SYSCALL(TERMINATEPROCESS, EMPTY, EMPTY, EMPTY);
