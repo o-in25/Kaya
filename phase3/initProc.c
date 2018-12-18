@@ -158,10 +158,7 @@ void test() {
 			userProc.Tp_pte.pteTable[j].entryHI = (BASEADDR + j) >> VPNMASK | (i << ASIDMASK);
 			userProc.Tp_pte.pteTable[j].entryLO = ALLOFF | DIRTY;
 		}
-	
-		if(status != SUCCESS) {
-			SYSCALL(TERMINATEPROCESS, EMPTY, EMPTY, EMPTY);
-		}
+		
 	}
 	debugger(5);
 	for(i = 0; i < MAXUPROC; i++) {
