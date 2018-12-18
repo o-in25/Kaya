@@ -106,7 +106,7 @@ static state_PTR prepareProcessorState(int flag, int index) {
 		/* the init handler */
 		processorState->s_t9 = initUProc;
 		/* TODO: set up pc */
-		processorState->s_status = initUProc;
+		processorState->s_sp = initUProc;
 	}
 	return processorState;
 }
@@ -165,7 +165,7 @@ void test() {
 		segmentTable->kSegOS = &kSegOS;
 		segmentTable->kUseg2 = &(userProc->Tp_pte);
 		/* prepare the processor state */
-		state_PTR processorState = prepareProcessorState(UPROCINIT, i);
+		state_PTR processorState = prepareProcessorState(FALSE, i);
 		userProc->Tp_sem = 0;
 
 		if(SYSCALL(CREATEPROCESS, (int) processorState, EMPTY, EMPTY) != SUCCESS) {
