@@ -172,6 +172,7 @@ void test() {
 		uProcesses[i - 1].Tp_sem = 0;
 		int status = SYSCALL(CREATEPROCESS, (int) &(processorState), EMPTY, EMPTY);
 		if(status != SUCCESS) {
+			debugger(9);
 			SYSCALL(TERMINATEPROCESS, EMPTY, EMPTY, EMPTY);
 		}
 	}
