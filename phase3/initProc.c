@@ -19,6 +19,11 @@ int mutexSemaphores[MAXSEMALLOC];
 /* END OF GLOBAL VARIABLES */
 
 
+int debugger(int* i) {
+	i = 0;
+	i = 42;
+}
+
 
 static void initUProcs() {
 	int j;
@@ -115,6 +120,8 @@ static state_PTR prepareProcessorState(int flag, int index) {
 
 /* wrapper function for our phase 3 */
 void test() {
+	/* here we are */
+	debugger(420);
 	/* some variables for indexing */
 	int i;
 	int j;
