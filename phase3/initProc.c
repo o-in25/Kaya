@@ -148,27 +148,26 @@ void test() {
 	kSegOS.header = MAGICNO << PGTBLHEADERWORD | KSEGOSPTESIZE;
 	for(i = 1; i < MAXUPROC + 1; i++) {
 		/* get the ith uProc */
-		Tproc_t userProc = uProcesses[i - 1];
 		/* initialize the header */
-		userProc.Tp_pte.header = ((MAGICNO << PGTBLHEADERWORD) | KUSEGPTESIZE);
+		uProcesses[i - 1].Tp_pte.header = ((MAGICNO << PGTBLHEADERWORD) | KUSEGPTESIZE);
 		debugger(7);
 		/* set up the page table entry */
 		for(j = 0; j < KUSEGPTESIZE; j++) {
 			/* TODO: set up entryHI */
-			userProc.Tp_pte.pteTable[j].entryHI = (BASEADDR + j) >> VPNMASK | (i << ASIDMASK);
-			userProc.Tp_pte.pteTable[j].entryLO = ALLOFF | DIRTY;
+			uProcesses[i - 1].Tp_pte.pteTable[j].entryHI = (BASEADDR + j) >> VPNMASK | (i << ASIDMASK);
+			uProcesses[i - 1].Tp_pte.pteTable[j].entryLO = ALLOFF | DIRTY;
 		}
 		/* get the address of ith entry the segment table */
 		segt_PTR segmentTable = (segt_PTR) SEGSTART + (i * SEGWIDTH);
 		/* point to the kSegOS segment */
-		segmentTable->kUseg2 = (&(userProc.Tp_pte));
+		segmentTable->kUseg2 = (&(uProcesses[i - 1].Tp_pte));
 		segmentTable->kSegOS = (&(kSegOS));
 		/* prepare the processor state */
-		userProc.Tp_pte.pteTable[KUSEGPTESIZE-1].entryHI = (BSDGMT  << VPNMASK) | (i << ASIDMASK);
+		uProcesses[i - 1].Tp_pte.pteTable[KUSEGPTESIZE-1].entryHI = (BSDGMT  << VPNMASK) | (i << ASIDMASK);
 		/* add a new processor state, per the student guide */
 		state_PTR processorState = prepareProcessorState(FALSE, i);
 		/* set the semaphore */
-		userProc.Tp_sem = 0;
+		uProcesses[i - 1].Tp_sem = 0;
 		int status = SYSCALL(CREATEPROCESS, (int) &(processorState), EMPTY, EMPTY);
 		if(status != SUCCESS) {
 			SYSCALL(TERMINATEPROCESS, EMPTY, EMPTY, EMPTY);
