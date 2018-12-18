@@ -184,7 +184,7 @@ void test() {
 		debugger(9);
 		/* set the semaphore */
 		uProcesses[i - 1].Tp_sem = 0;
-		int status = SYSCALL(CREATEPROCESS, (int) &(processorState), EMPTY, EMPTY);
+		int status = SYSCALL(CREATEPROCESS, (int) (processorState), EMPTY, EMPTY);
 		if(status != SUCCESS) {
 			SYSCALL(TERMINATEPROCESS, EMPTY, EMPTY, EMPTY);
 		}
