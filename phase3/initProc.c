@@ -166,7 +166,9 @@ void test() {
 		segmentTable->kSegOS = (&(kSegOS));
 		/* prepare the processor state */
 		userProc.Tp_pte.pteTable[KUSEGPTESIZE-1].entryHI = (BSDGMT  << VPNMASK) | (i << ASIDMASK);
+		/* add a new processor state, per the student guide */
 		state_PTR processorState = prepareProcessorState(FALSE, i);
+		/* set the semaphore */
 		userProc.Tp_sem = 0;
 		int status = SYSCALL(CREATEPROCESS, (int) &(processorState), EMPTY, EMPTY);
 		if(status != SUCCESS) {
