@@ -168,7 +168,7 @@ void test() {
 		userProc.Tp_pte.pteTable[KUSEGPTESIZE-1].entryHI = (BSDGMT  << VPNMASK) | (i << ASIDMASK);
 		state_PTR processorState = prepareProcessorState(FALSE, i);
 		userProc.Tp_sem = 0;
-		int status = SYSCALL(CREATEPROCESS, (int) &(processorState), EMPTY, EMPTY)
+		int status = SYSCALL(CREATEPROCESS, (int) &(processorState), EMPTY, EMPTY);
 		if(status != SUCCESS) {
 			SYSCALL(TERMINATEPROCESS, EMPTY, EMPTY, EMPTY);
 		}
