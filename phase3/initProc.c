@@ -103,10 +103,11 @@ state_PTR prepareProcessorState(int flag, int* index) {
 		/* this is for variable initialization i.e. step 1 */
 				debugger(10);
 		processorState->s_asid = ((*(index)) << ASIDMASK);
+						debugger(11);
+
 		processorState->s_status = ALLOFF | IEc | IM | TE;
 		/* the init handler */
 		processorState->s_t9 = (memaddr) initUProc;
-				debugger(11);
 		/* TODO: set up pc */
 		processorState->s_sp = (memaddr) initUProc;
 	}
