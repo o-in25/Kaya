@@ -142,6 +142,9 @@ void test() {
 		kSegOS.pteTable[i].entryLO = ((PADDRBASE + i) << VPNMASK) | VALID | DIRTY | GLOBAL;
 	} 
 	masterSemaphore = 0;
+	disk1Semaphore = 1;
+	disk0Semaphore = 1;
+	swapSemaphore = 1;
 	debugger(4);
 	state_PTR processorState; 
 	/* add a new processor state, per the student guide */
