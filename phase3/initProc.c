@@ -24,6 +24,11 @@ int debugger(int* i) {
 	i = 42;
 }
 
+int debugger2(int* i){
+    i = 0;
+    i = 42;
+}
+
 
 /* will invalidate a page table entry given a frame number */
 void invalidateEntry(int frameNumber) {
@@ -184,11 +189,12 @@ void test() {
 			SYSCALL(TERMINATEPROCESS, EMPTY, EMPTY, EMPTY);
 		}
 	}
-	debugger(5);
+	debugger2(5);
 	for(i = 0; i < MAXUPROC; i++) {
+        debugger2(i);
 		SYSCALL(PASSEREN, (int) &(masterSemaphore), EMPTY, EMPTY);
 	}
-	debugger(6);
+	debugger2(6);
 	/* end the process */
 	SYSCALL(TERMINATEPROCESS, EMPTY, EMPTY, EMPTY);
 }
