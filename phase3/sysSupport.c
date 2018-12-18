@@ -12,7 +12,7 @@ void uSyscallHandler() {
 }
 
 static void delegateUSyscall(state_PTR state) {
-    switch(state->s_a0) {
+    switch(statecle->s_a0) {
         case READ_FROM_TERMINAL: 
             readFromTerminal(state);
             break;
@@ -153,97 +153,7 @@ static void diskGet(state_PTR state) {
     diskOperation(NULL, NULL, NULL);
 }
 
-/*******
- * 
- * 
- *  12/17 6:49PM 
- *  We shoudn't need this; the diskIO func will handle each type 
- *  of command by taking in as anargument the command and placing it
- *  as a command in that device's comannad field per pops pg 38
- * 
- * 
- * / 
-/* I noticed the two disk operations were super similair so I combined them into one */
-/* since write and read commands are set to 3 and 4, those are used here as well to */
-/* which command is desired 
-static void diskStuff (state_PTR state, int readOrWrite){
-    int* address = (int*) state->s_a1;
-    int disk = state->s_a2;
-    int sectNumber = state->s_a3;
-    ASID = getASID();
-    int *buffer = (int*)(0x2001E000 + (disk * 4096));
-    state_PTR oldState = (state_PTR) &uProcesses[ASID-1].Told_trap[2];
-    devregarea_PTR devReg = (devregarea_PTR) RAMBASEADDR;
-    device_PTR device = &(devReg->devreg[disk]);
-    
-    /* disk0 and ksegos are off limits 
-    if (disk <= 0 || (memaddr) address < 0x80000000) {
-        /* its a trap 
-        terminateUProcess ();
-    }
-    
-    /* need the head, sector and cylinder for the data 
-    int head = sectNumber % 2;
-    sectNumber = sectNumber/2;
-    int sectorNumber = sectNumber % 8; /* sectNumber and sectorNumber can be easy to mix up but the way to think about it is that the shorter one is the one we dont use for real 
-    sectNumber = sectNumber/8;
-    int cylinder = sectNumber;
-    
-    /* call dibs 
-    SYSCALL(PASSEREN, (int)&mutexSemaphores[disk], 0, 0);
-    
-    if (readWrite == 4 /*command for write ){
-        for (int i = 0; i < 1024; i++){
-            /*copy it and... 
-            *address = *buffer;
-            
-            /* move on! 
-            buffer++;
-            address++;
-            i++;
-        }
-    }
-    
-    /*perform an atomic operation and seek to correct the cylinder 
-    disableInterrupts();
-    
-    device->d_command = ((cylinder << 8) | 2);
-    int status = SYSCALL(WAITIO, 3, disk, 0);
-    
-    enableInterrupts();
-    
-    /* if successful 
-    if (status == 1){
-        disableInterrupts();
-        
-        /* set up the data location and read/write command 
-        device->d_data0 = (memaddr) buffer;
-        device->d_command = (head << 16) | (sectorNumber << 8) | readOrWrite;
-        
-        status = SYSCALL(WAITIO, 3, disk, 0);
-        enableInterrupts();
-    }
-    
-    if (readOrWrite == 3/*read command){
-        for (int i = 0; i < 1024; i++){
-            /*copy it and... 
-            *address = *buffer;
-            
-            /* move on! 
-            buffer++;
-            address++;
-            i++;
-        }
-    }
-    
-    /* store the result in v0 
-    state->s_v0 = status;
-    
-    /* drop mic on stage 
-    SYSCALL(VERHOGEN, (int)&mutexSemaphores[disk], 0, 0);
-    
-}
-**/
+
 static void writeToPrinter(state_PTR state) {
     char* nextChar = (char*) state->s_a1;
     int stringLength = (int) state->s_a2;
