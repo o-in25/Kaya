@@ -199,7 +199,8 @@ static void terminateUProcess() {
     
     /* set page table and the swap pool entries to invalid */
     int touched = FALSE; /* used to know if we have to clear the tlb or not */
-    for (int i = 0; i < 16; i++) {
+    int i;
+    for (i = 0; i < 16; i++) {
         if(pool[i].ASID == ASID){
             /* invalidate the entry */
             invalidateEntry(i);
