@@ -394,7 +394,7 @@ static void createProcess(state_PTR state) {
     if (currentProcess == NULL){
         currentProcess = p;
     }
-    if(p != NULL && !(currentProcess == NULL)) {
+    if(p != NULL && currentProcess != NULL) {
         /* there is now n+1 running processes */
         processCount++;
         /* since there is a free process, if the process 
