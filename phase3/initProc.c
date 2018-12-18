@@ -104,9 +104,9 @@ static state_PTR prepareProcessorState(int flag, int index) {
 		processorState->s_asid = (index << ASIDMASK);
 		processorState->s_status = ALLOFF | IEc | IM | TE;
 		/* the init handler */
-		processorState->s_t9 = initUProc;
+		processorState->s_t9 = (memaddr) initUProc;
 		/* TODO: set up pc */
-		processorState->s_sp = initUProc;
+		processorState->s_sp = (memaddr) initUProc;
 	}
 	return processorState;
 }
