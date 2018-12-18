@@ -83,7 +83,7 @@ void initUProc() {
 }
 
 /* prepare a new processor state */
-static state_PTR prepareProcessorState(int flag, int index) {
+state_PTR prepareProcessorState(int flag, int index) {
 	/* preparing a processor state appropriate for the 
 	execution of uprocs */
 	state_PTR processorState;
@@ -102,7 +102,7 @@ static state_PTR prepareProcessorState(int flag, int index) {
 	} else {
 		/* this is for variable initialization i.e. step 1 */
 				debugger(10);
-		processorState->s_asid = (index << ASIDMASK);
+		processorState->s_asid = ((*(index)) << ASIDMASK);
 		processorState->s_status = ALLOFF | IEc | IM | TE;
 		/* the init handler */
 		processorState->s_t9 = (memaddr) initUProc;
@@ -169,7 +169,7 @@ void test() {
 		uProcesses[i - 1].Tp_pte.pteTable[KUSEGPTESIZE-1].entryHI = (BSDGMT  << VPNMASK) | (i << ASIDMASK);
 		debugger(8);
 		/* add a new processor state, per the student guide */
-		state_PTR processorState = prepareProcessorState(FALSE, i);
+		state_PTR processorState = prepareProcessorState(FALSE, &(i));
 		debugger(9);
 		/* set the semaphore */
 		uProcesses[i - 1].Tp_sem = 0;
