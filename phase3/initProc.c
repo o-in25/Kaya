@@ -147,17 +147,6 @@ void test() {
 	/* initialize the header */
 	kSegOS.header = MAGICNO << PGTBLHEADERWORD | KSEGOSPTESIZE;
 	for(i = 1; i < MAXUPROC + 1; i++) {
-		/* get the ith uProc */
-		Tproc_t userProc = uProcesses[i - 1];
-		/* initialize the header */
-		userProc.Tp_pte.header = ((MAGICNO << PGTBLHEADERWORD) | KUSEGPTESIZE);
-		debugger(7);
-		/* set up the page table entry */
-		for(j = 0; j < KUSEGPTESIZE; j++) {
-			/* TODO: set up entryHI */
-			userProc.Tp_pte.pteTable[j].entryHI = (BASEADDR + j) >> VPNMASK | (i << ASIDMASK);
-			userProc.Tp_pte.pteTable[j].entryLO = ALLOFF | DIRTY;
-		}
 		
 	}
 	debugger(5);
