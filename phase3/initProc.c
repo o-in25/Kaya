@@ -24,7 +24,7 @@ static void initUProcs() {
 }
 
 /* gets the ball rolling */
-static void initUProc() {
+void initUProc() {
 
 	int asid = extractASID();
 	int asidIndex = asid - 1;
