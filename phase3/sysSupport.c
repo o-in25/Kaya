@@ -5,6 +5,8 @@
 #include "../e/initProc.e"
 #include "../e/exceptions.e"
 #include "../e/initProc.e"
+/* include the µmps2 library */
+#include "/usr/local/include/umps2/umps/libumps.e"
 
 void uSyscallHandler() {
     state_PTR state = (&((uProcesses[getASID()-1]).Told_trap[SYSTRAP]));

@@ -1,6 +1,8 @@
 #include "../h/const.h"
 #include "../h/types.h"
 #include "../e/sysSupport.e"
+/* include the µmps2 library */
+#include "/usr/local/include/umps2/umps/libumps.e"
 
 
 /* GLOBAL VARIABLES */

@@ -4,7 +4,8 @@
 #include "../e/exceptions.e"
 #include "../e/initProc.e"
 #include "../e/sysSupport.e"
-
+/* include the µmps2 library */
+#include "/usr/local/include/umps2/umps/libumps.e"
 
 void progTrapHandler() {
     terminateUProcess();
